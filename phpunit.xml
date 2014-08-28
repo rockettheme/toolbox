@@ -12,13 +12,13 @@
 
     <testsuites>
         <testsuite name="RocketTheme Toolbox Test Suite">
-            <directory suffix=".php">./RocketTheme/Toolbox/ArrayTraits/tests/</directory>
-            <directory suffix=".php">./RocketTheme/Toolbox/DI/tests/</directory>
-            <directory suffix=".php">./RocketTheme/Toolbox/Event/tests/</directory>
-            <directory suffix=".php">./RocketTheme/Toolbox/File/tests/</directory>
-            <directory suffix=".php">./RocketTheme/Toolbox/ResourceLocator/tests/</directory>
-            <directory suffix=".php">./RocketTheme/Toolbox/Session/tests/</directory>
-            <directory suffix=".php">./RocketTheme/Toolbox/StreamWrapper/tests/</directory>
+            <directory suffix=".php">./ArrayTraits/tests/</directory>
+            <directory suffix=".php">./DI/tests/</directory>
+            <directory suffix=".php">./Event/tests/</directory>
+            <directory suffix=".php">./File/tests/</directory>
+            <directory suffix=".php">./ResourceLocator/tests/</directory>
+            <directory suffix=".php">./Session/tests/</directory>
+            <directory suffix=".php">./StreamWrapper/tests/</directory>
         </testsuite>
     </testsuites>
 
