@@ -21,7 +21,7 @@
             "RocketTheme\\Toolbox\\DI\\": "DI/src",
             "RocketTheme\\Toolbox\\Event\\": "Event/src",
             "RocketTheme\\Toolbox\\File\\": "File/src",
-            "RocketTheme\\Toolbox\\ResourceLocation\\": "ResourceLocation/src",
+            "RocketTheme\\Toolbox\\ResourceLocator\\": "ResourceLocator/src",
             "RocketTheme\\Toolbox\\Session\\": "Session/src",
             "RocketTheme\\Toolbox\\StreamWrapper\\": "StreamWrapper/src"
         }
