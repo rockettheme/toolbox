@@ -13,12 +13,19 @@ namespace RocketTheme\Toolbox\ResourceLocator;
  */
 class UniformResourceLocator implements ResourceLocatorInterface
 {
+    public $base;
+
     /**
      * @var array
      */
     protected $schemes = [];
 
     protected $cache = [];
+
+    public function __construct($base = null)
+    {
+        $this->base = $base ?: getcwd();
+    }
 
     /**
      * @param string $scheme
@@ -91,11 +98,11 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $scheme = 'file';
         }
 
-        if (!$file || $uri[0] == ':') {
-            throw new \InvalidArgumentException('Invalid resource URI');
-        }
         if (!isset($this->schemes[$scheme])) {
             throw new \InvalidArgumentException("Invalid resource {$scheme}://");
+        }
+        if (!$file && $scheme == 'file') {
+            $file = $this->base;
         }
 
         return [$file, $scheme];
@@ -128,7 +135,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
             foreach ($paths as $path) {
                 $filename = $path . '/' . ltrim(substr($file, strlen($prefix)), '\/');
-                $lookup = GRAV_ROOT . '/' . $filename;
+                $lookup = $this->base . '/' . $filename;
 
                 if (file_exists($lookup)) {
                     if (!$array) {
