@@ -24,7 +24,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
     public function __construct($base = null)
     {
-        $this->base = $base ?: getcwd();
+        $this->base = rtrim($base ?: getcwd(), '/');
     }
 
     /**
@@ -38,8 +38,11 @@ class UniformResourceLocator implements ResourceLocatorInterface
         foreach((array) $paths as $path) {
             $path = trim($path, '/');
             if (strstr($path, '://')) {
-                $list = array_merge($list, $this->find($path, true, false));
-            } else {
+                $items = $this->find($path, true, false);
+                if ($items) {
+                    $list = array_merge($list, $items);
+                }
+            } elseif (is_dir("{$this->base}/{$path}")) {
                 $list[] = $path;
             }
         }
@@ -48,11 +51,12 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $list = array_merge($list, $this->schemes[$scheme][$prefix]);
         }
 
-        $this->schemes[$scheme][$prefix] = $list;
+        if ($list) {
+            $this->schemes[$scheme][$prefix] = $list;
+        }
 
         // Sort in reverse order to get longer prefixes to be matched first.
         krsort($this->schemes[$scheme]);
-
         $this->cache = [];
     }
 
@@ -140,12 +144,12 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
             foreach ($paths as $path) {
                 $filename = $path . '/' . ltrim(substr($file, strlen($prefix)), '\/');
-                $lookup = $this->base . '/' . $filename;
+                $lookup = $this->base . '/' . trim($filename, '/');
 
                 if (file_exists($lookup)) {
                     if (!$array) {
                         $results = $absolute ? $lookup : $filename;
-                        break;
+                        break 2;
                     }
                     $results[] = $absolute ? $lookup : $filename;
                 }
