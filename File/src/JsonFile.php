@@ -50,6 +50,6 @@ class JsonFile extends File
      */
     protected function decode($var)
     {
-        return (array) json_decode($var);
+        return (array) json_decode($var, true);
     }
 }
