@@ -56,7 +56,9 @@ class UniformResourceLocator implements ResourceLocatorInterface
         }
 
         // Sort in reverse order to get longer prefixes to be matched first.
-        krsort($this->schemes[$scheme]);
+        if (is_array($this->schemes[$scheme])) {
+            krsort($this->schemes[$scheme]);
+        }
         $this->cache = [];
     }
 
