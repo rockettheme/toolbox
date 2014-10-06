@@ -38,7 +38,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
         foreach((array) $paths as $path) {
             $path = trim($path, '/');
             if (strstr($path, '://')) {
-                $items = $this->find($path, true, false);
+                $items = $this->find($path, true, false, false);
                 if ($items) {
                     $list = array_merge($list, $items);
                 }
@@ -68,27 +68,29 @@ class UniformResourceLocator implements ResourceLocatorInterface
      */
     public function __invoke($uri)
     {
-        return $this->find($uri, false, true);
+        return $this->find($uri, false, true, false);
     }
 
     /**
-     * @param  string $uri
-     * @param  bool   $absolute
+     * @param  string $uri      Input URI to be searched.
+     * @param  bool   $absolute Whether to return absolute path.
+     * @param  bool   $first    Whether to return first path even if it doesn't exist.
      * @return string|bool
      */
-    public function findResource($uri, $absolute = true)
+    public function findResource($uri, $absolute = true, $first = false)
     {
-        return $this->find($uri, false, $absolute);
+        return $this->find($uri, false, $absolute, $first);
     }
 
     /**
-     * @param  string $uri
-     * @param  bool   $absolute
+     * @param  string $uri      Input URI to be searched.
+     * @param  bool   $absolute Whether to return absolute path.
+     * @param  bool   $all      Whether to return all paths even if they don't exist.
      * @return array
      */
-    public function findResources($uri, $absolute = true)
+    public function findResources($uri, $absolute = true, $all = false)
     {
-        return $this->find($uri, true, $absolute);
+        return $this->find($uri, true, $absolute, $all);
     }
 
     /**
@@ -121,14 +123,15 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
     /**
      * @param  string $uri
-     * @param  bool   $absolute
      * @param  bool $array
+     * @param  bool $absolute
+     * @param  bool $all
      *
      * @throws \InvalidArgumentException
      * @return array|string|bool
      * @internal
      */
-    protected function find($uri, $array, $absolute)
+    protected function find($uri, $array, $absolute, $all)
     {
         // Local caching: make sure that the function gets only called at once for each file.
         $key = $uri .'@'. (int) $array . (int) $absolute;
@@ -148,12 +151,13 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 $filename = $path . '/' . ltrim(substr($file, strlen($prefix)), '\/');
                 $lookup = $this->base . '/' . trim($filename, '/');
 
-                if (file_exists($lookup)) {
+                if ($all || file_exists($lookup)) {
+                    $current = $absolute ? $lookup : $filename;
                     if (!$array) {
-                        $results = $absolute ? $lookup : $filename;
+                        $results = $current;
                         break 2;
                     }
-                    $results[] = $absolute ? $lookup : $filename;
+                    $results[] = $current;
                 }
             }
         }
