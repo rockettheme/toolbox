@@ -133,7 +133,7 @@ class MarkdownFile extends File
         $var = preg_replace("/(\r\n|\r)/", "\n", $var);
 
         // Parse header.
-        preg_match($frontmatter_regex, $var, $m);
+        preg_match($frontmatter_regex, ltrim($var), $m);
         if(!empty($m)) {
             $content['frontmatter'] = preg_replace("/\n\t/", "\n    ", $m[1]);
             $content['header'] = YamlParser::parse($content['frontmatter']);
