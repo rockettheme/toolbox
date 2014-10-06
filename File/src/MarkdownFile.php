@@ -127,18 +127,20 @@ class MarkdownFile extends File
         $content['header'] = array();
         $content['frontmatter'] = array();
 
+        $frontmatter_regex = "/^---\n(.+?)\n---(\n\n|$)/uim";
+
         // Normalize line endings to Unix style.
         $var = preg_replace("/(\r\n|\r)/", "\n", $var);
 
         // Parse header.
-        preg_match("/---\n(.+?)\n---(\n\n|$)/uism", $var, $m);
-        if (isset($m[1])) {
+        preg_match($frontmatter_regex, $var, $m);
+        if (isset($m[1]) && (isset($m[2]) && $m[2]!="")) {
             $content['frontmatter'] = preg_replace("/\n\t/", "\n    ", $m[1]);
             $content['header'] = YamlParser::parse($content['frontmatter']);
         }
 
         // Strip header to get content.
-        $content['markdown'] = trim(preg_replace("/---\n(.+?)\n---(\n\n|$)/uism", '', $var));
+        $content['markdown'] = trim(preg_replace($frontmatter_regex, '', $var, 1));
 
         return $content;
     }
