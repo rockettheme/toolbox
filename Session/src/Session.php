@@ -50,10 +50,10 @@ class Session implements \IteratorAggregate
         register_shutdown_function([$this, 'close']);
         session_cache_limiter('nocache');
 
-        if (isset($this['count'])) {
-            $this['count']++;
+        if (isset($this->count)) {
+            $this->count++;
         } else {
-            $this['count'] = 1;
+            $this->count = 1;
         }
 
         self::$instance = $this;
@@ -236,10 +236,10 @@ class Session implements \IteratorAggregate
 
 
     /**
-    * Retrieve an external iterator
-    *
-    * @return \ArrayIterator Return an ArrayIterator of $_SESSION
-    */
+     * Retrieve an external iterator
+     *
+     * @return \ArrayIterator Return an ArrayIterator of $_SESSION
+     */
     public function getIterator()
     {
         return new \ArrayIterator($_SESSION);
