@@ -46,7 +46,7 @@ class YamlFile extends File
      */
     protected function encode($var)
     {
-        return (string) YamlParser::dump($var);
+        return (string) YamlParser::dump($var, 3, 2);
     }
 
     /**

@@ -88,7 +88,7 @@ class PhpFile extends File
             } elseif (is_bool($v)) {
                 $r[] = "'" . $k . "' => " . ($v ? 'true' : 'false');
             } else {
-                $r[] .= "'" . $k . "' => " . "'" . addslashes($v) . "'";
+                $r[] .= "'" . $k . "' => " . '"' . addslashes($v) . '"';
             }
         }
 
