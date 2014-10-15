@@ -13,6 +13,9 @@ namespace RocketTheme\Toolbox\ResourceLocator;
  */
 class UniformResourceLocator implements ResourceLocatorInterface
 {
+    /**
+     * @var string  Base URL for all the streams.
+     */
     public $base;
 
     /**
@@ -20,6 +23,9 @@ class UniformResourceLocator implements ResourceLocatorInterface
      */
     protected $schemes = [];
 
+    /**
+     * @var array
+     */
     protected $cache = [];
 
     public function __construct($base = null)
@@ -28,6 +34,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Add new paths to the scheme.
+     *
      * @param string $scheme
      * @param string $prefix
      * @param string|array $paths
@@ -62,6 +70,11 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $this->cache = [];
     }
 
+    public function getSchemes()
+    {
+        return array_keys($this->schemes);
+    }
+
     /**
      * @param $uri
      * @return string|bool
@@ -72,6 +85,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Find highest priority instance from a resource.
+     *
      * @param  string $uri      Input URI to be searched.
      * @param  bool   $absolute Whether to return absolute path.
      * @param  bool   $first    Whether to return first path even if it doesn't exist.
@@ -83,6 +98,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Find all instances from a resource.
+     *
      * @param  string $uri      Input URI to be searched.
      * @param  bool   $absolute Whether to return absolute path.
      * @param  bool   $all      Whether to return all paths even if they don't exist.
