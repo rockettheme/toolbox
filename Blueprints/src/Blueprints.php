@@ -10,9 +10,24 @@ namespace RocketTheme\Toolbox\Blueprints;
  */
 class Blueprints
 {
-    protected $items = array();
-    protected $rules = array();
-    protected $nested = array();
+    /**
+     * @var array
+     */
+    protected $items = [];
+
+    /**
+     * @var array
+     */
+    protected $rules = [];
+
+    /**
+     * @var array
+     */
+    protected $nested = [];
+
+    /**
+     * @var array
+     */
     protected $filter = ['validation' => true];
 
     /**
@@ -23,10 +38,10 @@ class Blueprints
     public function __construct(array $serialized = null)
     {
         if ($serialized) {
-            $this->items = $serialized['items'];
-            $this->rules = $serialized['rules'];
-            $this->nested = $serialized['nested'];
-            $this->filter = $serialized['filter'];
+            $this->items = (array) $serialized['items'];
+            $this->rules = (array) $serialized['rules'];
+            $this->nested = (array) $serialized['nested'];
+            $this->filter = (array) $serialized['filter'];
         }
     }
 
