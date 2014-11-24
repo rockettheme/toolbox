@@ -87,6 +87,7 @@ class MoFile extends File
         // Offset of translation table.
         $translations = $this->readInt();
 
+        // Each table consists of string length and offset of the string.
         $this->seek($originals);
         $table_originals = $this->readIntArray($total * 2);
         $this->seek($translations);
@@ -95,11 +96,16 @@ class MoFile extends File
         $items = [];
         for ($i = 0; $i < $total; $i++) {
             $this->seek($table_originals[$i * 2 + 2]);
+
+            // TODO: Original string can have context concatenated on it. We do not yet support that.
             $original = $this->read($table_originals[$i * 2 + 1]);
 
             if ($original) {
                 $this->seek($table_translations[$i * 2 + 2]);
-                $items[$original] = $this->read($table_translations[$i * 2 + 1]);
+
+                // TODO: Plural forms are stored by letting the plural of the original string follow the singular of the original string, separated through a NUL byte.
+                $translated = $this->read($table_translations[$i * 2 + 1]);
+                $items[$original] = $translated;
             }
         }
 
