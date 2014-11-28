@@ -88,6 +88,18 @@ class UniformResourceLocator implements ResourceLocatorInterface
         return $this->base;
     }
 
+
+    /**
+     * Return true if scheme has been defined.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function schemeExists($name)
+    {
+        return isset($this->schemes[$name]);
+    }
+
     /**
      * Return defined schemes.
      *
