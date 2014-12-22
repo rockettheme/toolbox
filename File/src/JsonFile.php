@@ -35,21 +35,23 @@ class JsonFile extends File
      * Encode contents into RAW string.
      *
      * @param string $var
+     * @params bitmask $options
      * @return string
      */
-    protected function encode($var)
+    protected function encode($var, $options = 0)
     {
-        return (string) json_encode($var);
+        return (string) json_encode($var, $options);
     }
 
     /**
      * Decode RAW string into contents.
      *
      * @param string $var
+     * @param bool $assoc
      * @return array mixed
      */
-    protected function decode($var)
+    protected function decode($var, $assoc = false)
     {
-        return (array) json_decode($var, true);
+        return (array) json_decode($var, $assoc);
     }
 }
