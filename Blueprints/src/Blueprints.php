@@ -120,6 +120,7 @@ class Blueprints
      * @param $name
      * @param array $value
      * @param string $separator
+     * @return $this
      */
     public function embed($name, array $value, $separator = '.')
     {
@@ -127,11 +128,13 @@ class Blueprints
             $this->rules = array_merge($this->rules, $value['rules']);
         }
         if (!isset($value['form']['fields']) || !is_array($value['form']['fields'])) {
-            return;
+            return $this;
         }
         $prefix = $name ? ($separator != '.' ? strtr($name, $separator, '.') : $name) . '.' : '';
         $params = array_intersect_key($this->filter, $value);
         $this->parseFormFields($value['form']['fields'], $params, $prefix);
+
+        return $this;
     }
 
     /**
@@ -180,24 +183,32 @@ class Blueprints
      * @param array $fields
      * @param array $params
      * @param string $prefix
+     * @param string $parent
      * @internal
      */
-    protected function parseFormFields(array &$fields, $params, $prefix)
+    protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '')
     {
         // Go though all the fields in current level.
         foreach ($fields as $key => &$field) {
             // Set name from the array key.
-            $field['name'] = $prefix . $key;
+            if ($key && $key[0] == '.') {
+                $key = ($parent ?: rtrim($prefix, '.')) . $key;
+            } else {
+                $key = $prefix . $key;
+            }
+            $field['name'] = $key;
             $field += $params;
 
             if (isset($field['fields'])) {
+                $isArray = !empty($field['array']);
+
                 // Recursively get all the nested fields.
                 $newParams = array_intersect_key($this->filter, $field);
-                $this->parseFormFields($field['fields'], $newParams, $prefix);
+                $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''));
             } else {
                 // Add rule.
-                $this->items[$prefix . $key] = &$field;
-                $this->addProperty($prefix . $key);
+                $this->items[$key] = &$field;
+                $this->addProperty($key);
 
                 foreach ($field as $name => $value) {
                     if (substr($name, 0, 6) == '@data-') {
@@ -244,7 +255,7 @@ class Blueprints
      * @return array
      * @internal
      */
-    protected function getProperty($path = null, $separator = '.')
+    public function getProperty($path = null, $separator = '.')
     {
         if (!$path) {
             return $this->nested;
