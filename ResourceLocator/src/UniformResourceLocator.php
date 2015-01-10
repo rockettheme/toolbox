@@ -33,6 +33,20 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $this->base = rtrim($base ?: getcwd(), '/');
     }
 
+
+    /**
+     * Reset locator by removing all the schemes.
+     *
+     * @return $this
+     */
+    public function reset()
+    {
+        $this->schemes = [];
+        $this->cache = [];
+
+        return $this;
+    }
+
     /**
      * Add new paths to the scheme.
      *
