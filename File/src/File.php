@@ -53,6 +53,9 @@ class File implements FileInterface
      */
     public static function instance($filename)
     {
+        if (!is_string($filename) && $filename) {
+            throw new \InvalidArgumentException('Filename should be non-empty string');
+        }
         if (!isset(static::$instances[$filename])) {
             static::$instances[$filename] = new static;
             static::$instances[$filename]->init($filename);
