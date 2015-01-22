@@ -248,7 +248,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 $filePath = '/' . ltrim(substr($file, strlen($prefix)), '\/');
                 if (is_array($path)) {
                     // Handle scheme lookup.
-                    $path[1] .= $filePath;
+                    $path[1] = trim($path[1] . $filePath, '/');
                     $found = $this->find($path, $array, $absolute, $all);
                     if ($found) {
                         if (!$array) {
@@ -259,7 +259,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                     }
                 } else {
                     // Handle relative path lookup.
-                    $path .= $filePath;
+                    $path = trim($path . $filePath, '/');
                     $lookup = $this->base . '/' . $path;
 
                     if ($all || file_exists($lookup)) {
