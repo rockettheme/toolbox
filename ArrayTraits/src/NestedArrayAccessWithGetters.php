@@ -8,7 +8,7 @@ namespace RocketTheme\Toolbox\ArrayTraits;
  * @author RocketTheme
  * @license MIT
  */
-trait Getters
+trait NestedArrayAccessWithGetters
 {
     use NestedArrayAccess;
 
