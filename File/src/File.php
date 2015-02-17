@@ -362,11 +362,22 @@ class File implements FileInterface
     /**
      * @param  string  $dir
      * @return bool
+     * @throws \RuntimeException
      * @internal
      */
     protected function mkdir($dir)
     {
-        return is_dir($dir) || mkdir($dir, 0777, true);
+        if (!is_dir($dir)) {
+            $success = @mkdir($dir, 0777, true);
+
+            if (!$success) {
+                $error = error_get_last();
+
+                throw new \RuntimeException("Creating directory '{$dir}' failed on error {$error['message']}");
+            }
+        }
+
+        return true;
     }
 
     /**
