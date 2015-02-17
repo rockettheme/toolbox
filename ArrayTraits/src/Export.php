@@ -34,7 +34,7 @@ trait Export
      * @return string A YAML string representing the object.
      * @throws DumpException
      */
-    public function toYaml($inline = 2, $indent = 4)
+    public function toYaml($inline = 3, $indent = 2)
     {
         return Yaml::dump($this->toArray(), $inline, $indent, true, false);
     }
