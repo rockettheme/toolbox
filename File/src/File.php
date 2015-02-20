@@ -74,9 +74,11 @@ class File implements FileInterface
      * @param array $settings
      * @return array
      */
-    public function settings(array $settings)
+    public function settings(array $settings = null)
     {
-        $this->settings = $settings;
+        if ($settings !== null) {
+            $this->settings = $settings;
+        }
 
         return $this->settings;
     }
