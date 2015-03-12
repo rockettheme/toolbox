@@ -33,6 +33,17 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $this->base = rtrim($base ?: getcwd(), '/');
     }
 
+    /**
+     * Return iterator for the resource URI.
+     *
+     * @param  string $uri
+     * @param  int    $flags    See constants from FilesystemIterator class.
+     * @return UniformResourceIterator
+     */
+    public function getIterator($uri, $flags)
+    {
+        return new UniformResourceIterator($uri, $flags, $this);
+    }
 
     /**
      * Reset locator by removing all the schemes.
