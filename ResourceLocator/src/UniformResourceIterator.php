@@ -33,6 +33,9 @@ class UniformResourceIterator extends \FilesystemIterator
 
     public function current()
     {
+        if ($this->flags & static::CURRENT_AS_SELF) {
+            return $this;
+        }
         return $this->iterators[$this->index]->current();
     }
 
