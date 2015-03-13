@@ -147,16 +147,17 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
-     * @param $uri
+     * @param  string $uri
      * @return string|bool
      * @throws \BadMethodCallException
+     * @throws \RuntimeException
      */
     public function __invoke($uri)
     {
         if (!is_string($uri)) {
             throw new \BadMethodCallException('Invalid parameter $uri.');
         }
-        return $this->find($uri, false, true, false);
+        return $this->findCached($uri, false, true, false);
     }
 
     /**
@@ -165,15 +166,16 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  string $uri      Input URI to be searched.
      * @param  bool   $absolute Whether to return absolute path.
      * @param  bool   $first    Whether to return first path even if it doesn't exist.
-     * @throws \BadMethodCallException
      * @return string|bool
+     * @throws \BadMethodCallException
+     * @throws \RuntimeException
      */
     public function findResource($uri, $absolute = true, $first = false)
     {
         if (!is_string($uri)) {
             throw new \BadMethodCallException('Invalid parameter $uri.');
         }
-        return $this->find($uri, false, $absolute, $first);
+        return $this->findCached($uri, false, $absolute, $first);
     }
 
     /**
@@ -182,24 +184,24 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  string $uri      Input URI to be searched.
      * @param  bool   $absolute Whether to return absolute path.
      * @param  bool   $all      Whether to return all paths even if they don't exist.
-     * @throws \BadMethodCallException
      * @return array
+     * @throws \BadMethodCallException
+     * @throws \RuntimeException
      */
     public function findResources($uri, $absolute = true, $all = false)
     {
         if (!is_string($uri)) {
             throw new \BadMethodCallException('Invalid parameter $uri.');
         }
-        return $this->find($uri, true, $absolute, $all);
+
+        return $this->findCached($uri, true, $absolute, $all);
     }
 
     /**
      * Parse resource.
      *
-     * @param $uri
+     * @param  string $uri
      * @return array
-     * @throws \InvalidArgumentException
-     * @internal
      */
     protected function parseResource($uri)
     {
@@ -219,34 +221,43 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
-     * @param  string|array $uri
+     * @param  string $uri
      * @param  bool $array
      * @param  bool $absolute
      * @param  bool $all
      *
-     * @throws \InvalidArgumentException
      * @return array|string|bool
-     * @internal
+     * @throws \RuntimeException
      */
-    protected function find($uri, $array, $absolute, $all)
+    protected function findCached($uri, $array, $absolute, $all)
     {
-        if (is_string($uri)) {
-            // Local caching: make sure that the function gets only called at once for each file.
-            $key = $uri .'@'. (int) $array . (int) $absolute . (int) $all;
+        // Local caching: make sure that the function gets only called at once for each file.
+        $key = $uri .'@'. (int) $array . (int) $absolute . (int) $all;
 
-            if (isset($this->cache[$key])) {
-                return $this->cache[$key];
-            }
-
+        if (!isset($this->cache[$key])) {
             list ($scheme, $file) = $this->parseResource($uri);
 
-        } else {
-            // Accept also internal $uri format: [scheme, file].
-            list ($scheme, $file) = $uri;
+            $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
         }
 
+        return $this->cache[$key];
+    }
+
+    /**
+     * @param  string $scheme
+     * @param  string $file
+     * @param  bool $array
+     * @param  bool $absolute
+     * @param  bool $all
+     *
+     * @return array|string|bool
+     * @throws \RuntimeException
+     * @internal
+     */
+    protected function find($scheme, $file, $array, $absolute, $all)
+    {
         if (!isset($this->schemes[$scheme])) {
-            throw new \InvalidArgumentException("Invalid resource {$scheme}://");
+            throw new \RuntimeException("Invalid resource {$scheme}://");
         }
 
         $results = $array ? [] : false;
@@ -255,38 +266,34 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 continue;
             }
 
+            // Remove prefix from filename.
+            $filename = '/' . ltrim(substr($file, strlen($prefix)), '\/');
+
             foreach ($paths as $path) {
-                $filePath = '/' . ltrim(substr($file, strlen($prefix)), '\/');
                 if (is_array($path)) {
                     // Handle scheme lookup.
-                    $path[1] = trim($path[1] . $filePath, '/');
-                    $found = $this->find($path, $array, $absolute, $all);
+                    $relPath = trim($path[1] . $filename, '/');
+                    $found = $this->find($path[0], $relPath, $array, $absolute, $all);
                     if ($found) {
                         if (!$array) {
-                            $results = $found;
-                            break 2;
+                            return $found;
                         }
                         $results = array_merge($results, $found);
                     }
                 } else {
                     // Handle relative path lookup.
-                    $path = trim($path . $filePath, '/');
-                    $lookup = $this->base . '/' . $path;
+                    $relPath = trim($path . $filename, '/');
+                    $fullPath = $this->base . '/' . $relPath;
 
-                    if ($all || file_exists($lookup)) {
-                        $current = $absolute ? $lookup : $path;
+                    if ($all || file_exists($fullPath)) {
+                        $current = $absolute ? $fullPath : $relPath;
                         if (!$array) {
-                            $results = $current;
-                            break 2;
+                            return $current;
                         }
                         $results[] = $current;
                     }
                 }
             }
-        }
-
-        if (isset($key)) {
-            $this->cache[$key] = $results;
         }
 
         return $results;
