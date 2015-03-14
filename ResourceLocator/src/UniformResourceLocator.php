@@ -150,7 +150,6 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  string $uri
      * @return string|bool
      * @throws \BadMethodCallException
-     * @throws \RuntimeException
      */
     public function __invoke($uri)
     {
@@ -166,9 +165,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  string $uri      Input URI to be searched.
      * @param  bool   $absolute Whether to return absolute path.
      * @param  bool   $first    Whether to return first path even if it doesn't exist.
-     * @return string|bool
      * @throws \BadMethodCallException
-     * @throws \RuntimeException
+     * @return string|bool
      */
     public function findResource($uri, $absolute = true, $first = false)
     {
@@ -184,9 +182,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  string $uri      Input URI to be searched.
      * @param  bool   $absolute Whether to return absolute path.
      * @param  bool   $all      Whether to return all paths even if they don't exist.
-     * @return array
      * @throws \BadMethodCallException
-     * @throws \RuntimeException
+     * @return array
      */
     public function findResources($uri, $absolute = true, $all = false)
     {
@@ -198,10 +195,33 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Find all instances from a list of resources.
+     *
+     * @param  array  $uris     Input URIs to be searched.
+     * @param  bool   $absolute Whether to return absolute path.
+     * @param  bool   $all      Whether to return all paths even if they don't exist.
+     * @throws \BadMethodCallException
+     * @return array
+     */
+    public function mergeResources(array $uris, $absolute = true, $all = false)
+    {
+        $uris = array_unique($uris);
+
+        $list = [];
+        foreach ($uris as $uri) {
+            $list = array_merge($list, $this->findResources($uri, $absolute, $all));
+        }
+
+        return $list;
+    }
+
+    /**
      * Parse resource.
      *
-     * @param  string $uri
+     * @param $uri
      * @return array
+     * @throws \InvalidArgumentException
+     * @internal
      */
     protected function parseResource($uri)
     {
@@ -220,15 +240,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
         return [$scheme, $file];
     }
 
-    /**
-     * @param  string $uri
-     * @param  bool $array
-     * @param  bool $absolute
-     * @param  bool $all
-     *
-     * @return array|string|bool
-     * @throws \RuntimeException
-     */
+
     protected function findCached($uri, $array, $absolute, $all)
     {
         // Local caching: make sure that the function gets only called at once for each file.
@@ -250,14 +262,14 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  bool $absolute
      * @param  bool $all
      *
+     * @throws \InvalidArgumentException
      * @return array|string|bool
-     * @throws \RuntimeException
      * @internal
      */
     protected function find($scheme, $file, $array, $absolute, $all)
     {
         if (!isset($this->schemes[$scheme])) {
-            throw new \RuntimeException("Invalid resource {$scheme}://");
+            throw new \InvalidArgumentException("Invalid resource {$scheme}://");
         }
 
         $results = $array ? [] : false;
