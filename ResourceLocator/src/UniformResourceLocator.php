@@ -30,7 +30,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
     public function __construct($base = null)
     {
-        $this->base = rtrim($base ?: getcwd(), '/');
+        // Normalize base path.
+        $this->base = rtrim(str_replace('\\', '/', $base ?: getcwd()), '/');
     }
 
     /**
@@ -81,8 +82,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 // Support stream lookup in 'theme://path/to' format.
                 $list[] = explode('://', $path, 2);
             } else {
-                // Support relative paths.
-                $path = trim($path, '/');
+                // Support relative paths (after normalization).
+                $path = trim(str_replace('\\', '/', $path), '/');
                 if (file_exists("{$this->base}/{$path}")) {
                     $list[] = $path;
                 }
