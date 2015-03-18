@@ -280,12 +280,12 @@ class UniformResourceLocator implements ResourceLocatorInterface
             }
 
             // Remove prefix from filename.
-            $filename = '/' . ltrim(substr($file, strlen($prefix)), '\/');
+            $filename = '/' . trim(substr($file, strlen($prefix)), '\/');
 
             foreach ($paths as $path) {
                 if (is_array($path)) {
                     // Handle scheme lookup.
-                    $relPath = trim($path[1] . $filename, '/');
+                    $relPath = trim(trim($path[1], '/') . $filename, '/');
                     $found = $this->find($path[0], $relPath, $array, $absolute, $all);
                     if ($found) {
                         if (!$array) {
