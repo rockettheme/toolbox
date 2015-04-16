@@ -212,7 +212,7 @@ class File implements FileInterface
             $this->locked = null;
         }
         fclose($this->handle);
-        $this-> handle = null;
+        $this->handle = null;
     }
 
     /**
