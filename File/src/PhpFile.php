@@ -82,13 +82,9 @@ class PhpFile extends File
         $r = [];
         foreach ($a as $k => $v) {
             if (is_array($v) || is_object($v)) {
-                $r[] = "'" . $k . "' => " . $this->encodeArray((array) $v, $level + 1);
-            } elseif (is_int($v)) {
-                $r[] = "'" . $k . "' => " . $v;
-            } elseif (is_bool($v)) {
-                $r[] = "'" . $k . "' => " . ($v ? 'true' : 'false');
+                $r[] = var_export($k, true) . " => " . $this->encodeArray((array) $v, $level + 1);
             } else {
-                $r[] .= "'" . $k . "' => " . "'" . addslashes($v) . "'";
+                $r[] = var_export($k, true) . " => " . var_export($v, true);
             }
         }
 

@@ -17,14 +17,14 @@
     },
     "autoload": {
         "psr-4": {
-            "RocketTheme\\Toolbox\\ArrayTraits\\": "RocketTheme/Toolbox/ArrayTraits/src",
-            "RocketTheme\\Toolbox\\Blueprints\\": "RocketTheme/Toolbox/Blueprints/src",
-            "RocketTheme\\Toolbox\\Config\\": "RocketTheme/Toolbox/Config/src",
-            "RocketTheme\\Toolbox\\Data\\": "RocketTheme/Toolbox/Data/src",
-            "RocketTheme\\Toolbox\\DI\\": "RocketTheme/Toolbox/DI/src",
-            "RocketTheme\\Toolbox\\EventDispatcher\\": "RocketTheme/Toolbox/EventDispatcher/src",
-            "RocketTheme\\Toolbox\\Filesystem\\": "RocketTheme/Toolbox/Filesystem/src",
-            "RocketTheme\\Toolbox\\Session\\": "RocketTheme/Toolbox/Session/src"
+            "RocketTheme\\Toolbox\\ArrayTraits\\": "ArrayTraits/src",
+            "RocketTheme\\Toolbox\\Blueprints\\": "Blueprints/src",
+            "RocketTheme\\Toolbox\\DI\\": "DI/src",
+            "RocketTheme\\Toolbox\\Event\\": "Event/src",
+            "RocketTheme\\Toolbox\\File\\": "File/src",
+            "RocketTheme\\Toolbox\\ResourceLocator\\": "ResourceLocator/src",
+            "RocketTheme\\Toolbox\\Session\\": "Session/src",
+            "RocketTheme\\Toolbox\\StreamWrapper\\": "StreamWrapper/src"
         }
     }
 }

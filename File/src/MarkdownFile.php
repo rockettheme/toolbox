@@ -61,6 +61,25 @@ class MarkdownFile extends File
     }
 
     /**
+     * Get/set frontmatter content.
+     *
+     * @param string $var
+     *
+     * @return string
+     */
+    public function frontmatter($var = null)
+    {
+        $content = $this->content();
+
+        if ($var !== null) {
+            $content['frontmatter'] = (string) $var;
+            $this->content($content);
+        }
+
+        return $content['frontmatter'];
+    }
+
+    /**
      * Check contents and make sure it is in correct format.
      *
      * @param array $var
@@ -104,17 +123,24 @@ class MarkdownFile extends File
      */
     protected function decode($var)
     {
-        $content = array();
+        $content = [];
+        $content['header'] = [];
+        $content['frontmatter'] = '';
+
+        $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
         // Normalize line endings to Unix style.
         $var = preg_replace("/(\r\n|\r)/", "\n", $var);
 
         // Parse header.
-        preg_match("/---\n(.+?)\n---(\n\n|$)/uism", $this->raw(), $m);
-        $content['header'] = isset($m[1]) ? YamlParser::parse(preg_replace("/\n\t/", "\n    ", $m[1])) : array();
-
-        // Strip header to get content.
-        $content['markdown'] = trim(preg_replace("/---\n(.+?)\n---(\n\n|$)/uism", '', $var));
+        preg_match($frontmatter_regex, ltrim($var), $m);
+        if(!empty($m)) {
+            $content['frontmatter'] = preg_replace("/\n\t/", "\n    ", $m[1]);
+            $content['header'] = YamlParser::parse($content['frontmatter']);
+            $content['markdown'] = $m[2];
+        } else {
+            $content['markdown'] = $var;
+        }
 
         return $content;
     }

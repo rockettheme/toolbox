@@ -27,7 +27,7 @@ To add this package as a local, per-project dependency to your project, simply a
 
     {
         "require": {
-            "rockettheme/toolbox": "*"
+            "rockettheme/toolbox": "dev-master"
         }
     }
 

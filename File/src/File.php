@@ -41,6 +41,11 @@ class File implements FileInterface
     protected $content;
 
     /**
+     * @var array
+     */
+    protected $settings = [];
+
+    /**
      * @var array|File[]
      */
     static protected $instances = array();
@@ -53,11 +58,41 @@ class File implements FileInterface
      */
     public static function instance($filename)
     {
+        if (!is_string($filename) && $filename) {
+            throw new \InvalidArgumentException('Filename should be non-empty string');
+        }
         if (!isset(static::$instances[$filename])) {
             static::$instances[$filename] = new static;
             static::$instances[$filename]->init($filename);
         }
         return static::$instances[$filename];
+    }
+
+    /**
+     * Set/get settings.
+     *
+     * @param array $settings
+     * @return array
+     */
+    public function settings(array $settings = null)
+    {
+        if ($settings !== null) {
+            $this->settings = $settings;
+        }
+
+        return $this->settings;
+    }
+
+    /**
+     * Get setting.
+     *
+     * @param string $setting
+     * @param mixed $default
+     * @return mixed
+     */
+    public function setting($setting, $default = null)
+    {
+        return isset($this->settings[$setting]) ? $this->settings[$setting] : $default;
     }
 
     /**
@@ -177,6 +212,7 @@ class File implements FileInterface
             $this->locked = null;
         }
         fclose($this->handle);
+        $this->handle = null;
     }
 
     /**
@@ -226,7 +262,7 @@ class File implements FileInterface
      * Get/set parsed file contents.
      *
      * @param mixed $var
-     * @return string
+     * @return string|array
      */
     public function content($var = null)
     {
@@ -329,11 +365,22 @@ class File implements FileInterface
     /**
      * @param  string  $dir
      * @return bool
+     * @throws \RuntimeException
      * @internal
      */
     protected function mkdir($dir)
     {
-        return is_dir($dir) || mkdir($dir, 0777, true);
+        if (!is_dir($dir)) {
+            $success = @mkdir($dir, 0777, true);
+
+            if (!$success) {
+                $error = error_get_last();
+
+                throw new \RuntimeException("Creating directory '{$dir}' failed on error {$error['message']}");
+            }
+        }
+
+        return true;
     }
 
     /**

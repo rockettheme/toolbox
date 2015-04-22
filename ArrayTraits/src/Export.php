@@ -1,6 +1,7 @@
 <?php
 namespace RocketTheme\Toolbox\ArrayTraits;
 
+use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -27,11 +28,15 @@ trait Export
     /**
      * Convert object into YAML string.
      *
-     * @return string
+     * @param  int $inline  The level where you switch to inline YAML.
+     * @param  int $indent  The amount of spaces to use for indentation of nested nodes.
+     *
+     * @return string A YAML string representing the object.
+     * @throws DumpException
      */
-    public function toYaml()
+    public function toYaml($inline = 3, $indent = 2)
     {
-        return Yaml::dump($this->toArray());
+        return Yaml::dump($this->toArray(), $inline, $indent, true, false);
     }
 
     /**

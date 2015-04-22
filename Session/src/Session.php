@@ -40,14 +40,21 @@ class Session implements \IteratorAggregate
         }
 
         // Disable transparent sid support
-        ini_set('session.use_trans_sid', '0');
+        ini_set('session.use_trans_sid', 0);
 
         // Only allow cookies
         ini_set('session.use_cookies', 1);
 
+        session_name('msF9kJcW');
         session_set_cookie_params($lifetime, $path);
-        register_shutdown_function('session_write_close');
-        session_cache_limiter('none');
+        register_shutdown_function([$this, 'close']);
+        session_cache_limiter('nocache');
+
+        if (isset($this->count)) {
+            $this->count++;
+        } else {
+            $this->count = 1;
+        }
 
         self::$instance = $this;
     }
@@ -161,7 +168,9 @@ class Session implements \IteratorAggregate
      */
     public function close()
     {
-        session_write_close();
+        if ($this->started) {
+            session_write_close();
+        }
 
         $this->started = false;
 
@@ -227,10 +236,10 @@ class Session implements \IteratorAggregate
 
 
     /**
-    * Retrieve an external iterator
-    *
-    * @return \ArrayIterator Return an ArrayIterator of $_SESSION
-    */
+     * Retrieve an external iterator
+     *
+     * @return \ArrayIterator Return an ArrayIterator of $_SESSION
+     */
     public function getIterator()
     {
         return new \ArrayIterator($_SESSION);

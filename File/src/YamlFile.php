@@ -1,6 +1,8 @@
 <?php
 namespace RocketTheme\Toolbox\File;
 
+use Symfony\Component\Yaml\Exception\DumpException;
+use Symfony\Component\Yaml\Exception\ParseException;
 use \Symfony\Component\Yaml\Yaml as YamlParser;
 
 /**
@@ -43,10 +45,11 @@ class YamlFile extends File
      *
      * @param string $var
      * @return string
+     * @throws DumpException
      */
     protected function encode($var)
     {
-        return (string) YamlParser::dump($var);
+        return (string) YamlParser::dump($var, $this->setting('inline', 3), $this->setting('indent', 2), true, false);
     }
 
     /**
@@ -54,6 +57,7 @@ class YamlFile extends File
      *
      * @param string $var
      * @return array mixed
+     * @throws ParseException
      */
     protected function decode($var)
     {
