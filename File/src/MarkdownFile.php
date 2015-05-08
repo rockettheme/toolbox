@@ -127,7 +127,7 @@ class MarkdownFile extends File
         $content['header'] = [];
         $content['frontmatter'] = '';
 
-        $frontmatter_regex = "/^---\n(.+?)\n---\n{1,}(.*)$/uis";
+        $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
         // Normalize line endings to Unix style.
         $var = preg_replace("/(\r\n|\r)/", "\n", $var);
