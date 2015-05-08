@@ -125,6 +125,20 @@ class File implements FileInterface
     }
 
     /**
+     * Free the file instance.
+     */
+    public function free()
+    {
+        if ($this->locked) {
+            $this->unlock();
+        }
+        $this->content = null;
+        $this->raw = null;
+
+        unset(static::$instances[$this->filename]);
+    }
+
+    /**
      * Get/set the file location.
      *
      * @param  string $var
