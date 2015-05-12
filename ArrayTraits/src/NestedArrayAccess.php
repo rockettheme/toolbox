@@ -42,11 +42,12 @@ trait NestedArrayAccess
     /**
      * Sey value by using dot notation for nested arrays/objects.
      *
-     * @example $value = $this->set('this.is.my.nested.variable', $value);
+     * @example $data->set('this.is.my.nested.variable', $value);
      *
      * @param string  $name       Dot separated path to the requested value.
      * @param mixed   $value      New value.
      * @param string  $separator  Separator, defaults to '.'
+     * @return $this
      */
     public function set($name, $value, $separator = '.')
     {
@@ -71,6 +72,8 @@ trait NestedArrayAccess
         }
 
         $current = $value;
+
+        return $this;
     }
 
     /**
@@ -81,10 +84,13 @@ trait NestedArrayAccess
      * @param string  $name       Dot separated path to the requested value.
      * @param mixed   $default    Default value (or null).
      * @param string  $separator  Separator, defaults to '.'
+     * @return $this
      */
     public function def($name, $default = null, $separator = '.')
     {
         $this->set($name, $this->get($name, $default, $separator), $separator);
+
+        return $this;
     }
 
     /**
