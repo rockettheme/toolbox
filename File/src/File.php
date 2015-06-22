@@ -384,7 +384,8 @@ class File implements FileInterface
      */
     protected function mkdir($dir)
     {
-        if (!is_dir($dir)) {
+        // Silence error for open_basedir; should fail in mkdir instead.
+        if (!@is_dir($dir)) {
             $success = @mkdir($dir, 0777, true);
 
             if (!$success) {
