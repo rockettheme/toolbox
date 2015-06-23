@@ -195,7 +195,12 @@ class File implements FileInterface
             if (!$this->mkdir(dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
-            $this->handle = fopen($this->filename, 'wb+');
+            $this->handle = @fopen($this->filename, 'wb+');
+            if (!$this->handle) {
+                $error = error_get_last();
+
+                throw new \RuntimeException("Opening file '{$this->filename}' for writing failed on error {$error['message']}");
+            }
         }
         $lock = $block ? LOCK_EX : LOCK_EX | LOCK_NB;
         return $this->locked = $this->handle ? flock($this->handle, $lock) : false;
