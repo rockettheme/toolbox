@@ -82,10 +82,15 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 // Support stream lookup in 'theme://path/to' format.
                 $list[] = explode('://', $path, 2);
             } else {
-                // Support relative paths (after normalization).
-                $path = trim(str_replace('\\', '/', $path), '/');
-                if (file_exists("{$this->base}/{$path}")) {
+                if ($path && $path[0] === '/' && @file_exists($path)) {
+                    // Support for absolute paths.
                     $list[] = $path;
+                } else {
+                    // Support relative paths (after normalization).
+                    $path = trim(str_replace('\\', '/', $path), '/');
+                    if (file_exists("{$this->base}/{$path}")) {
+                        $list[] = $path;
+                    }
                 }
             }
         }
@@ -294,9 +299,17 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         $results = array_merge($results, $found);
                     }
                 } else {
-                    // Handle relative path lookup.
-                    $relPath = trim($path . $filename, '/');
-                    $fullPath = $this->base . '/' . $relPath;
+                    if (!$path || $path[0] !== '/') {
+                        // Handle relative path lookup.
+                        $relPath = trim($path . $filename, '/');
+                        $fullPath = $this->base . '/' . $relPath;
+                    } else {
+                        // Handle absolute path lookup.
+                        $fullPath = rtrim($path . $filename, '/');
+                        if (!$absolute) {
+                            throw \RuntimeException('UniformResourceLocator: Absolute stream path with relative lookup not allowed', 500);
+                        }
+                    }
 
                     if ($all || file_exists($fullPath)) {
                         $current = $absolute ? $fullPath : $relPath;

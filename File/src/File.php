@@ -199,7 +199,7 @@ class File implements FileInterface
             if (!$this->handle) {
                 $error = error_get_last();
 
-                throw new \RuntimeException("Opening file '{$this->filename}' for writing failed on error {$error['message']}");
+                throw new \RuntimeException("Opening file for writing failed on error {$error['message']}");
             }
         }
         $lock = $block ? LOCK_EX : LOCK_EX | LOCK_NB;
