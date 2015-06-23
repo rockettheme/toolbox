@@ -66,9 +66,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $prefix
      * @param string|array $paths
      * @param bool  $override  Add path as override.
+     * @param bool  $force     True to add paths even if them do not exist.
      * @throws \BadMethodCallException
      */
-    public function addPath($scheme, $prefix, $paths, $override = false)
+    public function addPath($scheme, $prefix, $paths, $override = false, $force = false)
     {
         $list = [];
         foreach((array) $paths as $path) {
@@ -82,15 +83,11 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 // Support stream lookup in 'theme://path/to' format.
                 $list[] = explode('://', $path, 2);
             } else {
-                if ($path && $path[0] === '/' && @file_exists($path)) {
-                    // Support for absolute paths.
+                // Normalize path.
+                $path = rtrim(str_replace('\\', '/', $path), '/');
+                if ($force || @file_exists("{$this->base}/{$path}") || @file_exists($path)) {
+                    // Support for absolute and relative paths.
                     $list[] = $path;
-                } else {
-                    // Support relative paths (after normalization).
-                    $path = trim(str_replace('\\', '/', $path), '/');
-                    if (file_exists("{$this->base}/{$path}")) {
-                        $list[] = $path;
-                    }
                 }
             }
         }
