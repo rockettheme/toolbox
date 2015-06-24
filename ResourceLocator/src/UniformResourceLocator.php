@@ -41,9 +41,21 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  int    $flags    See constants from FilesystemIterator class.
      * @return UniformResourceIterator
      */
-    public function getIterator($uri, $flags)
+    public function getIterator($uri, $flags = null)
     {
         return new UniformResourceIterator($uri, $flags, $this);
+    }
+
+    /**
+     * Return recursive iterator for the resource URI.
+     *
+     * @param  string $uri
+     * @param  int    $flags    See constants from FilesystemIterator class.
+     * @return RecursiveUniformResourceIterator
+     */
+    public function getRecursiveIterator($uri, $flags = null)
+    {
+        return new RecursiveUniformResourceIterator($uri, $flags, $this);
     }
 
     /**
