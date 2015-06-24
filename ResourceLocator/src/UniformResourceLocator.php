@@ -296,7 +296,9 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         $results = array_merge($results, $found);
                     }
                 } else {
-                    if (!$path || $path[0] !== '/') {
+                    // TODO: We could provide some extra information about the path to remove preg_match().
+                    // Check absolute paths for both unix and windows
+                    if (!$path || !preg_match('`^/|\w+:`', $path)) {
                         // Handle relative path lookup.
                         $relPath = trim($path . $filename, '/');
                         $fullPath = $this->base . '/' . $relPath;
