@@ -49,7 +49,7 @@ What you mainly want to know is that:
 
 # Getting Started
 
-* Have fun!
+* Have fun!!!
 
 
 [gitflow-model]: http://nvie.com/posts/a-successful-git-branching-model/

@@ -41,9 +41,21 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param  int    $flags    See constants from FilesystemIterator class.
      * @return UniformResourceIterator
      */
-    public function getIterator($uri, $flags)
+    public function getIterator($uri, $flags = null)
     {
         return new UniformResourceIterator($uri, $flags, $this);
+    }
+
+    /**
+     * Return recursive iterator for the resource URI.
+     *
+     * @param  string $uri
+     * @param  int    $flags    See constants from FilesystemIterator class.
+     * @return RecursiveUniformResourceIterator
+     */
+    public function getRecursiveIterator($uri, $flags = null)
+    {
+        return new RecursiveUniformResourceIterator($uri, $flags, $this);
     }
 
     /**
@@ -66,9 +78,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $prefix
      * @param string|array $paths
      * @param bool  $override  Add path as override.
+     * @param bool  $force     True to add paths even if them do not exist.
      * @throws \BadMethodCallException
      */
-    public function addPath($scheme, $prefix, $paths, $override = false)
+    public function addPath($scheme, $prefix, $paths, $override = false, $force = false)
     {
         $list = [];
         foreach((array) $paths as $path) {
@@ -82,9 +95,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 // Support stream lookup in 'theme://path/to' format.
                 $list[] = explode('://', $path, 2);
             } else {
-                // Support relative paths (after normalization).
-                $path = trim(str_replace('\\', '/', $path), '/');
-                if (file_exists("{$this->base}/{$path}")) {
+                // Normalize path.
+                $path = rtrim(str_replace('\\', '/', $path), '/');
+                if ($force || @file_exists("{$this->base}/{$path}") || @file_exists($path)) {
+                    // Support for absolute and relative paths.
                     $list[] = $path;
                 }
             }
@@ -294,9 +308,19 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         $results = array_merge($results, $found);
                     }
                 } else {
-                    // Handle relative path lookup.
-                    $relPath = trim($path . $filename, '/');
-                    $fullPath = $this->base . '/' . $relPath;
+                    // TODO: We could provide some extra information about the path to remove preg_match().
+                    // Check absolute paths for both unix and windows
+                    if (!$path || !preg_match('`^/|\w+:`', $path)) {
+                        // Handle relative path lookup.
+                        $relPath = trim($path . $filename, '/');
+                        $fullPath = $this->base . '/' . $relPath;
+                    } else {
+                        // Handle absolute path lookup.
+                        $fullPath = rtrim($path . $filename, '/');
+                        if (!$absolute) {
+                            throw \RuntimeException('UniformResourceLocator: Absolute stream path with relative lookup not allowed', 500);
+                        }
+                    }
 
                     if ($all || file_exists($fullPath)) {
                         $current = $absolute ? $fullPath : $relPath;

@@ -125,6 +125,20 @@ class File implements FileInterface
     }
 
     /**
+     * Free the file instance.
+     */
+    public function free()
+    {
+        if ($this->locked) {
+            $this->unlock();
+        }
+        $this->content = null;
+        $this->raw = null;
+
+        unset(static::$instances[$this->filename]);
+    }
+
+    /**
      * Get/set the file location.
      *
      * @param  string $var
@@ -181,7 +195,12 @@ class File implements FileInterface
             if (!$this->mkdir(dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
-            $this->handle = fopen($this->filename, 'wb+');
+            $this->handle = @fopen($this->filename, 'wb+');
+            if (!$this->handle) {
+                $error = error_get_last();
+
+                throw new \RuntimeException("Opening file for writing failed on error {$error['message']}");
+            }
         }
         $lock = $block ? LOCK_EX : LOCK_EX | LOCK_NB;
         return $this->locked = $this->handle ? flock($this->handle, $lock) : false;
@@ -370,7 +389,8 @@ class File implements FileInterface
      */
     protected function mkdir($dir)
     {
-        if (!is_dir($dir)) {
+        // Silence error for open_basedir; should fail in mkdir instead.
+        if (!@is_dir($dir)) {
             $success = @mkdir($dir, 0777, true);
 
             if (!$success) {

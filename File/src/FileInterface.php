@@ -19,6 +19,11 @@ interface FileInterface
     public static function instance($filename);
 
     /**
+     * Free the file instance.
+     */
+    public function free();
+
+    /**
      * Check if file exits.
      *
      * @return bool

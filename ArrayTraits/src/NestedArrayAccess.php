@@ -40,13 +40,14 @@ trait NestedArrayAccess
     }
 
     /**
-     * Sey value by using dot notation for nested arrays/objects.
+     * Set value by using dot notation for nested arrays/objects.
      *
-     * @example $value = $this->set('this.is.my.nested.variable', $value);
+     * @example $data->set('this.is.my.nested.variable', $value);
      *
      * @param string  $name       Dot separated path to the requested value.
      * @param mixed   $value      New value.
      * @param string  $separator  Separator, defaults to '.'
+     * @return $this
      */
     public function set($name, $value, $separator = '.')
     {
@@ -71,6 +72,50 @@ trait NestedArrayAccess
         }
 
         $current = $value;
+
+        return $this;
+    }
+
+    /**
+     * Unset value by using dot notation for nested arrays/objects.
+     *
+     * @example $data->remove('this.is.my.nested.variable');
+     *
+     * @param string  $name       Dot separated path to the requested value.
+     * @param string  $separator  Separator, defaults to '.'
+     * @return $this
+     */
+    public function remove($name, $separator = '.')
+    {
+        if ($name === '') {
+            $this->items = [];
+
+            return $this;
+        }
+
+        $path = explode($separator, $name);
+        $var = array_pop($path);
+        $current = &$this->items;
+
+        foreach ($path as $field) {
+            if (is_object($current)) {
+                // Handle objects.
+                if (!isset($current->{$field})) {
+                    return $this;
+                }
+                $current = &$current->{$field};
+            } else {
+                // Handle arrays and scalars.
+                if (!is_array($current) || !isset($current[$field])) {
+                    return $this;
+                }
+                $current = &$current[$field];
+            }
+        }
+
+        unset($current[$var]);
+
+        return $this;
     }
 
     /**
@@ -81,10 +126,13 @@ trait NestedArrayAccess
      * @param string  $name       Dot separated path to the requested value.
      * @param mixed   $default    Default value (or null).
      * @param string  $separator  Separator, defaults to '.'
+     * @return $this
      */
     public function def($name, $default = null, $separator = '.')
     {
         $this->set($name, $this->get($name, $default, $separator), $separator);
+
+        return $this;
     }
 
     /**
@@ -125,11 +173,16 @@ trait NestedArrayAccess
     }
 
     /**
+     * Unsets variable at specified offset.
+     *
      * @param $offset
-     * @throws \BadMethodCallException
      */
     public function offsetUnset($offset)
     {
-        throw new \BadMethodCallException('unset() not supported in this class.');
+        if (is_null($offset)) {
+            $this->items[] = [];
+        } else {
+            $this->remove($offset);
+        }
     }
 }
