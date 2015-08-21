@@ -318,7 +318,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         // Handle absolute path lookup.
                         $fullPath = rtrim($path . $filename, '/');
                         if (!$absolute) {
-                            throw \RuntimeException('UniformResourceLocator: Absolute stream path with relative lookup not allowed', 500);
+                            throw new \RuntimeException('UniformResourceLocator: Absolute stream path with relative lookup not allowed', 500);
                         }
                     }
 
