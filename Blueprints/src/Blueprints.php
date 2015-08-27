@@ -208,7 +208,7 @@ class Blueprints
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = is_string($val) ? $this->items[$val] : null;
 
-            if (!$rule && array_key_exists($key, $data1) && is_array($field) && is_array($val)) {
+            if ($rule && $rule['type'] === '_parent' || (array_key_exists($key, $data1) && is_array($field) && is_array($val))) {
                 // Array has been defined in blueprints.
                 $data1[$key] = $this->mergeArrays($data1[$key], $field, $val);
             } else {
@@ -250,6 +250,15 @@ class Blueprints
                 $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''));
             } else {
                 // Add rule.
+                $path = explode('.', $key);
+                array_pop($path);
+                $parent = '';
+                foreach ($path as $part) {
+                    $parent .= ($parent ? '.' : '') . $part;
+                    if (!isset($this->items[$parent])) {
+                        $this->items[$parent] = ['type' => '_parent', 'name' => $parent];
+                    }
+                }
                 $this->items[$key] = &$field;
                 $this->addProperty($key);
 
