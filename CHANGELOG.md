@@ -4,6 +4,7 @@
 3. [](#bugfix)
     * Fix regression: Default values for collections were broken
     * Fix Argument 1 passed to RocketTheme\Toolbox\Blueprints\Blueprints::mergeArrays() must be of the type array
+    * Add exception on Blueprint collection merging; only overridden value should be used
 
 # v1.1.2
 ## 08/27/2015
