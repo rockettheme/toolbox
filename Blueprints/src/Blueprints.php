@@ -173,6 +173,10 @@ class Blueprints
         $defaults = [];
 
         foreach ($nested as $key => $value) {
+            if ($key === '*') {
+                // TODO: Add support for adding defaults to collections.
+                continue;
+            }
             if (is_array($value)) {
                 // Recursively fetch the items.
                 $list = $this->buildDefaults($value);
