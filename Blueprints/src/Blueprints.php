@@ -212,7 +212,7 @@ class Blueprints
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = is_string($val) ? $this->items[$val] : null;
 
-            if ($rule && $rule['type'] === '_parent' || (array_key_exists($key, $data1) && is_array($field) && is_array($val))) {
+            if ($rule && $rule['type'] === '_parent' || (array_key_exists($key, $data1) && is_array($data1[$key]) && is_array($field) && is_array($val))) {
                 // Array has been defined in blueprints.
                 $data1[$key] = $this->mergeArrays($data1[$key], $field, $val);
             } else {
