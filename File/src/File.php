@@ -195,7 +195,7 @@ class File implements FileInterface
             if (!$this->mkdir(dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
-            $this->handle = @fopen($this->filename, 'wb+');
+            $this->handle = @fopen($this->filename, 'cb+');
             if (!$this->handle) {
                 $error = error_get_last();
 
@@ -319,7 +319,8 @@ class File implements FileInterface
             $lock = true;
         }
 
-        if (@fwrite($this->handle, $this->raw()) === false) {
+        // As we are using non-truncating locking, make sure that the file is empty before writing.
+        if (@ftruncate($this->handle, 0) === false || @fwrite($this->handle, $this->raw()) === false) {
             $this->unlock();
             throw new \RuntimeException('Saving file failed: ' . $this->filename);
         }

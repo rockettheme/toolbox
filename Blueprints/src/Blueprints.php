@@ -173,6 +173,10 @@ class Blueprints
         $defaults = [];
 
         foreach ($nested as $key => $value) {
+            if ($key === '*') {
+                // TODO: Add support for adding defaults to collections.
+                continue;
+            }
             if (is_array($value)) {
                 // Recursively fetch the items.
                 $list = $this->buildDefaults($value);
@@ -208,8 +212,8 @@ class Blueprints
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = is_string($val) ? $this->items[$val] : null;
 
-            if ($rule && $rule['type'] === '_parent' || (array_key_exists($key, $data1) && is_array($field) && is_array($val))) {
-                // Array has been defined in blueprints.
+            if ($rule && $rule['type'] === '_parent' || (array_key_exists($key, $data1) && is_array($data1[$key]) && is_array($field) && is_array($val) && !isset($val['*']))) {
+                // Array has been defined in blueprints and is not a collection of items.
                 $data1[$key] = $this->mergeArrays($data1[$key], $field, $val);
             } else {
                 // Otherwise just take value from the data2.
