@@ -24,9 +24,13 @@ class Message
      */
     public function add($message, $scope = 'default')
     {
+        $key = md5($scope.'~'.$message);
         $message = array('message' => $message, 'scope' => $scope);
 
-        $this->messages[] = $message;
+        // don't add duplicates
+        if (!array_key_exists($key, $this->messages)) {
+            $this->messages[$key] = $message;
+        }
 
         return $this;
     }
