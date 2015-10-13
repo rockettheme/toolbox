@@ -136,7 +136,17 @@ class MarkdownFile extends File
         preg_match($frontmatter_regex, ltrim($var), $m);
         if(!empty($m)) {
             $content['frontmatter'] = preg_replace("/\n\t/", "\n    ", $m[1]);
-            $content['header'] = YamlParser::parse($content['frontmatter']);
+
+            // Try native PECL Yaml PHP extension first if available, otherwise fall back to symfony\Yaml parser
+            if (function_exists('yaml_parse')) {
+                $data = preg_replace("/ (@[\w\.\-]*)/", " '\${1}'", $content['frontmatter']); // Fix illegal @ start character issue
+                $data = @yaml_parse("---\n" . $data . "\n...");
+                if ($data)
+                    $content['header'] = $data;
+                // else continue with symfony\Yaml parser if there have been parse errors...
+            }
+            if (!$content['header'])
+                $content['header'] = YamlParser::parse($content['frontmatter']);
             $content['markdown'] = $m[2];
         } else {
             $content['markdown'] = $var;
