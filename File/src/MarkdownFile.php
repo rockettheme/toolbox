@@ -123,9 +123,10 @@ class MarkdownFile extends File
      */
     protected function decode($var)
     {
-        $content = [];
-        $content['header'] = [];
-        $content['frontmatter'] = '';
+        $content = [
+            'header' => false,
+            'frontmatter' => ''
+        ];
 
         $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
@@ -137,18 +138,28 @@ class MarkdownFile extends File
         if(!empty($m)) {
             $content['frontmatter'] = preg_replace("/\n\t/", "\n    ", $m[1]);
 
-            // Try native PECL Yaml PHP extension first if available, otherwise fall back to symfony\Yaml parser
-            if (function_exists('yaml_parse')) {
+            // Try native PECL YAML PHP extension first if available.
+            if ($this->setting('native') && function_exists('yaml_parse')) {
                 $data = $content['frontmatter'];
-                if (strpos($data, ' @'))
-                    $data = preg_replace("/ (@[\w\.\-]*)/", " '\${1}'", $data); // Fix illegal @ start character issue
+                if ($this->setting('compat', true)) {
+                    // Fix illegal @ start character.
+                    $data = preg_replace('/ (@[\w\.\-]*)/', " '\${1}'", $data);
+                }
+
+                // Safely decode YAML.
+                $saved = @ini_get('yaml.decode_php');
+                @ini_set('yaml.decode_php', 0);
                 $content['header'] = @yaml_parse("---\n" . $data . "\n...");
-                // else continue with symfony\Yaml parser if there have been parse errors...
+                @ini_set('yaml.decode_php', $saved);
             }
-            if (!$content['header'])
-                $content['header'] = YamlParser::parse($content['frontmatter']);
+
+            if ($content['header'] === false) {
+                // YAML hasn't been parsed yet (error or extension isn't available). Fall back to Symfony parser.
+                $content['header'] = (array) YamlParser::parse($content['frontmatter']);
+            }
             $content['markdown'] = $m[2];
         } else {
+            $content['header'] = [];
             $content['markdown'] = $var;
         }
 
