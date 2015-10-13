@@ -139,10 +139,10 @@ class MarkdownFile extends File
 
             // Try native PECL Yaml PHP extension first if available, otherwise fall back to symfony\Yaml parser
             if (function_exists('yaml_parse')) {
-                $data = preg_replace("/ (@[\w\.\-]*)/", " '\${1}'", $content['frontmatter']); // Fix illegal @ start character issue
-                $data = @yaml_parse("---\n" . $data . "\n...");
-                if ($data)
-                    $content['header'] = $data;
+                $data = $content['frontmatter'];
+                if (strpos($data, ' @'))
+                    $data = preg_replace("/ (@[\w\.\-]*)/", " '\${1}'", $data); // Fix illegal @ start character issue
+                $content['header'] = @yaml_parse("---\n" . $data . "\n...");
                 // else continue with symfony\Yaml parser if there have been parse errors...
             }
             if (!$content['header'])

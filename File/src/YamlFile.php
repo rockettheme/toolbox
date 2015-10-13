@@ -63,7 +63,10 @@ class YamlFile extends File
     {
         // Try native PECL Yaml PHP extension first if available, otherwise fall back to symfony\Yaml parser
         if (function_exists('yaml_parse')) {
-            $data = preg_replace("/ (@[\w\.\-]*)/", " '\${1}'", $var); // Fix illegal @ start character issue
+            if (strpos($var, ' @'))
+                $data = preg_replace("/ (@[\w\.\-]*)/", " '\${1}'", $var); // Fix illegal @ start character issue
+            else
+                $data = $var;
             $data = @yaml_parse("---\n" . $data . "\n...");
             if ($data)
                 return $data;
