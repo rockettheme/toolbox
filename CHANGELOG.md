@@ -1,5 +1,5 @@
 # v1.1.4
-## XX/XX/2015
+## 10/15/2015
 
 1. [](#new)
     * Add support for native YAML parsing option to Markdown and YAML file classes
