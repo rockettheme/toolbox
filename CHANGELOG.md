@@ -1,3 +1,9 @@
+# v1.1.4
+## 10/15/2015
+
+1. [](#new)
+    * Add support for native YAML parsing option to Markdown and YAML file classes
+
 # v1.1.3
 ## 10/13/2015
 

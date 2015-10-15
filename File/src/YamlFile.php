@@ -61,6 +61,24 @@ class YamlFile extends File
      */
     protected function decode($var)
     {
-        return (array) YamlParser::parse($var);
+        $data = false;
+
+        // Try native PECL YAML PHP extension first if available.
+        if ($this->setting('native') && function_exists('yaml_parse')) {
+            if ($this->setting('compat', true)) {
+                // Fix illegal @ start character.
+                $data = preg_replace('/ (@[\w\.\-]*)/', " '\${1}'", $var);
+            } else {
+                $data = $var;
+            }
+
+            // Safely decode YAML.
+            $saved = @ini_get('yaml.decode_php');
+            @ini_set('yaml.decode_php', 0);
+            $data = @yaml_parse("---\n" . $data . "\n...");
+            @ini_set('yaml.decode_php', $saved);
+        }
+
+        return $data !== false ? $data : (array) YamlParser::parse($var);
     }
 }

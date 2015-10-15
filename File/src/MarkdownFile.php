@@ -123,9 +123,10 @@ class MarkdownFile extends File
      */
     protected function decode($var)
     {
-        $content = [];
-        $content['header'] = [];
-        $content['frontmatter'] = '';
+        $content = [
+            'header' => false,
+            'frontmatter' => ''
+        ];
 
         $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
@@ -136,9 +137,29 @@ class MarkdownFile extends File
         preg_match($frontmatter_regex, ltrim($var), $m);
         if(!empty($m)) {
             $content['frontmatter'] = preg_replace("/\n\t/", "\n    ", $m[1]);
-            $content['header'] = YamlParser::parse($content['frontmatter']);
+
+            // Try native PECL YAML PHP extension first if available.
+            if ($this->setting('native') && function_exists('yaml_parse')) {
+                $data = $content['frontmatter'];
+                if ($this->setting('compat', true)) {
+                    // Fix illegal @ start character.
+                    $data = preg_replace('/ (@[\w\.\-]*)/', " '\${1}'", $data);
+                }
+
+                // Safely decode YAML.
+                $saved = @ini_get('yaml.decode_php');
+                @ini_set('yaml.decode_php', 0);
+                $content['header'] = @yaml_parse("---\n" . $data . "\n...");
+                @ini_set('yaml.decode_php', $saved);
+            }
+
+            if ($content['header'] === false) {
+                // YAML hasn't been parsed yet (error or extension isn't available). Fall back to Symfony parser.
+                $content['header'] = (array) YamlParser::parse($content['frontmatter']);
+            }
             $content['markdown'] = $m[2];
         } else {
+            $content['header'] = [];
             $content['markdown'] = $var;
         }
 
