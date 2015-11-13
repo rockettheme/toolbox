@@ -1,11 +1,17 @@
-# v1.1.4
+# v1.2.0
 ## XX/XX/2015
+
+1. [](#new)
+    * Renamed NestedArrayAccess::remove() into NestedArrayAccess::undef() to avoid name clashes
+
+# v1.1.4
+## 10/15/2015
 
 1. [](#new)
     * Add support for native YAML parsing option to Markdown and YAML file classes
 
 # v1.1.3
-## 10/13/2015
+## 09/14/2015
 
 3. [](#bugfix)
     * Fix regression: Default values for collections were broken
