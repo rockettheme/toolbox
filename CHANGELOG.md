@@ -2,6 +2,7 @@
 ## XX/XX/2015
 
 1. [](#new)
+    * **Backwards compatibility break**: Blueprints class needs to be initialized with `init()` if blueprints contain `@data-*` fields 
     * Renamed NestedArrayAccess::remove() into NestedArrayAccess::undef() to avoid name clashes
 
 # v1.1.4

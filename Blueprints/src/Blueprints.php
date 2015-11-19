@@ -28,6 +28,11 @@ class Blueprints
     /**
      * @var array
      */
+    protected $dynamic = [];
+
+    /**
+     * @var array
+     */
     protected $filter = ['validation' => true];
 
     /**
@@ -41,8 +46,45 @@ class Blueprints
             $this->items = (array) $serialized['items'];
             $this->rules = (array) $serialized['rules'];
             $this->nested = (array) $serialized['nested'];
+            $this->dynamic = (array) $serialized['dynamic'];
             $this->filter = (array) $serialized['filter'];
         }
+    }
+
+    /**
+     * Initialize blueprints with its dynamic fields.
+     *
+     * @return $this
+     */
+    public function init()
+    {
+        foreach ($this->dynamic as $key => $data) {
+            $field = &$this->items[$key];
+            foreach ($data as $property => $call) {
+                $func = $call['function'];
+                $value = $call['params'];
+
+                list($o, $f) = preg_split('/::/', $func);
+                if (!$f && function_exists($o)) {
+                    $data = call_user_func_array($o, $value);
+                } elseif ($f && method_exists($o, $f)) {
+                    $data = call_user_func_array(array($o, $f), $value);
+                }
+
+                // If function returns a value,
+                if (isset($data)) {
+                    if (isset($field[$property]) && is_array($field[$property]) && is_array($data)) {
+                        // Combine field and @data-field together.
+                        $field[$property] += $data;
+                    } else {
+                        // Or create/replace field with @data-field.
+                        $field[$property] = $data;
+                    }
+                }
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -111,7 +153,7 @@ class Blueprints
      */
     public function toArray()
     {
-        return ['items' => $this->items, 'rules' => $this->rules, 'nested' => $this->nested, 'filter' => $this->filter];
+        return ['items' => $this->items, 'rules' => $this->rules, 'nested' => $this->nested, 'dynamic' => $this->dynamic, 'filter' => $this->filter];
     }
 
     /**
@@ -266,6 +308,10 @@ class Blueprints
                 $this->items[$key] = &$field;
                 $this->addProperty($key);
 
+                if (!empty($field['data'])) {
+                    $this->dynamic[$key] = $field['data'];
+                }
+
                 foreach ($field as $name => $value) {
                     if (substr($name, 0, 6) == '@data-') {
                         $property = substr($name, 6);
@@ -275,23 +321,8 @@ class Blueprints
                             $func = $value;
                             $value = array();
                         }
-                        list($o, $f) = preg_split('/::/', $func);
-                        if (!$f && function_exists($o)) {
-                            $data = call_user_func_array($o, $value);
-                        } elseif ($f && method_exists($o, $f)) {
-                            $data = call_user_func_array(array($o, $f), $value);
-                        }
 
-                        // If function returns a value,
-                        if (isset($data)) {
-                            if (isset($field[$property]) && is_array($field[$property]) && is_array($data)) {
-                                // Combine field and @data-field together.
-                                $field[$property] += $data;
-                            } else {
-                                // Or create/replace field with @data-field.
-                                $field[$property] = $data;
-                            }
-                        }
+                        $this->dynamic[$key][$property] = ['function' => $func, 'params' => $value];
                     }
                 }
 
