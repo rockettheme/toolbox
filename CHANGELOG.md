@@ -1,3 +1,10 @@
+# v1.2.0
+## 10/24/2015
+
+1. [](#new)
+    * **Backwards compatibility break**: Blueprints class needs to be initialized with `init()` if blueprints contain `@data-*` fields 
+    * Renamed NestedArrayAccess::remove() into NestedArrayAccess::undef() to avoid name clashes
+
 # v1.1.4
 ## 10/15/2015
 
@@ -5,7 +12,7 @@
     * Add support for native YAML parsing option to Markdown and YAML file classes
 
 # v1.1.3
-## 10/13/2015
+## 09/14/2015
 
 3. [](#bugfix)
     * Fix regression: Default values for collections were broken

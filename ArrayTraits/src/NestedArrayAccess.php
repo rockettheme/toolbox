@@ -79,13 +79,13 @@ trait NestedArrayAccess
     /**
      * Unset value by using dot notation for nested arrays/objects.
      *
-     * @example $data->remove('this.is.my.nested.variable');
+     * @example $data->undef('this.is.my.nested.variable');
      *
      * @param string  $name       Dot separated path to the requested value.
      * @param string  $separator  Separator, defaults to '.'
      * @return $this
      */
-    public function remove($name, $separator = '.')
+    public function undef($name, $separator = '.')
     {
         if ($name === '') {
             $this->items = [];
@@ -182,7 +182,7 @@ trait NestedArrayAccess
         if (is_null($offset)) {
             $this->items[] = [];
         } else {
-            $this->remove($offset);
+            $this->undef($offset);
         }
     }
 }
