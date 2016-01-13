@@ -1,3 +1,9 @@
+# v1.2.1
+## XX/XX/2016
+
+2. [](#improved)
+    * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
+
 # v1.2.0
 ## 10/24/2015
 
