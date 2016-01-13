@@ -1,6 +1,8 @@
 # v1.2.1
 ## XX/XX/2016
 
+1. [](#new)
+    * Add Blueprints::extra() function to return data fields which haven't been defined in blueprints
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
 

@@ -207,6 +207,55 @@ class Blueprints
     }
 
     /**
+     * Get property from the definition.
+     *
+     * @param  string  $path  Comma separated path to the property.
+     * @param  string  $separator
+     * @return array
+     * @internal
+     */
+    public function getProperty($path = null, $separator = '.')
+    {
+        if (!$path) {
+            return $this->nested;
+        }
+        $parts = explode($separator, $path);
+        $item = array_pop($parts);
+
+        $nested = $this->nested;
+        foreach ($parts as $part) {
+            if (!isset($nested[$part])) {
+                return [];
+            }
+            $nested = $nested[$part];
+        }
+
+        return isset($nested[$item]) ? $nested[$item] : [];
+    }
+
+    /**
+     * Return data fields that do not exist in blueprints.
+     *
+     * @param  array  $data
+     * @param  string $prefix
+     * @return array
+     */
+    public function extra(array $data, $prefix = '')
+    {
+        $rules = &$this->nested;
+
+        // Drill down to prefix level
+        if (!empty($prefix)) {
+            $parts = explode('.', trim($prefix, '.'));
+            foreach ($parts as $part) {
+                $rules = isset($rules[$part]) ? $rules[$part] : [];
+            }
+        }
+
+        return $this->extraArray($data, $rules, $prefix);
+    }
+
+    /**
      * @param array $nested
      * @return array
      */
@@ -335,33 +384,6 @@ class Blueprints
     }
 
     /**
-     * Get property from the definition.
-     *
-     * @param  string  $path  Comma separated path to the property.
-     * @param  string  $separator
-     * @return array
-     * @internal
-     */
-    public function getProperty($path = null, $separator = '.')
-    {
-        if (!$path) {
-            return $this->nested;
-        }
-        $parts = explode($separator, $path);
-        $item = array_pop($parts);
-
-        $nested = $this->nested;
-        foreach ($parts as $part) {
-            if (!isset($nested[$part])) {
-                return [];
-            }
-            $nested = $nested[$part];
-        }
-
-        return isset($nested[$item]) ? $nested[$item] : [];
-    }
-
-    /**
      * Add property to the definition.
      *
      * @param  string  $path  Comma separated path to the property.
@@ -396,5 +418,32 @@ class Blueprints
             return $this->rules[$rule];
         }
         return array();
+    }
+
+    /**
+     * @param array $data
+     * @param array $rules
+     * @param string $prefix
+     * @return array
+     * @internal
+     */
+    protected function extraArray(array $data, array $rules, $prefix)
+    {
+        $array = array();
+        foreach ($data as $key => $field) {
+            $val = isset($rules[$key]) ? $rules[$key] : null;
+            $rule = is_string($val) ? $this->items[$val] : null;
+
+            if ($rule) {
+                // Item has been defined in blueprints.
+            } elseif (is_array($field) && is_array($val)) {
+                // Array has been defined in blueprints.
+                $array += $this->ExtraArray($field, $val, $prefix . $key . '.');
+            } else {
+                // Undefined/extra item.
+                $array[$prefix.$key] = $field;
+            }
+        }
+        return $array;
     }
 }
