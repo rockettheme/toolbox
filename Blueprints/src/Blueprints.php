@@ -40,9 +40,9 @@ class Blueprints
      *
      * @param array $serialized  Serialized content if available.
      */
-    public function __construct(array $serialized = null)
+    public function __construct($serialized = null)
     {
-        if ($serialized) {
+        if (is_array($serialized) && !empty($serialized)) {
             $this->items = (array) $serialized['items'];
             $this->rules = (array) $serialized['rules'];
             $this->nested = (array) $serialized['nested'];
@@ -61,25 +61,10 @@ class Blueprints
         foreach ($this->dynamic as $key => $data) {
             $field = &$this->items[$key];
             foreach ($data as $property => $call) {
-                $func = $call['function'];
-                $value = $call['params'];
+                $action = 'dynamic' . ucfirst(isset($call['action']) ? $call['action'] : 'data');
 
-                list($o, $f) = preg_split('/::/', $func);
-                if (!$f && function_exists($o)) {
-                    $data = call_user_func_array($o, $value);
-                } elseif ($f && method_exists($o, $f)) {
-                    $data = call_user_func_array(array($o, $f), $value);
-                }
-
-                // If function returns a value,
-                if (isset($data)) {
-                    if (isset($field[$property]) && is_array($field[$property]) && is_array($data)) {
-                        // Combine field and @data-field together.
-                        $field[$property] += $data;
-                    } else {
-                        // Or create/replace field with @data-field.
-                        $field[$property] = $data;
-                    }
+                if (method_exists($this, $action)) {
+                    $this->{$action}($field, $property, $call);
                 }
             }
         }
@@ -203,8 +188,10 @@ class Blueprints
     public function mergeData(array $data1, array $data2, $name = null, $separator = '.')
     {
         $nested = $this->getProperty($name, $separator);
+
         return $this->mergeArrays($data1, $data2, $nested);
     }
+
 
     /**
      * Get property from the definition.
@@ -362,16 +349,20 @@ class Blueprints
                 }
 
                 foreach ($field as $name => $value) {
-                    if (substr($name, 0, 6) == '@data-') {
-                        $property = substr($name, 6);
-                        if (is_array($value)) {
-                            $func = array_shift($value);
-                        } else {
-                            $func = $value;
-                            $value = array();
-                        }
+                    if (!empty($name) && $name[0] == '@') {
+                        list ($action, $property) = explode('-', substr($name, 1), 2);
+                        if ($action === 'data') {
+                            if (is_array($value)) {
+                                $func = array_shift($value);
+                            } else {
+                                $func = $value;
+                                $value = array();
+                            }
 
-                        $this->dynamic[$key][$property] = ['function' => $func, 'params' => $value];
+                            $this->dynamic[$key][$property] = ['function' => $func, 'params' => $value];
+                        } else {
+                            $this->dynamic[$key][$property] = ['action' => $action, 'params' => $value];
+                        }
                     }
                 }
 
@@ -445,5 +436,38 @@ class Blueprints
             }
         }
         return $array;
+    }
+
+    /**
+     * @param array $field
+     * @param string $property
+     * @param array $call
+     */
+    protected function dynamicData(array &$field, $property, array &$call)
+    {
+        $function = $call['function'];
+        $params = $call['params'];
+
+        list($o, $f) = preg_split('/::/', $function, 2);
+        if (!$f) {
+            if (function_exists($o)) {
+                $data = call_user_func_array($o, $params);
+            }
+        } else {
+            if (method_exists($o, $f)) {
+                $data = call_user_func_array(array($o, $f), $params);
+            }
+        }
+
+        // If function returns a value,
+        if (isset($data)) {
+            if (isset($field[$property]) && is_array($field[$property]) && is_array($data)) {
+                // Combine field and @data-field together.
+                $field[$property] += $data;
+            } else {
+                // Or create/replace field with @data-field.
+                $field[$property] = $data;
+            }
+        }
     }
 }

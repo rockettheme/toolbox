@@ -3,6 +3,7 @@
 
 1. [](#new)
     * Add Blueprints::extra() function to return data fields which haven't been defined in blueprints
+    * Allow dynamic fields in Blueprints
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
 
