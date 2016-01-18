@@ -7,7 +7,6 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4.0",
-        "ircmaxell/password-compat": "1.0.*",
         "pimple/pimple": "~3.0",
         "symfony/yaml": "~2.5",
         "symfony/event-dispatcher": "~2.5"
