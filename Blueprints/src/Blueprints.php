@@ -200,7 +200,7 @@ class Blueprints
             $this->rules = array_merge($this->rules, $value['rules']);
         }
         if (!isset($value['form']['fields']) || !is_array($value['form']['fields'])) {
-            return $this;
+            $value['form']['fields'] = [];
         }
         $name = $separator != '.' ? strtr($name, $separator, '.') : $name;
         $prefix = $name ? $name . '.' : '';
