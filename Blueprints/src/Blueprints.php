@@ -260,7 +260,7 @@ class Blueprints
             $nested = $nested[$part];
         }
 
-        return isset($nested[$item]) ? $nested[$item] : [];
+        return isset($nested[$item]) && is_array($nested[$item]) ? $nested[$item] : [];
     }
 
     /**

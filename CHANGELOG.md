@@ -8,6 +8,9 @@
     * Remove dependency on ircmaxell/password-compat
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
+3. [](#bugfix)
+    * Fix blueprints without form
+    * Fix merging data with empty blueprints
 
 # v1.2.0
 ## 10/24/2015
