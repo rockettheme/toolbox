@@ -400,7 +400,10 @@ class Blueprints
 
                 foreach ($field as $name => $value) {
                     if (!empty($name) && $name[0] == '@') {
-                        list ($action, $property) = explode('-', substr($name, 1), 2);
+                        $list = explode('-', substr($name, 1), 2);
+                        $action = array_shift($list);
+                        $property = array_shift($list);
+
                         if ($action === 'data') {
                             if (is_array($value)) {
                                 $func = array_shift($value);
