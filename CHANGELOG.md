@@ -5,6 +5,7 @@
     * Add Blueprints::extra() function to return data fields which haven't been defined in blueprints
     * Add missing form data into Blueprints class
     * Allow dynamic fields in Blueprints
+    * Add merging strategy support for Blueprints
     * Remove dependency on ircmaxell/password-compat
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)

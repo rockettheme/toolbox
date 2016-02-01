@@ -192,9 +192,10 @@ class Blueprints
      * @param $name
      * @param array $value
      * @param string $separator
+     * @param int $strategy     Merge strategy -1 = merge parent, 0 = replace, 1 = merge child.
      * @return $this
      */
-    public function embed($name, array $value, $separator = '.')
+    public function embed($name, array $value, $separator = '.', $strategy = 0)
     {
         if (isset($value['rules'])) {
             $this->rules = array_merge($this->rules, $value['rules']);
@@ -203,18 +204,31 @@ class Blueprints
             $value['form']['fields'] = [];
         }
         $name = $separator != '.' ? strtr($name, $separator, '.') : $name;
-        $prefix = $name ? $name . '.' : '';
-        $params = array_intersect_key($this->filter, $value);
-        $form = $this->parseFormFields($value['form']['fields'], $params, $prefix);
+
+        $meta = array_diff_key($value, ['form' => 1]);
+        $form = array_diff_key($value['form'], ['fields' => 1]);
+        if ($strategy && $this->items[$name]['meta']) {
+            if ($strategy < 0) {
+                $meta = $this->items[$name]['meta'] + $meta;
+                $form = $this->items[$name]['form'] + $form;
+            } else {
+                $meta += $this->items[$name]['meta'];
+                $form += $this->items[$name]['form'];
+            }
+        }
 
         $this->items[$name] = [
             'type' => '_root',
-            'meta' => array_diff_key($value, ['form' => 1]),
-            'form' => array_diff_key($value['form'], ['fields' => 1])
+            'meta' => $meta,
+            'form' => $form
         ];
         $this->addProperty($name);
 
-        $this->form[$name] = $form;
+        $prefix = $name ? $name . '.' : '';
+        $params = array_intersect_key($this->filter, $value);
+        $formFields = $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $strategy);
+
+        $this->form[$name] = $formFields;
 
         return $this;
     }
@@ -353,10 +367,11 @@ class Blueprints
      * @param array $params
      * @param string $prefix
      * @param string $parent
+     * @param int $strategy     Merge strategy -1 = merge parent, 0 = replace, 1 = merge child.
      * @return array
      * @internal
      */
-    protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '')
+    protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '', $strategy = 0)
     {
         $form = [];
 
@@ -368,37 +383,47 @@ class Blueprints
             } else {
                 $key = $prefix . $key;
             }
-            $field['name'] = $key;
-            $field += $params;
+
+            $properties = array_diff_key($field, ['fields' => 1]);
+            $properties['name'] = $key;
+            $properties += $params;
+
+            if ($strategy && isset($this->items[$key])) {
+                // Merge strategy and property exists - use merge parent strategy or merge child strategy.
+                $properties = $strategy < 0 ? $this->items[$key] + $properties : $properties + $this->items[$key];
+            }
 
             if (isset($field['fields'])) {
-                $isArray = !empty($field['array']);
+                if (!isset($this->items[$key])) {
+                    // Add missing property.
+                    $this->addProperty($key);
+                }
 
                 // Recursively get all the nested fields.
-                $newParams = array_intersect_key($this->filter, $field);
-                $form[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''));
-
-                $this->items[$key] = array_diff_key($field, ['fields' => 1]);
-                $this->addProperty($key);
+                $isArray = !empty($properties['array']);
+                $newParams = array_intersect_key($this->filter, $properties);
+                $form[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $strategy);
             } else {
-                // Add rule.
-                $path = explode('.', $key);
-                array_pop($path);
-                $parent = '';
-                foreach ($path as $part) {
-                    $parent .= ($parent ? '.' : '') . $part;
-                    if (!isset($this->items[$parent])) {
-                        $this->items[$parent] = ['type' => '_parent', 'name' => $parent];
+                if (!isset($this->items[$key])) {
+                    // Add rule.
+                    $path = explode('.', $key);
+                    array_pop($path);
+                    $parent = '';
+                    foreach ($path as $part) {
+                        $parent .= ($parent ? '.' : '') . $part;
+                        if (!isset($this->items[$parent])) {
+                            $this->items[$parent] = ['type' => '_parent', 'name' => $parent];
+                        }
                     }
-                }
-                $this->items[$key] = &$field;
-                $this->addProperty($key);
 
-                if (!empty($field['data'])) {
-                    $this->dynamic[$key] = $field['data'];
+                    $this->addProperty($key);
                 }
 
-                foreach ($field as $name => $value) {
+                if (!empty($properties['data'])) {
+                    $this->dynamic[$key] = $properties['data'];
+                }
+
+                foreach ($properties as $name => $value) {
                     if (!empty($name) && $name[0] == '@') {
                         $list = explode('-', substr($name, 1), 2);
                         $action = array_shift($list);
@@ -420,12 +445,14 @@ class Blueprints
                 }
 
                 // Initialize predefined validation rule.
-                if (isset($field['validate']['rule'])) {
-                    $field['validate'] += $this->getRule($field['validate']['rule']);
+                if (isset($contents['validate']['rule'])) {
+                    $contents['validate'] += $this->getRule($contents['validate']['rule']);
                 }
 
                 $form[$key] = 1;
             }
+
+            $this->items[$key] = $properties;
         }
 
         return $form;
@@ -444,7 +471,7 @@ class Blueprints
 
         $nested = &$this->nested;
         foreach ($parts as $part) {
-            if (!isset($nested[$part])) {
+            if (!isset($nested[$part]) || !is_array($nested[$part])) {
                 $nested[$part] = [];
             }
             $nested = &$nested[$part];
