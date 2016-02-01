@@ -424,8 +424,8 @@ class Blueprints
                 }
 
                 foreach ($properties as $name => $value) {
-                    if (!empty($name) && $name[0] == '@') {
-                        $list = explode('-', substr($name, 1), 2);
+                    if (!empty($name) && ($name[0] === '@' || $name[strlen($name) - 1] === '@')) {
+                        $list = explode('-', trim($name, '@'), 2);
                         $action = array_shift($list);
                         $property = array_shift($list);
 

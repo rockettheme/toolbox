@@ -4,7 +4,7 @@
 1. [](#new)
     * Add Blueprints::extra() function to return data fields which haven't been defined in blueprints
     * Add missing form data into Blueprints class
-    * Allow dynamic fields in Blueprints
+    * Allow dynamic fields in Blueprints (property@)
     * Add merging strategy support for Blueprints
     * Remove dependency on ircmaxell/password-compat
 2. [](#improved)
