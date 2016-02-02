@@ -72,6 +72,21 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Reset a locator scheme
+     *
+     * @param string $scheme The scheme to reset
+     * 
+     * @return $this
+     */
+    public function resetScheme($scheme)
+    {
+        $this->schemes[$scheme] = [];
+        $this->cache = [];
+        
+        return $this;
+    }
+
+    /**
      * Add new paths to the scheme.
      *
      * @param string $scheme
