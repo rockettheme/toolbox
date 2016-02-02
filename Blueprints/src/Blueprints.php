@@ -433,10 +433,35 @@ class Blueprints
         }
 
         if ($strategy > 0) {
-            return $formOld + $formNew;
+            return $this->reorder($formOld + $formNew);
         } else {
-            return $formNew + $formOld;
+            return $this->reorder($formNew + $formOld);
         }
+    }
+
+    protected function reorder(array $items)
+    {
+        $modified = false;
+        $reordered = $list = array_keys($items);
+        foreach ($list as $item) {
+            $property = $this->items[$item];
+            if (isset($property['ordering'])) {
+                $modified = true;
+                if (is_scalar($property['ordering']) && (string)(int) $property['ordering'] === (string) $property['ordering']) {
+                    $location = array_search($item, $reordered);
+                    $rel = array_splice($reordered, $location, 1);
+                    $location = (int) $property['ordering'];
+                    array_splice($reordered, $location, 0, $rel);
+                } elseif (isset($items[$property['ordering']])) {
+                    $location = array_search($item, $reordered);
+                    $rel = array_splice($reordered, $location, 1);
+                    $location = array_search($property['ordering'], $reordered);
+                    array_splice($reordered, $location + 1, 0, $rel);
+                }
+            }
+        }
+
+        return $modified ? array_merge(array_flip($reordered), $items) : $items;
     }
 
     protected function parseProperties($key, array &$properties, array $formPath)
