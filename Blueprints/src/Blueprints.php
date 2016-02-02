@@ -229,7 +229,10 @@ class Blueprints
 
         $prefix = $name ? $name . '.' : '';
         $params = array_intersect_key($this->filter, $value);
-        $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $strategy, [$name]);
+        $location = [$name];
+        $fields = $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $strategy, $location);
+
+        $this->setFormFields($location, $fields);
 
         return $this;
     }
@@ -375,7 +378,8 @@ class Blueprints
      */
     protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '', $strategy = 0, array $formPath = [])
     {
-        $this->touchFormFields($formPath);
+        $formOld = $this->getFormFields($formPath);
+        $formNew = [];
 
         // Go though all the fields in current level.
         foreach ($fields as $key => &$field) {
@@ -405,7 +409,7 @@ class Blueprints
                 // Recursively get all the nested fields.
                 $isArray = !empty($properties['array']);
                 $newParams = array_intersect_key($this->filter, $properties);
-                $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $strategy, $newPath);
+                $formNew[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $strategy, $newPath);
             } else {
                 if (!isset($this->items[$key])) {
                     // Add parent rules.
@@ -422,10 +426,16 @@ class Blueprints
 
                 $this->parseProperties($key, $properties, $newPath);
 
-                $this->touchFormFields($newPath);
+                $formNew[$key] = [];
             }
 
             $this->items[$key] = $properties;
+        }
+
+        if ($strategy > 0) {
+            return $formOld + $formNew;
+        } else {
+            return $formNew + $formOld;
         }
     }
 
@@ -488,8 +498,26 @@ class Blueprints
 
     /**
      * @param array $parts
+     * @return array
      */
-    protected function touchFormFields(array &$parts)
+    protected function getFormFields(array &$parts)
+    {
+        $nested = &$this->form;
+        foreach ($parts as $part) {
+            if (!isset($nested[$part])) {
+                return [];
+            }
+            $nested = &$nested[$part];
+        }
+
+        return $nested;
+    }
+
+    /**
+     * @param array $parts
+     * @param array $fields
+     */
+    protected function setFormFields(array &$parts, array $fields)
     {
         $nested = &$this->form;
         foreach ($parts as $part) {
@@ -498,6 +526,8 @@ class Blueprints
             }
             $nested = &$nested[$part];
         }
+
+        $nested = $fields;
     }
 
     /**
