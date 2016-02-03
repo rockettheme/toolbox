@@ -517,7 +517,7 @@ class Blueprints
         }
 
         if (!isset($nested[$item])) {
-            $nested[$item] = 1;
+            $nested[$item] = $path;
         }
     }
 
