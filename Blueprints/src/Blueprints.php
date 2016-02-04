@@ -228,7 +228,7 @@ class Blueprints
         $this->addProperty($name);
 
         $prefix = $name ? $name . '.' : '';
-        $params = array_intersect_key($this->filter, $value);
+        $params = array_intersect_key($form, $this->filter);
         $location = [$name];
         $fields = $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $strategy, $location);
 
@@ -408,7 +408,7 @@ class Blueprints
             if (isset($field['fields'])) {
                 // Recursively get all the nested fields.
                 $isArray = !empty($properties['array']);
-                $newParams = array_intersect_key($this->filter, $properties);
+                $newParams = array_intersect_key($properties, $this->filter);
                 $formNew[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $strategy, $newPath);
             } else {
                 if (!isset($this->items[$key])) {
