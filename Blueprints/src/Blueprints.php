@@ -422,7 +422,14 @@ class Blueprints
                 $properties = $strategy < 0 ? $this->items[$key] + $properties : $properties + $this->items[$key];
             }
 
-            if (!isset($this->items[$key]) && (!isset($properties['form_field']) || $properties['form_field'])) {
+            $isFormField = !isset($properties['form_field']) || $properties['form_field'];
+
+            if (!$isFormField) {
+                // Remove property if it exists.
+                if (isset($this->items[$key])) {
+                    $this->removeProperty($key);
+                }
+            } elseif (!isset($this->items[$key])) {
                 // Add missing property.
                 $this->addProperty($key);
             }
@@ -540,6 +547,30 @@ class Blueprints
 
         if (!isset($nested[$item])) {
             $nested[$item] = $path;
+        }
+    }
+
+    /**
+     * Remove property to the definition.
+     *
+     * @param  string  $path  Comma separated path to the property.
+     * @internal
+     */
+    protected function removeProperty($path)
+    {
+        $parts = explode('.', $path);
+        $item = array_pop($parts);
+
+        $nested = &$this->nested;
+        foreach ($parts as $part) {
+            if (!isset($nested[$part]) || !is_array($nested[$part])) {
+                return;
+            }
+            $nested = &$nested[$part];
+        }
+
+        if (isset($nested[$item])) {
+            unset($nested[$item]);
         }
     }
 
