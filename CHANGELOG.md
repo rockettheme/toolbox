@@ -7,6 +7,7 @@
     * Allow dynamic fields in Blueprints (property@)
     * Add merging strategy support for Blueprints
     * Implement reordering fields in Blueprints
+    * Blueprints: Add default properties support for form field types
     * Remove dependency on ircmaxell/password-compat
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)

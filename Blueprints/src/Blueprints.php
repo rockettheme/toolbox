@@ -41,6 +41,11 @@ class Blueprints
     protected $filter = ['validation' => true];
 
     /**
+     * @var array
+     */
+    protected $types = [];
+
+    /**
      * Constructor.
      *
      * @param array $serialized  Serialized content if available.
@@ -55,6 +60,17 @@ class Blueprints
             $this->dynamic = (array) $serialized['dynamic'];
             $this->filter = (array) $serialized['filter'];
         }
+    }
+
+    /**
+     * @param array $types
+     * @return $this
+     */
+    public function setTypes(array $types)
+    {
+        $this->types = $types;
+
+        return $this;
     }
 
     /**
@@ -208,7 +224,7 @@ class Blueprints
 
         $meta = array_diff_key($value, ['form' => 1]);
         $form = array_diff_key($value['form'], ['fields' => 1]);
-        $items = isset($this->items[$name]) ? $this->items[$name] : ['type' => '_root'];
+        $items = isset($this->items[$name]) ? $this->items[$name] : ['type' => '_root', 'form_field' => false];
 
         if ($strategy && isset($this->items[$name]['meta'])) {
             if ($strategy < 0) {
@@ -395,12 +411,18 @@ class Blueprints
             $properties = array_diff_key($field, ['fields' => 1]) + $params;
             $properties['name'] = $key;
 
+            // Set default properties for the field type.
+            $type = isset($properties['type']) ? $properties['type'] : '';
+            if (isset($this->types[$type])) {
+                $properties += $this->types[$type];
+            }
+
             // If strategy, use either merge parent strategy or merge child strategy.
             if ($strategy && isset($this->items[$key])) {
                 $properties = $strategy < 0 ? $this->items[$key] + $properties : $properties + $this->items[$key];
             }
 
-            if (!isset($this->items[$key])) {
+            if (!isset($this->items[$key]) && (!isset($properties['form_field']) || $properties['form_field'])) {
                 // Add missing property.
                 $this->addProperty($key);
             }
@@ -419,7 +441,7 @@ class Blueprints
                     foreach ($path as $part) {
                         $parent .= ($parent ? '.' : '') . $part;
                         if (!isset($this->items[$parent])) {
-                            $this->items[$parent] = ['type' => '_parent', 'name' => $parent];
+                            $this->items[$parent] = ['type' => '_parent', 'name' => $parent, 'form_field' => false];
                         }
                     }
                 }
