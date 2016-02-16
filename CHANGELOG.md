@@ -9,6 +9,7 @@
     * Implement reordering fields in Blueprints
     * Blueprints: Add default properties support for form field types
     * Remove dependency on ircmaxell/password-compat
+    * Add support for Symfony 3
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
 3. [](#bugfix)
