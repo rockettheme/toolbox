@@ -13,6 +13,7 @@
     <testsuites>
         <testsuite name="RocketTheme Toolbox Test Suite">
             <directory suffix=".php">./ArrayTraits/tests/</directory>
+            <directory suffix=".php">./Blueprints/tests/</directory>
             <directory suffix=".php">./DI/tests/</directory>
             <directory suffix=".php">./Event/tests/</directory>
             <directory suffix=".php">./File/tests/</directory>
