@@ -462,29 +462,36 @@ class Blueprints
         }
 
         if ($strategy > 0) {
-            return $this->reorder($formOld + $formNew);
+            return $this->reorder(array_replace($formOld, $formNew), $prefix, $parent);
         } else {
-            return $this->reorder($formNew + $formOld);
+            return $this->reorder($formNew + $formOld, $prefix, $parent);
         }
     }
 
-    protected function reorder(array $items)
+    protected function reorder(array $items, $prefix, $parent)
     {
         $modified = false;
         $reordered = $list = array_keys($items);
         foreach ($list as $item) {
             $property = $this->items[$item];
             if (isset($property['ordering'])) {
+                if ((string)(int) $property['ordering'] === (string) $property['ordering']) {
+                    $ordering = (int) $property['ordering'];
+                } elseif ($property['ordering'][0] == '.') {
+                    $ordering = ($parent ?: rtrim($prefix, '.')) . $property['ordering'];
+                } else {
+                    $ordering = $prefix . $property['ordering'];
+                }
+
                 $modified = true;
-                if (is_scalar($property['ordering']) && (string)(int) $property['ordering'] === (string) $property['ordering']) {
+                if (is_int($ordering)) {
                     $location = array_search($item, $reordered);
                     $rel = array_splice($reordered, $location, 1);
-                    $location = (int) $property['ordering'];
-                    array_splice($reordered, $location, 0, $rel);
-                } elseif (isset($items[$property['ordering']])) {
+                    array_splice($reordered, $ordering, 0, $rel);
+                } elseif (isset($items[$ordering])) {
                     $location = array_search($item, $reordered);
                     $rel = array_splice($reordered, $location, 1);
-                    $location = array_search($property['ordering'], $reordered);
+                    $location = array_search($ordering, $reordered);
                     array_splice($reordered, $location + 1, 0, $rel);
                 }
             }
