@@ -209,10 +209,10 @@ class Blueprints
      * @param $name
      * @param array $value
      * @param string $separator
-     * @param int $strategy     Merge strategy -1 = merge parent, 0 = replace, 1 = merge child.
+     * @param bool $merge   Merge fields instead replacing them.
      * @return $this
      */
-    public function embed($name, array $value, $separator = '.', $strategy = 0)
+    public function embed($name, array $value, $separator = '.', $merge = false)
     {
         if (isset($value['rules'])) {
             $this->rules = array_merge($this->rules, $value['rules']);
@@ -226,14 +226,9 @@ class Blueprints
         $form = array_diff_key($value['form'], ['fields' => 1]);
         $items = isset($this->items[$name]) ? $this->items[$name] : ['type' => '_root', 'form_field' => false];
 
-        if ($strategy && isset($this->items[$name]['meta'])) {
-            if ($strategy < 0) {
-                $meta = $this->items[$name]['meta'] + $meta;
-                $form = $this->items[$name]['form'] + $form;
-            } else {
-                $meta += $this->items[$name]['meta'];
-                $form += $this->items[$name]['form'];
-            }
+        if ($merge && isset($this->items[$name]['meta'])) {
+            $meta += $this->items[$name]['meta'];
+            $form += $this->items[$name]['form'];
         }
 
         $this->items[$name] = [
@@ -246,7 +241,7 @@ class Blueprints
         $prefix = $name ? $name . '.' : '';
         $params = array_intersect_key($form, $this->filter);
         $location = [$name];
-        $fields = $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $strategy, $location);
+        $fields = $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $merge, $location);
 
         $this->setFormFields($location, $fields);
 
@@ -384,15 +379,15 @@ class Blueprints
     /**
      * Gets all field definitions from the blueprints.
      *
-     * @param array $fields     Fields to parse.
-     * @param array $params     Property parameters.
+     * @param array  $fields    Fields to parse.
+     * @param array  $params    Property parameters.
      * @param string $prefix    Property prefix.
      * @param string $parent    Parent property.
-     * @param int $strategy     Merge strategy -1 = merge parent, 0 = replace, 1 = merge child.
+     * @param bool   $merge     Merge fields instead replacing them.
      * @param array $formPath
      * @return array
      */
-    protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '', $strategy = 0, array $formPath = [])
+    protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
         $formOld = $this->getFormFields($formPath);
         $formNew = [];
@@ -417,9 +412,9 @@ class Blueprints
                 $properties += $this->types[$type];
             }
 
-            // If strategy, use either merge parent strategy or merge child strategy.
-            if ($strategy && isset($this->items[$key])) {
-                $properties = $strategy < 0 ? $this->items[$key] + $properties : $properties + $this->items[$key];
+            // Merge properties with existing ones.
+            if ($merge && isset($this->items[$key])) {
+                $properties += $this->items[$key];
             }
 
             $isFormField = !isset($properties['form_field']) || $properties['form_field'];
@@ -438,7 +433,7 @@ class Blueprints
                 // Recursively get all the nested fields.
                 $isArray = !empty($properties['array']);
                 $newParams = array_intersect_key($properties, $this->filter);
-                $formNew[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $strategy, $newPath);
+                $formNew[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $merge, $newPath);
             } else {
                 if (!isset($this->items[$key])) {
                     // Add parent rules.
@@ -461,11 +456,7 @@ class Blueprints
             $this->items[$key] = $properties;
         }
 
-        if ($strategy > 0) {
-            return $this->reorder(array_replace($formOld, $formNew), $prefix, $parent);
-        } else {
-            return $this->reorder($formNew + $formOld, $prefix, $parent);
-        }
+        return $this->reorder(array_replace($formOld, $formNew), $prefix, $parent);
     }
 
     protected function reorder(array $items, $prefix, $parent)
