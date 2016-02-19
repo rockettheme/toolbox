@@ -394,12 +394,7 @@ class Blueprints
 
         // Go though all the fields in current level.
         foreach ($fields as $key => &$field) {
-            // Set name from the array key.
-            if ($key && $key[0] == '.') {
-                $key = ($parent ?: rtrim($prefix, '.')) . $key;
-            } else {
-                $key = $prefix . $key;
-            }
+            $key = $this->getFieldKey($key, $prefix, $parent);
 
             $newPath = array_merge($formPath, [$key]);
 
@@ -459,6 +454,16 @@ class Blueprints
         return $this->reorder(array_replace($formOld, $formNew), $prefix, $parent);
     }
 
+    protected function getFieldKey($key, $prefix, $parent)
+    {
+        // Set name from the array key.
+        if ($key && $key[0] == '.') {
+            return ($parent ?: rtrim($prefix, '.')) . $key;
+        }
+
+        return $prefix . $key;
+    }
+
     protected function reorder(array $items, $prefix, $parent)
     {
         $modified = false;
@@ -468,10 +473,8 @@ class Blueprints
             if (isset($property['ordering'])) {
                 if ((string)(int) $property['ordering'] === (string) $property['ordering']) {
                     $ordering = (int) $property['ordering'];
-                } elseif ($property['ordering'][0] == '.') {
-                    $ordering = ($parent ?: rtrim($prefix, '.')) . $property['ordering'];
                 } else {
-                    $ordering = $prefix . $property['ordering'];
+                    $ordering = $this->getFieldKey($property['ordering'], $prefix, $parent);
                 }
 
                 $modified = true;
