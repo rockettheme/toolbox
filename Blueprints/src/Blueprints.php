@@ -28,17 +28,17 @@ class Blueprints
     /**
      * @var array
      */
-    protected $form = [];
-
-    /**
-     * @var array
-     */
     protected $dynamic = [];
 
     /**
      * @var array
      */
     protected $filter = ['validation' => true];
+
+    /**
+     * @var array
+     */
+    protected $ignoreFormKeys = ['fields' => 1];
 
     /**
      * @var array
@@ -56,7 +56,6 @@ class Blueprints
             $this->items = (array) $serialized['items'];
             $this->rules = (array) $serialized['rules'];
             $this->nested = (array) $serialized['nested'];
-            $this->form = (array) $serialized['form'];
             $this->dynamic = (array) $serialized['dynamic'];
             $this->filter = (array) $serialized['filter'];
         }
@@ -87,15 +86,14 @@ class Blueprints
     /**
      * Initialize blueprints with its dynamic fields.
      *
-     * @param string $name
      * @return $this
      */
-    public function init($name = 'dynamic')
+    public function init()
     {
         foreach ($this->dynamic as $key => $data) {
             $field = &$this->items[$key];
             foreach ($data as $property => $call) {
-                $action = $name . ucfirst(isset($call['action']) ? $call['action'] : 'data');
+                $action = 'dynamic' . ucfirst($call['action']);
 
                 if (method_exists($this, $action)) {
                     $this->{$action}($field, $property, $call);
@@ -185,7 +183,6 @@ class Blueprints
             'items' => $this->items,
             'rules' => $this->rules,
             'nested' => $this->nested,
-            'form' => $this->form,
             'dynamic' => $this->dynamic,
             'filter' => $this->filter
         ];
@@ -222,17 +219,10 @@ class Blueprints
         }
         $name = $separator != '.' ? strtr($name, $separator, '.') : $name;
 
-        $meta = array_diff_key($value, ['form' => 1]);
         $form = array_diff_key($value['form'], ['fields' => 1]);
         $items = isset($this->items[$name]) ? $this->items[$name] : ['type' => '_root', 'form_field' => false];
 
-        if ($merge && isset($this->items[$name]['meta'])) {
-            $meta += $this->items[$name]['meta'];
-            $form += $this->items[$name]['form'];
-        }
-
         $this->items[$name] = [
-                'meta' => $meta,
                 'form' => $form
             ] + $items;
 
@@ -241,9 +231,7 @@ class Blueprints
         $prefix = $name ? $name . '.' : '';
         $params = array_intersect_key($form, $this->filter);
         $location = [$name];
-        $fields = $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $merge, $location);
-
-        $this->setFormFields($location, $fields);
+        $this->parseFormFields($value['form']['fields'], $params, $prefix, '', $merge, $location);
 
         return $this;
     }
@@ -385,20 +373,16 @@ class Blueprints
      * @param string $parent    Parent property.
      * @param bool   $merge     Merge fields instead replacing them.
      * @param array $formPath
-     * @return array
      */
     protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
-        $formOld = $this->getFormFields($formPath);
-        $formNew = [];
-
         // Go though all the fields in current level.
         foreach ($fields as $key => &$field) {
             $key = $this->getFieldKey($key, $prefix, $parent);
 
             $newPath = array_merge($formPath, [$key]);
 
-            $properties = array_diff_key($field, ['fields' => 1]) + $params;
+            $properties = array_diff_key($field, $this->ignoreFormKeys) + $params;
             $properties['name'] = $key;
 
             // Set default properties for the field type.
@@ -428,7 +412,7 @@ class Blueprints
                 // Recursively get all the nested fields.
                 $isArray = !empty($properties['array']);
                 $newParams = array_intersect_key($properties, $this->filter);
-                $formNew[$key] = $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $merge, $newPath);
+                $this->parseFormFields($field['fields'], $newParams, $prefix, $key . ($isArray ? '.*': ''), $merge, $newPath);
             } else {
                 if (!isset($this->items[$key])) {
                     // Add parent rules.
@@ -444,14 +428,10 @@ class Blueprints
                 }
 
                 $this->parseProperties($key, $properties, $newPath);
-
-                $formNew[$key] = [];
             }
 
             $this->items[$key] = $properties;
         }
-
-        return $this->reorder(array_replace($formOld, $formNew), $prefix, $parent);
     }
 
     protected function getFieldKey($key, $prefix, $parent)
@@ -462,36 +442,6 @@ class Blueprints
         }
 
         return $prefix . $key;
-    }
-
-    protected function reorder(array $items, $prefix, $parent)
-    {
-        $modified = false;
-        $reordered = $list = array_keys($items);
-        foreach ($list as $item) {
-            $property = $this->items[$item];
-            if (isset($property['ordering'])) {
-                if ((string)(int) $property['ordering'] === (string) $property['ordering']) {
-                    $ordering = (int) $property['ordering'];
-                } else {
-                    $ordering = $this->getFieldKey($property['ordering'], $prefix, $parent);
-                }
-
-                $modified = true;
-                if (is_int($ordering)) {
-                    $location = array_search($item, $reordered);
-                    $rel = array_splice($reordered, $location, 1);
-                    array_splice($reordered, $ordering, 0, $rel);
-                } elseif (isset($items[$ordering])) {
-                    $location = array_search($item, $reordered);
-                    $rel = array_splice($reordered, $location, 1);
-                    $location = array_search($ordering, $reordered);
-                    array_splice($reordered, $location + 1, 0, $rel);
-                }
-            }
-        }
-
-        return $modified ? array_merge(array_flip($reordered), $items) : $items;
     }
 
     protected function parseProperties($key, array &$properties, array $formPath)
@@ -506,18 +456,7 @@ class Blueprints
                 $action = array_shift($list);
                 $property = array_shift($list);
 
-                if ($action === 'data') {
-                    if (is_array($value)) {
-                        $func = array_shift($value);
-                    } else {
-                        $func = $value;
-                        $value = array();
-                    }
-
-                    $this->dynamic[$key][$property] = ['function' => $func, 'params' => $value, 'form' => $formPath];
-                } else {
-                    $this->dynamic[$key][$property] = ['action' => $action, 'params' => $value, 'form' => $formPath];
-                }
+                $this->dynamic[$key][$property] = ['action' => $action, 'params' => $value];
             }
         }
 
@@ -576,40 +515,6 @@ class Blueprints
     }
 
     /**
-     * @param array $parts
-     * @return array
-     */
-    protected function getFormFields(array &$parts)
-    {
-        $nested = &$this->form;
-        foreach ($parts as $part) {
-            if (!isset($nested[$part])) {
-                return [];
-            }
-            $nested = &$nested[$part];
-        }
-
-        return $nested;
-    }
-
-    /**
-     * @param array $parts
-     * @param array $fields
-     */
-    protected function setFormFields(array &$parts, array $fields)
-    {
-        $nested = &$this->form;
-        foreach ($parts as $part) {
-            if (!isset($nested[$part]) || !is_array($nested[$part])) {
-                $nested[$part] = [];
-            }
-            $nested = &$nested[$part];
-        }
-
-        $nested = $fields;
-    }
-
-    /**
      * @param $rule
      * @return array
      * @internal
@@ -656,8 +561,14 @@ class Blueprints
      */
     protected function dynamicData(array &$field, $property, array &$call)
     {
-        $function = $call['function'];
         $params = $call['params'];
+
+        if (is_array($params)) {
+            $function = array_shift($params);
+        } else {
+            $function = $params;
+            $params = [];
+        }
 
         list($o, $f) = preg_split('/::/', $function, 2);
         if (!$f) {
