@@ -2,19 +2,17 @@
 ## XX/XX/2016
 
 1. [](#new)
-    * Add Blueprints::extra() function to return data fields which haven't been defined in blueprints
-    * Add missing form data into Blueprints class
-    * Allow dynamic fields in Blueprints (property@)
-    * Add merging strategy support for Blueprints
-    * Implement reordering fields in Blueprints
-    * Blueprints: Add default properties support for form field types
+    * Renamed Blueprints class into BlueprintSchema
+    * Add new function BlueprintSchema::extra() to return data fields which haven't been defined in blueprints
+    * Allow arbitrary dynamic fields in BlueprintSchema (property@)
+    * Add default properties support for form field types
     * Remove dependency on ircmaxell/password-compat
     * Add support for Symfony 3
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
 3. [](#bugfix)
-    * Fix blueprints without form
-    * Fix merging data with empty blueprints
+    * Fix blueprint without a form
+    * Fix merging data with empty blueprint
 
 # v1.2.0
 ## 10/24/2015
