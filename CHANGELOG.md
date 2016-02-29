@@ -6,6 +6,7 @@
     * Add new function BlueprintSchema::extra() to return data fields which haven't been defined in blueprints
     * Allow arbitrary dynamic fields in BlueprintSchema (property@)
     * Add default properties support for form field types
+    * Add new class BlueprintForm
     * Remove dependency on ircmaxell/password-compat
     * Add support for Symfony 3
 2. [](#improved)
