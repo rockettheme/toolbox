@@ -3,6 +3,8 @@
 use RocketTheme\Toolbox\Blueprints\BlueprintSchema;
 use RocketTheme\Toolbox\File\YamlFile;
 
+require_once 'helper.php';
+
 class BlueprintsBlueprintSchemaTest extends PHPUnit_Framework_TestCase
 {
     public function testCreation()
@@ -85,12 +87,4 @@ class BlueprintsBlueprintSchemaTest extends PHPUnit_Framework_TestCase
 
         return $content;
     }
-}
-
-function blueprint_data_option_test(array $param = null, $sort = false)
-{
-    if ($sort) {
-        asort($param);
-    }
-    return $param ?: ['yes' => 'Yes', 'no' => 'No'];
 }
