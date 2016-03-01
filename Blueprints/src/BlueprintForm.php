@@ -15,6 +15,11 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     use NestedArrayAccessWithGetters, Export;
 
     /**
+     * @var string
+     */
+    protected $nestedSeparator = '/';
+
+    /**
      * @var array
      */
     protected $items;
