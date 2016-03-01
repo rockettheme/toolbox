@@ -570,10 +570,12 @@ class BlueprintSchema
             $params = [];
         }
 
-        list($o, $f) = preg_split('/::/', $function, 2);
-        if (!$f) {
-            if (function_exists($o)) {
-                $data = call_user_func_array($o, $params);
+        $list = preg_split('/::/', $function, 2);
+        $f = array_pop($list);
+        $o = array_pop($list);
+        if (!$o) {
+            if (function_exists($f)) {
+                $data = call_user_func_array($f, $params);
             }
         } else {
             if (method_exists($o, $f)) {

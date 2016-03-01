@@ -3,15 +3,9 @@ items:
     form: {  }
     type: _root
     form_field: false
-  text:
-    type: text
-    label: Text
-    placeholder: 'Enter your text'
-    name: text
 rules: {  }
 nested:
   '': ''
-  text: text
 dynamic: {  }
 filter:
   validation: true

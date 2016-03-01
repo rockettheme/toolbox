@@ -1,6 +1,0 @@
-form:
-  fields:
-    text:
-      type: text
-      label: Text
-      placeholder: 'Enter your text'
