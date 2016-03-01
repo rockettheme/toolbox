@@ -430,7 +430,9 @@ class BlueprintSchema
                 $this->parseProperties($key, $properties, $newPath);
             }
 
-            $this->items[$key] = $properties;
+            if ($isFormField) {
+                $this->items[$key] = $properties;
+            }
         }
     }
 
