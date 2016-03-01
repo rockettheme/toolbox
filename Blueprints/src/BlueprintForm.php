@@ -64,7 +64,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     public function __construct($filename, array $items = [])
     {
-        $this->setSeparator('/');
+        $this->nestedSeparator = '/';
         $this->filename = $filename;
         $this->items = $items;
     }

@@ -15,17 +15,6 @@ trait NestedArrayAccess
     protected $nestedSeparator = '.';
 
     /**
-     * @param string $separator
-     * @return $this
-     */
-    public function setSeparator($separator)
-    {
-        $this->nestedSeparator = $separator;
-
-        return $this;
-    }
-
-    /**
      * Get value by using dot notation for nested arrays/objects.
      *
      * @example $value = $this->get('this.is.my.nested.variable');
