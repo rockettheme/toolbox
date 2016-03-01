@@ -15,11 +15,6 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     use NestedArrayAccessWithGetters, Export;
 
     /**
-     * @var string
-     */
-    protected $nestedSeparator = '/';
-
-    /**
      * @var array
      */
     protected $items;
@@ -69,6 +64,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     public function __construct($filename, array $items = [])
     {
+        $this->setSeparator('/');
         $this->filename = $filename;
         $this->items = $items;
     }
@@ -187,7 +183,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     public function fields()
     {
-        return (array) $this->get('form.fields');
+        return (array) $this->get('form/fields');
     }
 
     /**
