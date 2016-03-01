@@ -375,10 +375,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     }
 
     /**
-     * @param array $value
+     * @param array|string $value
      * @param array $path
      */
-    protected function doImport(array &$value, array &$path)
+    protected function doImport(&$value, array &$path)
     {
         $type = !is_string($value) ? !isset($value['type']) ? null : $value['type'] : $value;
 
@@ -408,10 +408,20 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $filename = array_shift($files);
         $content = $this->loadFile($filename);
 
-        $extends = isset($content['@extends']) ? (array) $content['@extends']
-            : (isset($content['extends@']) ? (array) $content['extends@'] : null);
+        if (isset($content['extends@'])) {
+            $key = 'extends@';
+        } elseif (isset($content['@extends'])) {
+            $key = '@extends';
+        } elseif (isset($content['@extends@'])) {
+            $key = '@extends@';
+        }
 
-        $data = isset($extends) ? $this->doExtend($files, $extends) : [];
+        $data = isset($key) ? $this->doExtend($files, (array) $content[$key]) : [];
+
+        if (isset($key)) {
+            unset($content[$key]);
+        }
+
         $data[] = $content;
 
         return $data;
