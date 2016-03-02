@@ -289,7 +289,7 @@ class BlueprintSchema
      */
     public function extra(array $data, $prefix = '')
     {
-        $rules = &$this->nested;
+        $rules = $this->nested;
 
         // Drill down to prefix level
         if (!empty($prefix)) {
@@ -536,9 +536,10 @@ class BlueprintSchema
      * @return array
      * @internal
      */
-    protected function extraArray(array $data, array $rules, $prefix)
+    protected function extraArray(array &$data, array &$rules, $prefix)
     {
         $array = [];
+
         foreach ($data as $key => $field) {
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = is_string($val) ? $this->items[$val] : null;
