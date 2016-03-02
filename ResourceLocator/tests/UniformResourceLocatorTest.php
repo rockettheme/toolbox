@@ -125,6 +125,21 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testAddPath
+     */
+    public function testIsStream($uri)
+    {
+        $locator = self::$locator;
+
+        // Existing file.
+        $this->assertEquals(true, $locator->isStream('all://base.txt'));
+        // Non-existing file.
+        $this->assertEquals(true, $locator->isStream('all://bar.txt'));
+        // Unknown uri type.
+        $this->assertEquals(false, $locator->isStream('fail://base.txt'));
+    }
+
+    /**
+     * @depends testAddPath
      * @dataProvider findResourcesProvider
      */
     public function testFindResource($uri, $paths)

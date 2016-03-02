@@ -195,6 +195,19 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Returns true if uri is resolvable by using locator.
+     *
+     * @param  string $uri
+     * @return bool
+     */
+    public function isStream($uri)
+    {
+        list ($scheme,) = $this->parseResource($uri);
+
+        return $this->schemeExists($scheme);
+    }
+
+    /**
      * Find highest priority instance from a resource.
      *
      * @param  string $uri      Input URI to be searched.

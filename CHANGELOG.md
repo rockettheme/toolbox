@@ -7,8 +7,10 @@
     * Allow arbitrary dynamic fields in BlueprintSchema (property@)
     * Add default properties support for form field types
     * Add new class BlueprintForm
+    * Add new function UniformResourceLocator::isStream()
     * Remove dependency on ircmaxell/password-compat
     * Add support for Symfony 3
+    * Add a few unit tests
 2. [](#improved)
     * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
 3. [](#bugfix)
