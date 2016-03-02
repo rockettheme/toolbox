@@ -62,11 +62,24 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      * @param string|array $filename
      * @param array $items
      */
-    public function __construct($filename, array $items = [])
+    public function __construct($filename = null, array $items = [])
     {
         $this->nestedSeparator = '/';
         $this->filename = $filename;
         $this->items = $items;
+    }
+
+    /**
+     * Set filename for the blueprint. Can also be array of files for parent lookup.
+     *
+     * @param string|array $filename
+     * @return $this
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
+
+        return $this;
     }
 
     /**
@@ -103,7 +116,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     public function load()
     {
         // Only load and extend blueprint if it has not yet been loaded.
-        if (empty($this->items)) {
+        if (empty($this->items) && $this->filename) {
             // Get list of files.
             $files = $this->getFiles($this->filename);
 
