@@ -369,8 +369,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                 switch ($action) {
                     case 'unset':
                         unset($items[$key]);
-                        if (empty($item)) {
-                            // Drop empty item.
+                        if (empty($items)) {
                             return null;
                         }
                         break;
