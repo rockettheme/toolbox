@@ -350,8 +350,22 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             // Handle special instructions in the form.
             if (!empty($key) && ($key[0] === '@' || $key[strlen($key) - 1] === '@')) {
                 $name = trim($key, '@');
+                $list = explode('-', trim($name, '@'), 2);
+                $action = array_shift($list);
+                $property = array_shift($list);
 
-                switch ($name) {
+                switch ($action) {
+                    case 'unset':
+                        if ($item) {
+                            // Check if we want to drop current item.
+                            if (!$property) {
+                                return null;
+                            }
+
+                            // Otherwise we want to drop given property.
+                            unset($items[$property], $items[$key]);
+                        }
+                        break;
                     case 'import':
                         $this->doImport($item, $path);
                         unset($items[$key]);
@@ -361,10 +375,6 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                         unset($items[$key]);
                         break;
                     default:
-                        $list = explode('-', trim($name, '@'), 2);
-                        $action = array_shift($list);
-                        $property = array_shift($list);
-
                         $this->dynamic[implode('/', $path)][$property] = ['action' => $action, 'params' => $item];
                 }
 
@@ -375,6 +385,8 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                 $location = $this->deepInit($item, $newPath);
                 if ($location) {
                     $order[$key] = $location;
+                } elseif ($location === null) {
+                    unset($items[$key]);
                 }
             }
         }

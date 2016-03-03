@@ -22,8 +22,6 @@ form:
       type: name
       label: Name
       default: Joe
-      validate:
-        type: name
       name: user.name
     user.country:
       type: select
@@ -34,8 +32,3 @@ form:
         - { us: 'United States', fi: Finland, po: Poland }
         - true
       name: user.country
-    undefined:
-      type: select
-      label: Undefined
-      data-options@: undefined_function
-      name: undefined

@@ -11,3 +11,7 @@ form:
 
     user.name:
       default: Joe
+      unset-validate@: true
+
+    undefined:
+      unset@: true
