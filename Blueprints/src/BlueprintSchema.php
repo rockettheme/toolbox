@@ -396,9 +396,9 @@ class BlueprintSchema
                 $properties += $this->items[$key];
             }
 
-            $isFormField = !isset($properties['form_field']) || $properties['form_field'];
+            $isInputField = !isset($properties['input@']) || $properties['input@'];
 
-            if (!$isFormField) {
+            if (!$isInputField) {
                 // Remove property if it exists.
                 if (isset($this->items[$key])) {
                     $this->removeProperty($key);
@@ -430,7 +430,7 @@ class BlueprintSchema
                 $this->parseProperties($key, $properties, $newPath);
             }
 
-            if ($isFormField) {
+            if ($isInputField) {
                 $this->items[$key] = $properties;
             }
         }
