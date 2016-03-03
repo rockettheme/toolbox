@@ -2,12 +2,13 @@
 ## XX/XX/2016
 
 1. [](#new)
+    * Add new function UniformResourceLocator::isStream()
+    * Add new class BlueprintForm
     * Renamed Blueprints class into BlueprintSchema
     * Add new function BlueprintSchema::extra() to return data fields which haven't been defined in blueprints
-    * Allow arbitrary dynamic fields in BlueprintSchema (property@)
+    * Add support to unset and replace blueprint fields and properties
+    * Allow arbitrary dynamic fields in Blueprints (property@)
     * Add default properties support for form field types
-    * Add new class BlueprintForm
-    * Add new function UniformResourceLocator::isStream()
     * Remove dependency on ircmaxell/password-compat
     * Add support for Symfony 3
     * Add a few unit tests

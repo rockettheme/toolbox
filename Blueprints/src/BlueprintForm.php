@@ -318,6 +318,19 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             unset($bref_stack[key($bref_stack)]);
 
             foreach (array_keys($head) as $key) {
+                if (!empty($key) && ($key[0] === '@' || $key[strlen($key) - 1] === '@')) {
+                    $list = explode('-', trim($key, '@'), 2);
+                    $action = array_shift($list);
+                    if ($action === 'unset' || $action === 'replace') {
+                        $property = array_shift($list);
+                        if (!$property) {
+                            $bref = ['unset@' => true];
+                        } else {
+                            unset($bref[$property]);
+                        }
+                        continue;
+                    }
+                }
                 if (isset($key, $bref[$key]) && is_array($bref[$key]) && is_array($head[$key])) {
                     $bref_stack[] = &$bref[$key];
                     $head_stack[] = $head[$key];
@@ -349,21 +362,16 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
 
             // Handle special instructions in the form.
             if (!empty($key) && ($key[0] === '@' || $key[strlen($key) - 1] === '@')) {
-                $name = trim($key, '@');
-                $list = explode('-', trim($name, '@'), 2);
+                $list = explode('-', trim($key, '@'), 2);
                 $action = array_shift($list);
                 $property = array_shift($list);
 
                 switch ($action) {
                     case 'unset':
-                        if ($item) {
-                            // Check if we want to drop current item.
-                            if (!$property) {
-                                return null;
-                            }
-
-                            // Otherwise we want to drop given property.
-                            unset($items[$property], $items[$key]);
+                        unset($items[$key]);
+                        if (empty($item)) {
+                            // Drop empty item.
+                            return null;
                         }
                         break;
                     case 'import':
