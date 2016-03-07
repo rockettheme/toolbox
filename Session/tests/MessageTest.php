@@ -1,10 +1,11 @@
 <?php
 
-use RocketTheme\Toolbox\Session;
+use RocketTheme\Toolbox\Session\Message;
 
-class SessionMessageTest extends PHPUnit_Framework_TestCase {
+class SessionMessageTest extends PHPUnit_Framework_TestCase
+{
 
-    public function testDummy()
+    public function testCreation()
     {
         $message = new Message;
         $this->assertTrue(true);

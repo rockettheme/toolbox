@@ -1,3 +1,23 @@
+# v1.3.0
+## 03/07/2016
+
+1. [](#new)
+    * Add new function UniformResourceLocator::isStream()
+    * Add new class BlueprintForm
+    * Renamed Blueprints class into BlueprintSchema
+    * Add new function BlueprintSchema::extra() to return data fields which haven't been defined in blueprints
+    * Add support to unset and replace blueprint fields and properties
+    * Allow arbitrary dynamic fields in Blueprints (property@)
+    * Add default properties support for form field types
+    * Remove dependency on ircmaxell/password-compat
+    * Add support for Symfony 3
+    * Add a few unit tests
+2. [](#improved)
+    * UniformResourceLocator::addPath(): Add option to add path after existing one (falls back to be last if path is not found)
+3. [](#bugfix)
+    * Fix blueprint without a form
+    * Fix merging data with empty blueprint
+
 # v1.2.0
 ## 10/24/2015
 

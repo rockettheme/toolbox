@@ -72,12 +72,27 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Reset a locator scheme
+     *
+     * @param string $scheme The scheme to reset
+     * 
+     * @return $this
+     */
+    public function resetScheme($scheme)
+    {
+        $this->schemes[$scheme] = [];
+        $this->cache = [];
+        
+        return $this;
+    }
+
+    /**
      * Add new paths to the scheme.
      *
      * @param string $scheme
      * @param string $prefix
      * @param string|array $paths
-     * @param bool  $override  Add path as override.
+     * @param bool|string  $override  True to add path as override, string
      * @param bool  $force     True to add paths even if them do not exist.
      * @throws \BadMethodCallException
      */
@@ -105,9 +120,14 @@ class UniformResourceLocator implements ResourceLocatorInterface
         }
 
         if (isset($this->schemes[$scheme][$prefix])) {
-            $list = $override
-                ? array_merge($this->schemes[$scheme][$prefix], $list)
-                : array_merge($list, $this->schemes[$scheme][$prefix]);
+            $paths = $this->schemes[$scheme][$prefix];
+            if (!$override || $override == 1) {
+                $list = $override ? array_merge($paths, $list) : array_merge($list, $paths);
+            } else {
+                $location = array_search($override, $paths) ?: count($paths);
+                array_splice($paths, $location, 0, $list);
+                $list = $paths;
+            }
         }
 
         $this->schemes[$scheme][$prefix] = $list;
@@ -172,6 +192,19 @@ class UniformResourceLocator implements ResourceLocatorInterface
             throw new \BadMethodCallException('Invalid parameter $uri.');
         }
         return $this->findCached($uri, false, true, false);
+    }
+
+    /**
+     * Returns true if uri is resolvable by using locator.
+     *
+     * @param  string $uri
+     * @return bool
+     */
+    public function isStream($uri)
+    {
+        list ($scheme,) = $this->parseResource($uri);
+
+        return $this->schemeExists($scheme);
     }
 
     /**
@@ -318,7 +351,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         // Handle absolute path lookup.
                         $fullPath = rtrim($path . $filename, '/');
                         if (!$absolute) {
-                            throw new \RuntimeException('UniformResourceLocator: Absolute stream path with relative lookup not allowed', 500);
+                            throw new \RuntimeException("UniformResourceLocator: Absolute stream path with relative lookup not allowed ({$prefix})", 500);
                         }
                     }
 
