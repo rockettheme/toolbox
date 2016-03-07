@@ -1,5 +1,5 @@
 # v1.3.0
-## XX/XX/2016
+## 03/07/2016
 
 1. [](#new)
     * Add new function UniformResourceLocator::isStream()
