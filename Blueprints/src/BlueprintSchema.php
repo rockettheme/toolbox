@@ -544,7 +544,7 @@ class BlueprintSchema
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = is_string($val) ? $this->items[$val] : null;
 
-            if ($rule) {
+            if ($rule || isset($val['*'])) {
                 // Item has been defined in blueprints.
             } elseif (is_array($field) && is_array($val)) {
                 // Array has been defined in blueprints.

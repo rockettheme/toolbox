@@ -1,5 +1,11 @@
-# v1.3.0
+# v1.3.1
 ## XX/XX/2016
+
+3. [](#bugfix)
+    * Fix collections support in BluprintSchema::extra()
+
+# v1.3.0
+## 03/07/2016
 
 1. [](#new)
     * Add new function UniformResourceLocator::isStream()
