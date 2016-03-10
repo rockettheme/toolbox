@@ -334,6 +334,26 @@ class File implements FileInterface
     }
 
     /**
+     * Rename file in the filesystem if it exists.
+     *
+     * @param $filename
+     * @return bool
+     */
+    public function rename($filename)
+    {
+        if ($this->exists() && !@rename($this->filename, $filename)) {
+            return false;
+        }
+
+        unset(static::$instances[$this->filename]);
+        static::$instances[$filename] = $this;
+
+        $this->filename = $filename;
+
+        return true;
+    }
+
+    /**
      * Delete file from filesystem.
      *
      * @return bool

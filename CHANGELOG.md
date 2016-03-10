@@ -1,6 +1,8 @@
 # v1.3.1
 ## XX/XX/2016
 
+1. [](#new)
+    * Add new function File::rename()
 3. [](#bugfix)
     * Fix collections support in BluprintSchema::extra()
 
