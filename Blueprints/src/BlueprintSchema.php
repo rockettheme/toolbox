@@ -306,7 +306,7 @@ class BlueprintSchema
      * @param array $nested
      * @return array
      */
-    protected function buildDefaults(array &$nested)
+    protected function buildDefaults(array $nested)
     {
         $defaults = [];
 
@@ -374,10 +374,10 @@ class BlueprintSchema
      * @param bool   $merge     Merge fields instead replacing them.
      * @param array $formPath
      */
-    protected function parseFormFields(array &$fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
+    protected function parseFormFields(array $fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
         // Go though all the fields in current level.
-        foreach ($fields as $key => &$field) {
+        foreach ($fields as $key => $field) {
             $key = $this->getFieldKey($key, $prefix, $parent);
 
             $newPath = array_merge($formPath, [$key]);
@@ -427,7 +427,9 @@ class BlueprintSchema
                     }
                 }
 
-                $this->parseProperties($key, $properties, $newPath);
+                if ($isInputField) {
+                    $this->parseProperties($key, $properties);
+                }
             }
 
             if ($isInputField) {
@@ -446,8 +448,10 @@ class BlueprintSchema
         return $prefix . $key;
     }
 
-    protected function parseProperties($key, array &$properties, array $formPath)
+    protected function parseProperties($key, array &$properties)
     {
+        $key = ltrim($key, '.');
+
         if (!empty($properties['data'])) {
             $this->dynamic[$key] = $properties['data'];
         }
@@ -536,12 +540,12 @@ class BlueprintSchema
      * @return array
      * @internal
      */
-    protected function extraArray(array &$data, array &$rules, $prefix)
+    protected function extraArray(array $data, array $rules, $prefix)
     {
         $array = [];
 
         foreach ($data as $key => $field) {
-            $val = isset($rules[$key]) ? $rules[$key] : null;
+            $val = isset($rules[$key]) ? $rules[$key] : (isset($rules['*']) ? $rules['*'] : null);
             $rule = is_string($val) ? $this->items[$val] : null;
 
             if ($rule || isset($val['*'])) {
@@ -562,7 +566,7 @@ class BlueprintSchema
      * @param string $property
      * @param array $call
      */
-    protected function dynamicData(array &$field, $property, array &$call)
+    protected function dynamicData(array &$field, $property, array $call)
     {
         $params = $call['params'];
 
