@@ -3,6 +3,7 @@
 
 1. [](#new)
     * Add new function File::rename()
+    * Add new function UniformResourceLocator::fillCache()
 3. [](#bugfix)
     * Fix collections support in BluprintSchema::extra()
 

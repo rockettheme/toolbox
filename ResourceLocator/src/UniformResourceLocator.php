@@ -75,14 +75,14 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * Reset a locator scheme
      *
      * @param string $scheme The scheme to reset
-     * 
+     *
      * @return $this
      */
     public function resetScheme($scheme)
     {
         $this->schemes[$scheme] = [];
         $this->cache = [];
-        
+
         return $this;
     }
 
@@ -108,7 +108,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 $list[] = $path;
             } elseif (strstr($path, '://')) {
                 // Support stream lookup in 'theme://path/to' format.
-                $list[] = explode('://', $path, 2);
+                $stream = explode('://', $path, 2);
+                $stream[1] = trim($stream[1], '/');
+
+                $list[] = $stream;
             } else {
                 // Normalize path.
                 $path = rtrim(str_replace('\\', '/', $path), '/');
@@ -264,6 +267,31 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Pre-fill cache by a stream.
+     *
+     * @param string $uri
+     * @return $this
+     */
+    public function fillCache($uri)
+    {
+        $cacheKey = $uri . '@cache';
+
+        if (!isset($this->cache[$cacheKey])) {
+            $this->cache[$cacheKey] = true;
+
+            $iterator = new \RecursiveIteratorIterator($this->getRecursiveIterator($uri), \RecursiveIteratorIterator::SELF_FIRST);
+
+            /** @var UniformResourceIterator $uri */
+            foreach ($iterator as $uri) {
+                $key = $uri->getUrl() . '@010';
+                $this->cache[$key] = $uri->getPathname();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Parse resource.
      *
      * @param $uri
@@ -332,7 +360,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
             foreach ($paths as $path) {
                 if (is_array($path)) {
                     // Handle scheme lookup.
-                    $relPath = trim(trim($path[1], '/') . $filename, '/');
+                    $relPath = trim($path[1] . $filename, '/');
                     $found = $this->find($path[0], $relPath, $array, $absolute, $all);
                     if ($found) {
                         if (!$array) {
