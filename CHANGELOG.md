@@ -6,6 +6,7 @@
     * Add new function UniformResourceLocator::fillCache()
 3. [](#bugfix)
     * Fix collections support in BluprintSchema::extra()
+    * Fix exception in stream wrapper when scheme is not defined in locator 
 
 # v1.3.0
 ## 03/07/2016

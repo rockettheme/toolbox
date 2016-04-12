@@ -20,6 +20,14 @@ interface ResourceLocatorInterface
     public function __invoke($uri);
 
     /**
+     * Returns true if uri is resolvable by using locator.
+     *
+     * @param  string $uri
+     * @return bool
+     */
+    public function isStream($uri);
+
+    /**
      * @param  string $uri
      * @param  bool   $absolute
      * @param  bool   $first

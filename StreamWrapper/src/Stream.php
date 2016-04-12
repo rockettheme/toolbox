@@ -234,6 +234,6 @@ class Stream implements StreamInterface
 
     protected function findPath($uri)
     {
-        return static::$locator ? static::$locator->findResource($uri) : false;
+        return static::$locator && static::$locator->isStream($uri) ? static::$locator->findResource($uri) : false;
     }
 }
