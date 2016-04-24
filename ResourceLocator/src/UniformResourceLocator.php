@@ -350,6 +350,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
         $results = $array ? [] : false;
         foreach ($this->schemes[$scheme] as $prefix => $paths) {
+            // If $file doesn't begin with $prefix, move on to the next path
             if ($prefix && strpos($file, $prefix) !== 0) {
                 continue;
             }
@@ -359,7 +360,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
             foreach ($paths as $path) {
                 if (is_array($path)) {
-                    // Handle scheme lookup.
+                    // Handle scheme lookup, for cases where the path is part of another stream [<stream>, <relativepath>]
                     $relPath = trim($path[1] . $filename, '/');
                     $found = $this->find($path[0], $relPath, $array, $absolute, $all);
                     if ($found) {
@@ -369,22 +370,38 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         $results = array_merge($results, $found);
                     }
                 } else {
-                    // TODO: We could provide some extra information about the path to remove preg_match().
+                    // TODO: We could provide some extra information about the path to remove the need for regex-based matching.
+                    $isAbsolutePath = $this->getRootDirectory($path);
                     // Check absolute paths for both unix and windows
-                    if (!$path || !preg_match('`^/|\w+:`', $path)) {
+                    if (!$path || !$isAbsolutePath) {
                         // Handle relative path lookup.
                         $relPath = trim($path . $filename, '/');
                         $fullPath = $this->base . '/' . $relPath;
+                        $searchPath = rtrim($this->base . '/' . $path, '/');                        
                     } else {
                         // Handle absolute path lookup.
                         $fullPath = rtrim($path . $filename, '/');
+                        $searchPath = rtrim($path, '/');
                         if (!$absolute) {
                             throw new \RuntimeException("UniformResourceLocator: Absolute stream path with relative lookup not allowed ({$prefix})", 500);
                         }
                     }
-
-                    if ($all || file_exists($fullPath)) {
-                        $current = $absolute ? $fullPath : $relPath;
+                    
+                    // Resolve $fullPath to its "realpath", i.e. resolving any directory traversals and symbolic links
+                    $rootSymbol = $this->getRootDirectory($fullPath);
+                    $realFullPath = $rootSymbol . $this->normalizePath($fullPath);
+                    
+                    // Make sure that $realFullPath begins with $searchPath - otherwise it is not allowed!
+                    $allowed = (strpos($realFullPath, $searchPath) === 0);
+                    
+                    if ($all || ($allowed && file_exists($realFullPath))) {
+                        // Decide whether we're returning the absolute or relative path
+                        if ($absolute){
+                            $current = $realFullPath;
+                        } else {
+                            $current = $this->normalizePath($relPath);
+                        }
+                        
                         if (!$array) {
                             return $current;
                         }
@@ -396,4 +413,68 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
         return $results;
     }
+    
+    /**
+     * Get the root directory of an absolute file path in Windows or *nix systems.
+     *
+     * If the path is not an absolute file path, this will return the empty string.
+     * If it matches an absolute path on *nix type systems, this will return a forward slash `/`.
+     * If it matches an absolute path on Windows systems, this will return a drive letter, colon, and backslash (e.g. "C:\")
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public function getRootDirectory($path)
+    {
+        if ($path) {
+            $isAbsolutePath = preg_match('`^/|\w+:`', $path, $rootSymbol);
+            return isset($rootSymbol[0]) ? $rootSymbol[0] : '';
+        } else {
+            return '';
+        }
+    }
+    
+    /**
+     * Normalize path.
+     *
+     * Adapted from thephpleague/flysystem
+     * @link https://github.com/thephpleague/flysystem/blob/15dcc8ee9b279b40fbcca47ad9c7257a41b61947/src/Util.php#L74-L121 
+     * @param string $path
+     *
+     * @return string|false
+     */
+    public function normalizePath($path)
+    {
+        // Remove any kind of funky unicode whitespace
+        $normalized = preg_replace('#\p{C}+|^\./#u', '', $path);
+        $normalized = $this->normalizeRelativePath($normalized);
+        if (preg_match('#/\.{2}|^\.{2}/|^\.{2}$#', $normalized)) {
+            return false;
+        }
+        $normalized = preg_replace('#\\\{2,}#', '\\', trim($normalized, '\\'));
+        $normalized = preg_replace('#/{2,}#', '/', trim($normalized, '/'));
+        return $normalized;
+    }
+    
+    /**
+     * Normalize relative directories in a path.
+     *
+     * Adapted from thephpleague/flysystem
+     * @link https://github.com/thephpleague/flysystem/blob/15dcc8ee9b279b40fbcca47ad9c7257a41b61947/src/Util.php#L74-L121 
+     * @param string $path
+     *
+     * @return string
+     */
+    public function normalizeRelativePath($path)
+    {
+        // Path remove self referring paths ("/./").
+        $path = preg_replace('#/\.(?=/)|^\./|(/|^)\./?$#', '', $path);
+        // Regex for resolving relative paths
+        $regex = '#/*[^/\.]+/\.\.#Uu';
+        while (preg_match($regex, $path)) {
+            $path = preg_replace($regex, '', $path);
+        }
+        return $path;
+    }    
 }
