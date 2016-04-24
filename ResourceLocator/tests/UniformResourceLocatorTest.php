@@ -186,6 +186,11 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
             ['all://local_override.txt', ['override/all/local_override.txt', 'local/all/local_override.txt']],
             ['all://override.txt', ['override/all/override.txt']],
             ['all://missing.txt', []],
+            // Testing paths containing directory traversals (..)
+            // This path should resolve correctly because it is inside a registered path for the scheme...
+            ['base://../base/all/base.txt', ['base/all/base.txt']],
+            // But this one should fail because it resolves outside of a registered path
+            ['all://../../restricted.txt', []],
         ];
     }
 
