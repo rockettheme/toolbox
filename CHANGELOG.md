@@ -1,5 +1,5 @@
 # v1.3.1
-## XX/XX/2016
+## 04/25/2016
 
 1. [](#new)
     * Add new function File::rename()
