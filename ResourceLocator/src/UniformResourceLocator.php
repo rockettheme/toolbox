@@ -362,13 +362,18 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $key = $uri .'@'. (int) $array . (int) $absolute . (int) $all;
 
         if (!isset($this->cache[$key])) {
-            list ($scheme, $file) = $this->normalize($uri, true, true);
+            try {
+                list ($scheme, $file) = $this->normalize($uri, true, true);
 
-            if (!$file && $scheme === 'file') {
-                $file = $this->base;
+                if (!$file && $scheme === 'file') {
+                    $file = $this->base;
+                }
+
+                $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
+
+            } catch (\BadMethodCallException $e) {
+                $this->cache[$key] =  $array ? [] : false;
             }
-
-            $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
         }
 
         return $this->cache[$key];
