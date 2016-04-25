@@ -1,3 +1,15 @@
+# v1.3.1
+## 04/25/2016
+
+1. [](#new)
+    * Add new function File::rename()
+    * Add new function UniformResourceLocator::fillCache()
+3. [](#bugfix)
+    * Fix collections support in BluprintSchema::extra()
+    * Fix exception in stream wrapper when scheme is not defined in locator 
+    * Prevent UniformResourceLocator from resolving paths outside of defined scheme paths (#8)
+    * Fix breaking YAML files which start with three dashes (#5) 
+
 # v1.3.0
 ## 03/07/2016
 

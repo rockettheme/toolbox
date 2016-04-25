@@ -75,14 +75,14 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * Reset a locator scheme
      *
      * @param string $scheme The scheme to reset
-     * 
+     *
      * @return $this
      */
     public function resetScheme($scheme)
     {
         $this->schemes[$scheme] = [];
         $this->cache = [];
-        
+
         return $this;
     }
 
@@ -108,7 +108,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
                 $list[] = $path;
             } elseif (strstr($path, '://')) {
                 // Support stream lookup in 'theme://path/to' format.
-                $list[] = explode('://', $path, 2);
+                $stream = explode('://', $path, 2);
+                $stream[1] = trim($stream[1], '/');
+
+                $list[] = $stream;
             } else {
                 // Normalize path.
                 $path = rtrim(str_replace('\\', '/', $path), '/');
@@ -202,9 +205,72 @@ class UniformResourceLocator implements ResourceLocatorInterface
      */
     public function isStream($uri)
     {
-        list ($scheme,) = $this->parseResource($uri);
+        try {
+            list ($scheme,) = $this->normalize($uri, true, true);
+        } catch (\Exception $e) {
+            return false;
+        }
 
         return $this->schemeExists($scheme);
+    }
+
+    /**
+     * Returns the canonicalized URI on success. The resulting path will have no '/./' or '/../' components.
+     * Trailing delimiter `/` is kept.
+     *
+     * By default (if $throwException parameter is not set to true) returns false on failure.
+     *
+     * @param string $uri
+     * @param bool $throwException
+     * @param bool $splitStream
+     * @return string|array|bool
+     * @throws \BadMethodCallException
+     */
+    public function normalize($uri, $throwException = false, $splitStream = false)
+    {
+        if (!is_string($uri)) {
+            if ($throwException) {
+                throw new \BadMethodCallException('Invalid parameter $uri.');
+            } else {
+                return false;
+            }
+        }
+
+        $uri = preg_replace('|\\\|u', '/', $uri);
+        $segments = explode('://', $uri, 2);
+        $path = array_pop($segments);
+        $scheme = array_pop($segments) ?: 'file';
+
+        if ($path) {
+            $path = preg_replace('|\\\|u', '/', $path);
+            $parts = explode('/', $path);
+
+            $list = [];
+            foreach ($parts as $i => $part) {
+                if ($part === '..') {
+                    $part = array_pop($list);
+                    if ($part === null || $part === '' || (!$list && strpos($part, ':'))) {
+                        if ($throwException) {
+                            throw new \BadMethodCallException('Invalid parameter $uri.');
+                        } else {
+                            return false;
+                        }
+                    }
+                } elseif (($i && $part === '') || $part === '.') {
+                    continue;
+                } else {
+                    $list[] = $part;
+                }
+            }
+
+            if (($l = end($parts)) === '' || $l === '.' || $l === '..') {
+                $list[] = '';
+            }
+
+            $path = implode('/', $list);
+        }
+
+        return $splitStream ? [$scheme, $path] : ($scheme !== 'file' ? "{$scheme}://{$path}" : $path);
     }
 
     /**
@@ -264,29 +330,30 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
-     * Parse resource.
+     * Pre-fill cache by a stream.
      *
-     * @param $uri
-     * @return array
-     * @throws \InvalidArgumentException
-     * @internal
+     * @param string $uri
+     * @return $this
      */
-    protected function parseResource($uri)
+    public function fillCache($uri)
     {
-        $segments = explode('://', $uri, 2);
-        $file = array_pop($segments);
-        $scheme = array_pop($segments);
+        $cacheKey = $uri . '@cache';
 
-        if (!$scheme) {
-            $scheme = 'file';
+        if (!isset($this->cache[$cacheKey])) {
+            $this->cache[$cacheKey] = true;
+
+            $iterator = new \RecursiveIteratorIterator($this->getRecursiveIterator($uri), \RecursiveIteratorIterator::SELF_FIRST);
+
+            /** @var UniformResourceIterator $uri */
+            foreach ($iterator as $uri) {
+                $key = $uri->getUrl() . '@010';
+                $this->cache[$key] = $uri->getPathname();
+            }
         }
 
-        if (!$file && $scheme == 'file') {
-            $file = $this->base;
-        }
-
-        return [$scheme, $file];
+        return $this;
     }
+
 
 
     protected function findCached($uri, $array, $absolute, $all)
@@ -295,9 +362,18 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $key = $uri .'@'. (int) $array . (int) $absolute . (int) $all;
 
         if (!isset($this->cache[$key])) {
-            list ($scheme, $file) = $this->parseResource($uri);
+            try {
+                list ($scheme, $file) = $this->normalize($uri, true, true);
 
-            $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
+                if (!$file && $scheme === 'file') {
+                    $file = $this->base;
+                }
+
+                $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
+
+            } catch (\BadMethodCallException $e) {
+                $this->cache[$key] =  $array ? [] : false;
+            }
         }
 
         return $this->cache[$key];
@@ -332,7 +408,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
             foreach ($paths as $path) {
                 if (is_array($path)) {
                     // Handle scheme lookup.
-                    $relPath = trim(trim($path[1], '/') . $filename, '/');
+                    $relPath = trim($path[1] . $filename, '/');
                     $found = $this->find($path[0], $relPath, $array, $absolute, $all);
                     if ($found) {
                         if (!$array) {
