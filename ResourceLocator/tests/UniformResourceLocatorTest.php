@@ -136,6 +136,18 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $locator->isStream('all://bar.txt'));
         // Unknown uri type.
         $this->assertEquals(false, $locator->isStream('fail://base.txt'));
+        // Bad uri.
+        $this->assertEquals(false, $locator->isStream('fail://../base.txt'));
+    }
+
+    /**
+     * @dataProvider normalizeProvider
+     */
+    public function testNormalize($uri, $path)
+    {
+        $locator = self::$locator;
+
+        $this->assertEquals($path, $locator->normalize($uri));
     }
 
     /**
@@ -176,6 +188,42 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($fullPath, $locator($uri));
     }
 
+
+    public function normalizeProvider() {
+        return [
+            ['', ''],
+            ['./', ''],
+            ['././/./', ''],
+            ['././/../', false],
+            ['/', '/'],
+            ['//', '/'],
+            ['///', '/'],
+            ['/././', '/'],
+            ['foo', 'foo'],
+            ['/foo', '/foo'],
+            ['//foo', '/foo'],
+            ['/foo/', '/foo/'],
+            ['//foo//', '/foo/'],
+            ['path/to/file.txt', 'path/to/file.txt'],
+            ['path/to/../file.txt', 'path/file.txt'],
+            ['path/to/../../file.txt', 'file.txt'],
+            ['path/to/../../../file.txt', false],
+            ['/path/to/file.txt', '/path/to/file.txt'],
+            ['/path/to/../file.txt', '/path/file.txt'],
+            ['/path/to/../../file.txt', '/file.txt'],
+            ['/path/to/../../../file.txt', false],
+            ['c:\\', 'c:/'],
+            ['c:\\path\\to\file.txt', 'c:/path/to/file.txt'],
+            ['c:\\path\\to\../file.txt', 'c:/path/file.txt'],
+            ['c:\\path\\to\../../file.txt', 'c:/file.txt'],
+            ['c:\\path\\to\../../../file.txt', false],
+            ['stream://path/to/file.txt', 'stream://path/to/file.txt'],
+            ['stream://path/to/../file.txt', 'stream://path/file.txt'],
+            ['stream://path/to/../../file.txt', 'stream://file.txt'],
+            ['stream://path/to/../../../file.txt', false],
+
+        ];
+    }
     public function findResourcesProvider() {
         return [
             ['all://base.txt', ['base/all/base.txt']],
@@ -186,6 +234,7 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
             ['all://local_override.txt', ['override/all/local_override.txt', 'local/all/local_override.txt']],
             ['all://override.txt', ['override/all/override.txt']],
             ['all://missing.txt', []],
+            ['all://asdf/../base.txt', ['base/all/base.txt']],
         ];
     }
 
