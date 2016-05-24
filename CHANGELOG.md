@@ -1,3 +1,11 @@
+# v1.3.2
+## 05/24/2016
+
+1. [](#new)
+    * Added a new function BlueprintForm::getFilename()
+1. [](#bugfix)
+    * BlueprintsForm: Detect if user really meant to extend parent blueprint, not another one
+
 # v1.3.1
 ## 04/25/2016
 

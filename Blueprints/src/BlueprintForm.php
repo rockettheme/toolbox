@@ -83,6 +83,16 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     }
 
     /**
+     * Get the filename of the blueprint.
+     *
+     * @return array|null|string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
      * Set context for import@ and extend@.
      *
      * @param $context
@@ -123,7 +133,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             // Load and extend blueprints.
             $data = $this->doLoad($files);
 
-            $this->items = array_shift($data);
+            $this->items = (array) array_shift($data);
 
             foreach ($data as $content) {
                 $this->extend($content, true);
@@ -448,7 +458,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $key = '@extends@';
         }
 
-        $data = isset($key) ? $this->doExtend($files, (array) $content[$key]) : [];
+        $data = isset($key) ? $this->doExtend($filename, $files, (array) $content[$key]) : [];
 
         if (isset($key)) {
             unset($content[$key]);
@@ -462,11 +472,12 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Internal function to recursively load extended blueprints.
      *
+     * @param string $filename
      * @param array $parents
      * @param array $extends
      * @return array
      */
-    protected function doExtend(array $parents, array $extends)
+    protected function doExtend($filename, array $parents, array $extends)
     {
         if (is_string(key($extends))) {
             $extends = [$extends];
@@ -483,9 +494,29 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             }
 
             if ($type === '@parent' || $type === 'parent@') {
+                if (!$parents) {
+                    throw new \RuntimeException("Parent blueprint missing for '{$filename}'");
+                }
+
                 $files = $parents;
             } else {
                 $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
+
+                // Detect extend loops.
+                if ($files && array_intersect($files, $parents)) {
+                    // Let's check if user really meant extends@: parent@.
+                    $index = array_search($filename, $files);
+                    if ($index !== false) {
+                        // We want to grab only the parents of the file which is currently being loaded.
+                        $files = array_slice($files, $index + 1);
+                    }
+                    if ($files !== $parents) {
+                        throw new \RuntimeException("Loop detected while extending blueprint file '{$filename}'");
+                    }
+                    if (!$parents) {
+                        throw new \RuntimeException("Parent blueprint missing for '{$filename}'");
+                    }
+                }
             }
 
             if ($files) {
