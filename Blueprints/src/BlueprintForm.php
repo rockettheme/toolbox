@@ -83,6 +83,16 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     }
 
     /**
+     * Get the filename of the blueprint.
+     *
+     * @return array|null|string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
      * Set context for import@ and extend@.
      *
      * @param $context
