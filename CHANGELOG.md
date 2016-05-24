@@ -1,3 +1,9 @@
+# v1.3.2
+## XX/XX/2016
+
+3. [](#bugfix)
+    * BlueprintsForm: Detect if user really meant to extend parent blueprint, not another one
+
 # v1.3.1
 ## 04/25/2016
 
