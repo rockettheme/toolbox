@@ -1,3 +1,9 @@
+# v1.3.3
+## 06/30/2016
+
+1. [](#improved)
+    * Improve session start check
+
 # v1.3.2
 ## 05/24/2016
 
