@@ -26,7 +26,7 @@ class Session implements \IteratorAggregate
      * @param string $domain   Optional, domain for the session
      * @throws \RuntimeException
      */
-    public function __construct($lifetime, $path, $domain = '')
+    public function __construct($lifetime, $path, $domain = null)
     {
         // Session is a singleton.
         if (isset(self::$instance)) {
