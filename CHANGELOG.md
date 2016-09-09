@@ -4,6 +4,8 @@
 2. [](#improved)
     * Allow calls without parameter in UniformResourceLocator::getPaths()
     * Add support for BlueprintSchema::getPropertyName() and getProperty()
+    * Add domain parameter to Session constructor
+    * Add support for `FilesystemIterator::FOLLOW_SYMLINKS` in RecursiveUniformResourceIterator class
 
 # v1.3.2
 ## 05/24/2016
