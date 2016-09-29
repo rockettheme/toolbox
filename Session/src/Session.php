@@ -20,6 +20,23 @@ class Session implements \IteratorAggregate
      */
     static $instance;
 
+    
+    /**
+    * http://php.net/manual/fr/function.session-status.php#113468
+    * Check if session is started nicelly
+    * @return bool
+    */
+    private function isSessionStarted()
+    {
+        if ( php_sapi_name() !== 'cli' ) {
+            if ( version_compare(phpversion(), '5.4.0', '>=') ) {
+                return session_status() == PHP_SESSION_ACTIVE ? TRUE : FALSE;
+            } else {
+                return !(session_id === '');
+            }
+        }
+    }
+    
     /**
      * @param int    $lifetime Defaults to 1800 seconds.
      * @param string $path     Cookie path.
@@ -34,7 +51,7 @@ class Session implements \IteratorAggregate
         }
 
         // Destroy any existing sessions started with session.auto_start
-        if (session_id())
+        if ($this->isSessionStarted())
         {
             session_unset();
             session_destroy();
