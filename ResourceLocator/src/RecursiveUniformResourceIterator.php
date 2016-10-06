@@ -8,7 +8,7 @@ namespace RocketTheme\Toolbox\ResourceLocator;
  * @author RocketTheme
  * @license MIT
  */
-class RecursiveUniformResourceIterator extends UniformResourceIterator implements \RecursiveIterator
+class RecursiveUniformResourceIterator extends UniformResourceIterator implements \SeekableIterator, \RecursiveIterator
 {
     protected $subPath;
 
@@ -19,8 +19,10 @@ class RecursiveUniformResourceIterator extends UniformResourceIterator implement
         return (new RecursiveUniformResourceIterator($this->getUrl(), $this->flags, $this->locator))->setSubPath($subPath);
     }
 
-    public function hasChildren($allow_links = false)
+    public function hasChildren($allow_links = null)
     {
+        $allow_links = (bool) ($allow_links !== null ? $allow_links : $this->flags & \FilesystemIterator::FOLLOW_SYMLINKS);
+
         return $this->iterator && $this->isDir() && !$this->isDot() && ($allow_links || !$this->isLink());
     }
 

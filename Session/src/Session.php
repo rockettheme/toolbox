@@ -23,9 +23,10 @@ class Session implements \IteratorAggregate
     /**
      * @param int    $lifetime Defaults to 1800 seconds.
      * @param string $path     Cookie path.
+     * @param string $domain   Optional, domain for the session
      * @throws \RuntimeException
      */
-    public function __construct($lifetime, $path)
+    public function __construct($lifetime, $path, $domain = null)
     {
         // Session is a singleton.
         if (isset(self::$instance)) {
@@ -46,7 +47,7 @@ class Session implements \IteratorAggregate
         ini_set('session.use_cookies', 1);
 
         session_name('msF9kJcW');
-        session_set_cookie_params($lifetime, $path);
+        session_set_cookie_params($lifetime, $path, $domain);
         register_shutdown_function([$this, 'close']);
         session_cache_limiter('nocache');
 

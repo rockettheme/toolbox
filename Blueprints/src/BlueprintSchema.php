@@ -247,37 +247,57 @@ class BlueprintSchema
      */
     public function mergeData(array $data1, array $data2, $name = null, $separator = '.')
     {
-        $nested = $this->getProperty($name, $separator);
+        $nested = $this->getNested($name, $separator);
+
+        if (!is_array($nested)) {
+            $nested = [];
+        }
 
         return $this->mergeArrays($data1, $data2, $nested);
     }
 
-
     /**
-     * Get property from the definition.
+     * Get the property with given path.
      *
-     * @param  string  $path  Comma separated path to the property.
-     * @param  string  $separator
-     * @return array
-     * @internal
+     * @param string $path
+     * @param string $separator
+     * @return mixed
      */
     public function getProperty($path = null, $separator = '.')
     {
-        if (!$path) {
-            return $this->nested;
-        }
-        $parts = explode($separator, $path);
-        $item = array_pop($parts);
+        $name = $this->getPropertyName($path, $separator);
+        $property = $this->get($name);
+        $nested = $this->getNested($name);
 
+        return $this->getPropertyRecursion($property, $nested);
+    }
+
+    /**
+     * Returns name of the property with given path.
+     *
+     * @param string $path
+     * @param string $separator
+     * @return string
+     */
+    public function getPropertyName($path = null, $separator = '.')
+    {
+        $parts = explode($separator, $path);
         $nested = $this->nested;
-        foreach ($parts as $part) {
+
+        $result = [];
+        while (($part = array_shift($parts)) !== null) {
             if (!isset($nested[$part])) {
-                return [];
+                if (isset($nested['*'])) {
+                    $part = '*';
+                } else {
+                    return implode($separator, array_merge($result, [$part], $parts));
+                }
             }
+            $result[] = $part;
             $nested = $nested[$part];
         }
 
-        return isset($nested[$item]) && is_array($nested[$item]) ? $nested[$item] : [];
+        return implode('.', $result);
     }
 
     /**
@@ -300,6 +320,67 @@ class BlueprintSchema
         }
 
         return $this->extraArray($data, $rules, $prefix);
+    }
+
+    /**
+     * Get the property with given path.
+     *
+     * @param $property
+     * @param $nested
+     * @return mixed
+     */
+    protected function getPropertyRecursion($property, $nested)
+    {
+        if (!isset($property['type']) || empty($nested) || !is_array($nested)) {
+            return $property;
+        }
+
+        if ($property['type'] === '_root') {
+            foreach ($nested as $key => $value) {
+                if ($key === '') {
+                    continue;
+                }
+                $name = is_array($value) ? $key : $value;
+                $property['fields'][$key] = $this->getPropertyRecursion($this->get($name), $value);
+            }
+        } elseif ($property['type'] === '_parent' || !empty($property['array'])) {
+            foreach ($nested as $key => $value) {
+                $name = is_array($value) ? "{$property['name']}.{$key}" : $value;
+                $property['fields'][$key] = $this->getPropertyRecursion($this->get($name), $value);
+            }
+        }
+
+        return $property;
+    }
+
+    /**
+     * Get property from the definition.
+     *
+     * @param  string  $path  Comma separated path to the property.
+     * @param  string  $separator
+     * @return array|string|null
+     * @internal
+     */
+    protected function getNested($path = null, $separator = '.')
+    {
+        if (!$path) {
+            return $this->nested;
+        }
+        $parts = explode($separator, $path);
+        $item = array_pop($parts);
+
+        $nested = $this->nested;
+        foreach ($parts as $part) {
+            if (!isset($nested[$part])) {
+                $part = '*';
+                if (!isset($nested[$part])) {
+                    return [];
+                }
+            }
+            $nested = $nested[$part];
+        }
+
+        return isset($nested[$item]) ? $nested[$item] : (isset($nested['*']) ? $nested['*'] : null);
     }
 
     /**
