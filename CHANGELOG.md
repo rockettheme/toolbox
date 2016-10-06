@@ -1,5 +1,5 @@
 # v1.3.3
-## XX/XX/2016
+## 10/06/2016
 
 2. [](#improved)
     * Allow calls without parameter in UniformResourceLocator::getPaths()
