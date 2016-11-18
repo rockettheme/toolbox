@@ -1,3 +1,9 @@
+# v1.3.4
+## XX/XX/2016
+
+3. [](#bugfix)
+    * IniFile::content() should not fail if file doesn't exist
+
 # v1.3.3
 ## 10/06/2016
 
@@ -6,8 +12,6 @@
     * Add support for BlueprintSchema::getPropertyName() and getProperty()
     * Add domain parameter to Session constructor
     * Add support for `FilesystemIterator::FOLLOW_SYMLINKS` in RecursiveUniformResourceIterator class
-3. [](#bugfix)
-    * IniFile::content() should not fail if file doesn't exist
 
 # v1.3.2
 ## 05/24/2016
