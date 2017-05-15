@@ -1,5 +1,5 @@
 # v1.3.4
-## mm/dd/2017
+## 05/15/2017
 
 1. [](#new)
     * Blueprint: Add support for a single array field in forms
