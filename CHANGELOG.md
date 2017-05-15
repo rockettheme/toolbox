@@ -1,8 +1,9 @@
 # v1.3.4
-## XX/XX/2016
+## mm/dd/2017
 
 3. [](#bugfix)
     * IniFile::content() should not fail if file doesn't exist
+    * Protection against invalid session cookie name throwing exception
 
 # v1.3.3
 ## 10/06/2016
