@@ -217,8 +217,6 @@ class Session implements \IteratorAggregate
      * Removes an attribute.
      *
      * @param string $name
-     *
-     * @return mixed The removed value or null when it does not exist
      */
     public function __unset($name)
     {
