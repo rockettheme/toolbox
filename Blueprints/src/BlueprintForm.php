@@ -206,7 +206,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     public function fields()
     {
-        return (array) $this->get('form/fields');
+        return (array) ($this->get('form/fields') ?: ['' => $this->get('form/field')]);
     }
 
     /**

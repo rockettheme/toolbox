@@ -6,6 +6,7 @@
     * Session: Protection against invalid session cookie name throwing exception
     * Session: Do not destroy session on CLI
     * BlueprintSchema: Fixed warning when field list is not what was expected 
+    * Blueprint: Add support for a single array field in forms
 
 # v1.3.3
 ## 10/06/2016
