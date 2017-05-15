@@ -83,6 +83,11 @@ class Session implements \IteratorAggregate
      */
     public function start()
     {
+        // Protection against invalid session cookie names throwing exception
+        if (isset($_COOKIE[session_name()]) && !preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $_COOKIE[session_name()])) {
+            unset($_COOKIE[session_name()]);
+        }
+
         if (!session_start()) {
             throw new \RuntimeException('Failed to start session.', 500);
         }
