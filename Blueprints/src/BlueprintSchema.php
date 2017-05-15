@@ -457,8 +457,18 @@ class BlueprintSchema
      */
     protected function parseFormFields(array $fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
+        // Ignore single field as we're expecting list of fields.
+        if (isset($fields['type']) && !is_array($fields['type'])) {
+            return;
+        }
+
         // Go though all the fields in current level.
         foreach ($fields as $key => $field) {
+            // Skip illegal field (needs to be an array).
+            if (!is_array($field)) {
+                continue;
+            }
+
             $key = $this->getFieldKey($key, $prefix, $parent);
 
             $newPath = array_merge($formPath, [$key]);
