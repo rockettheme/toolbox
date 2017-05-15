@@ -1,3 +1,14 @@
+# v1.3.4
+## 05/15/2017
+
+1. [](#new)
+    * Blueprint: Add support for a single array field in forms
+3. [](#bugfix)
+    * IniFile::content() should not fail if file doesn't exist
+    * Session: Protection against invalid session cookie name throwing exception
+    * Session: Do not destroy session on CLI
+    * BlueprintSchema: Fixed warning when field list is not what was expected 
+
 # v1.3.3
 ## 10/06/2016
 

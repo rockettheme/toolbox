@@ -20,6 +20,7 @@ class Session implements \IteratorAggregate
      */
     static $instance;
 
+    
     /**
      * @param int    $lifetime Defaults to 1800 seconds.
      * @param string $path     Cookie path.
@@ -34,7 +35,7 @@ class Session implements \IteratorAggregate
         }
 
         // Destroy any existing sessions started with session.auto_start
-        if (session_id())
+        if ($this->isSessionStarted())
         {
             session_unset();
             session_destroy();
@@ -83,6 +84,11 @@ class Session implements \IteratorAggregate
      */
     public function start()
     {
+        // Protection against invalid session cookie names throwing exception: http://php.net/manual/en/function.session-id.php#116836
+        if (isset($_COOKIE[session_name()]) && !preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $_COOKIE[session_name()])) {
+            unset($_COOKIE[session_name()]);
+        }
+
         if (!session_start()) {
             throw new \RuntimeException('Failed to start session.', 500);
         }
@@ -217,8 +223,6 @@ class Session implements \IteratorAggregate
      * Removes an attribute.
      *
      * @param string $name
-     *
-     * @return mixed The removed value or null when it does not exist
      */
     public function __unset($name)
     {
@@ -254,5 +258,15 @@ class Session implements \IteratorAggregate
     public function started()
     {
         return $this->started;
+    }
+
+    /**
+     * http://php.net/manual/en/function.session-status.php#113468
+     * Check if session is started nicely.
+     * @return bool
+     */
+    protected function isSessionStarted()
+    {
+        return php_sapi_name() !== 'cli' ? session_id() !== '' : false;
     }
 }
