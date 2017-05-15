@@ -4,7 +4,7 @@
 3. [](#bugfix)
     * IniFile::content() should not fail if file doesn't exist
     * Session: Protection against invalid session cookie name throwing exception
-    * Session: 
+    * Session: Do not destroy session on CLI
 
 # v1.3.3
 ## 10/06/2016
