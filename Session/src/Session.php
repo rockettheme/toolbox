@@ -22,18 +22,6 @@ class Session implements \IteratorAggregate
 
     
     /**
-    * http://php.net/manual/fr/function.session-status.php#113468
-    * Check if session is started nicelly
-    * @return bool
-    */
-    private function isSessionStarted()
-    {
-        if ( php_sapi_name() !== 'cli' ) {
-            return !(session_id === '');
-        }
-    }
-    
-    /**
      * @param int    $lifetime Defaults to 1800 seconds.
      * @param string $path     Cookie path.
      * @param string $domain   Optional, domain for the session
@@ -270,5 +258,15 @@ class Session implements \IteratorAggregate
     public function started()
     {
         return $this->started;
+    }
+
+    /**
+     * http://php.net/manual/en/function.session-status.php#113468
+     * Check if session is started nicely.
+     * @return bool
+     */
+    protected function isSessionStarted()
+    {
+        return php_sapi_name() !== 'cli' ? session_id() !== '' : false;
     }
 }

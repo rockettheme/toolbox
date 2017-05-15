@@ -3,7 +3,8 @@
 
 3. [](#bugfix)
     * IniFile::content() should not fail if file doesn't exist
-    * Protection against invalid session cookie name throwing exception
+    * Session: Protection against invalid session cookie name throwing exception
+    * Session: 
 
 # v1.3.3
 ## 10/06/2016
