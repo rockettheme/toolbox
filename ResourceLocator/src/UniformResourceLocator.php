@@ -102,7 +102,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
         foreach((array) $paths as $path) {
             if (is_array($path)) {
                 // Support stream lookup in ['theme', 'path/to'] format.
-                if (count($path) != 2) {
+                if (count($path) != 2 || !is_string($path[0]) || !is_string($path[1])) {
                     throw new \BadMethodCallException('Invalid stream path given.');
                 }
                 $list[] = $path;

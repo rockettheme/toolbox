@@ -5,6 +5,7 @@
     * Improved error message in `File::content()` class when failing to load the data
 3. [](#bugfix)
     * Fixed `Blueprintform::resolve()` to use slash notation by default instead of dot notation
+    * Fixed warning if badly formatted `$path` parameter is given to `UniformResourceLocator::addPath()`
 
 # v1.3.4
 ## 05/15/2017
