@@ -1,3 +1,9 @@
+# v1.3.5
+## mm/dd/2017
+
+3. [](#bugfix)
+    * Fixes Blueprintform::resolve() to use slash notation by default instead of dot notation
+
 # v1.3.4
 ## 05/15/2017
 

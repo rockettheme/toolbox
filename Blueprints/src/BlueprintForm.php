@@ -264,10 +264,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     }
 
     /**
-     * Get blueprints by using dot notation for nested arrays/objects.
+     * Get blueprints by using slash notation for nested arrays/objects.
      *
-     * @example $value = $this->resolve('this.is.my.nested.variable');
-     * returns ['this.is.my', 'nested.variable']
+     * @example $value = $this->resolve('this/is/my/nested/variable');
+     * returns ['this/is/my', 'nested/variable']
      *
      * @param array  $path
      * @param string  $separator
@@ -277,7 +277,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     {
         $fields = false;
         $parts = [];
-        $current = $this['form.fields'];
+        $current = $this['form/fields'];
         $result = [null, null, null];
 
         while (($field = current($path)) !== null) {
