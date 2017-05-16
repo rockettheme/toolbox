@@ -293,7 +293,11 @@ class File implements FileInterface
 
         } elseif ($this->content === null) {
             // Decode RAW file.
-            $this->content = $this->decode($this->raw());
+            try {
+                $this->content = $this->decode($this->raw());
+            } catch (\Exception $e) {
+                throw new \RuntimeException(sprintf('Failed to read %s: %s', $this->filename, $e->getMessage()), 500, $e);
+            }
         }
 
         return $this->content;
