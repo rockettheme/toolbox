@@ -1,10 +1,20 @@
+# v1.3.5
+## 05/22/2017
+
+2. [](#improved)
+    * Improved exception message in `File::content()` class when failing to load the data
+3. [](#bugfix)
+    * Fixed `Blueprintform::resolve()` to use slash notation by default instead of dot notation
+    * Fixed warning if badly formatted `$path` parameter is given to `UniformResourceLocator::addPath()`
+    * Fixed `Blueprintform::fields()` returning bad value if there were no fields
+
 # v1.3.4
 ## 05/15/2017
 
 1. [](#new)
     * Blueprint: Add support for a single array field in forms
 3. [](#bugfix)
-    * IniFile::content() should not fail if file doesn't exist
+    * Fixed `IniFile::content()` should not fail if file doesn't exist
     * Session: Protection against invalid session cookie name throwing exception
     * Session: Do not destroy session on CLI
     * BlueprintSchema: Fixed warning when field list is not what was expected 
@@ -13,8 +23,8 @@
 ## 10/06/2016
 
 2. [](#improved)
-    * Allow calls without parameter in UniformResourceLocator::getPaths()
-    * Add support for BlueprintSchema::getPropertyName() and getProperty()
+    * Allow calls without parameter in `UniformResourceLocator::getPaths()`
+    * Add support for `BlueprintSchema::getPropertyName()` and `getProperty()`
     * Add domain parameter to Session constructor
     * Add support for `FilesystemIterator::FOLLOW_SYMLINKS` in RecursiveUniformResourceIterator class
 
