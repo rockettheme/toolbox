@@ -1,5 +1,5 @@
 # v1.3.5
-## mm/dd/2017
+## 05/22/2017
 
 2. [](#improved)
     * Improved exception message in `File::content()` class when failing to load the data
