@@ -18,9 +18,9 @@ class Session implements \IteratorAggregate
     /**
      * @var Session
      */
-    static $instance;
+    protected static $instance;
 
-    
+
     /**
      * @param int    $lifetime Defaults to 1800 seconds.
      * @param string $path     Cookie path.
