@@ -1,3 +1,9 @@
+# v1.3.6
+## 08/16/2017
+
+2. [](#improved)
+    * Improve Event class to support getters and export
+
 # v1.3.5
 ## 05/22/2017
 
