@@ -1,5 +1,5 @@
 # v1.3.6
-## mm/dd/2017
+## 08/16/2017
 
 2. [](#improved)
     * Improve Event class to support getters and export
