@@ -1,5 +1,5 @@
 # v1.3.7
-## mm/dd/2017
+## 08/28/2017
 
 1. [](#bugfix)
     * Fixed `Event` backwards compatibility by removing getters support
