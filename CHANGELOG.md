@@ -1,3 +1,9 @@
+# v1.3.8
+## 09/23/2017
+
+1. [](#bugfix)
+    * Fixed bad PHP docblock that was breaking API generation
+
 # v1.3.7
 ## 08/28/2017
 
