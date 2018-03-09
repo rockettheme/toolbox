@@ -1,4 +1,10 @@
 # v1.3.7
+## mm/dd/2018
+
+1. [](#new)
+    * `BlueprintForm`: Implemented support for multiple `import@`s and partial `import@`s (#17)
+
+# v1.3.7
 ## 08/28/2017
 
 1. [](#bugfix)

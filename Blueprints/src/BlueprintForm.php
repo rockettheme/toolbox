@@ -333,8 +333,9 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             unset($bref_stack[key($bref_stack)]);
 
             foreach (array_keys($head) as $key) {
-                if (!empty($key) && ($key[0] === '@' || $key[strlen($key) - 1] === '@')) {
-                    $list = explode('-', trim($key, '@'), 2);
+                if (strpos($key, '@') !== false) {
+                    // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
+                    $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                     $action = array_shift($list);
                     if ($action === 'unset' || $action === 'replace') {
                         $property = array_shift($list);
@@ -374,10 +375,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             if ($field && isset($item['type'])) {
                 $item['name'] = $key;
             }
-
             // Handle special instructions in the form.
-            if (!empty($key) && ($key[0] === '@' || $key[strlen($key) - 1] === '@')) {
-                $list = explode('-', trim($key, '@'), 2);
+            if (strpos($key, '@') !== false) {
+                // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
+                $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                 $action = array_shift($list);
                 $property = array_shift($list);
 
@@ -389,8 +390,8 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                         }
                         break;
                     case 'import':
-                        $this->doImport($item, $path);
                         unset($items[$key]);
+                        $this->doImport($item, $path);
                         break;
                     case 'ordering':
                         $ordering = $item;
@@ -428,20 +429,35 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     protected function doImport(&$value, array &$path)
     {
         $type = !is_string($value) ? !isset($value['type']) ? null : $value['type'] : $value;
+        $field = 'form';
+        if ($type && strpos($type, ':') !== false) {
+            list ($type, $field) = explode(':', $type, 2);
+        }
 
-        $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
-
-        if (!$files) {
+        if (!$type && !$field) {
             return;
         }
 
-        /** @var BlueprintForm $blueprint */
-        $blueprint = new static($files);
-        $blueprint->setContext($this->context)->setOverrides($this->overrides)->load();
+        if ($type) {
+            $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
+
+            if (!$files) {
+                return;
+            }
+
+            /** @var BlueprintForm $blueprint */
+            $blueprint = new static($files);
+            $blueprint->setContext($this->context)->setOverrides($this->overrides)->load();
+        } else {
+            $blueprint = $this;
+        }
 
         $name = implode('/', $path);
 
-        $this->embed($name, $blueprint->form(), '/', false);
+        $value = $blueprint->get($field);
+        if (is_array($value)) {
+            $this->embed($name, $value, '/');
+        }
     }
 
     /**
