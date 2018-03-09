@@ -1,3 +1,9 @@
+# v1.3.9
+## 10/08/2017
+
+1. [](#improved)
+    * Modified `MarkdownFile::encode()` to dump header with 20 levels of indention (was 5)
+
 # v1.3.8
 ## 09/23/2017
 
