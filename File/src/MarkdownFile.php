@@ -107,7 +107,7 @@ class MarkdownFile extends File
     protected function encode($var)
     {
         // Create Markdown file with YAML header.
-        $o = (!empty($var['header']) ? "---\n" . trim(YamlParser::dump($var['header'], 5)) . "\n---\n\n" : '') . $var['markdown'];
+        $o = (!empty($var['header']) ? "---\n" . trim(YamlParser::dump($var['header'], 20)) . "\n---\n\n" : '') . $var['markdown'];
 
         // Normalize line endings to Unix style.
         $o = preg_replace("/(\r\n|\r)/", "\n", $o);
