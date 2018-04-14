@@ -52,12 +52,6 @@ class Session implements \IteratorAggregate
         register_shutdown_function([$this, 'close']);
         session_cache_limiter('nocache');
 
-        if (isset($this->count)) {
-            $this->count++;
-        } else {
-            $this->count = 1;
-        }
-
         self::$instance = $this;
     }
 
@@ -101,7 +95,7 @@ class Session implements \IteratorAggregate
     /**
      * Get session ID
      *
-     * @return string Session ID
+     * @return string|null Session ID
      */
     public function getId()
     {
@@ -126,7 +120,7 @@ class Session implements \IteratorAggregate
     /**
      * Get session name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {

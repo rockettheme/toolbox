@@ -1,9 +1,9 @@
 # v1.3.10
 ## mm/dd/2018
 
-1. [](#new)
-    * `BlueprintForm`: Implemented support for multiple `import@`s and partial `import@`s (#17)
-
+1. [](#bugfix)
+    * `Session`: Removed broken request counter
+    
 # v1.3.9
 ## 10/08/2017
 
