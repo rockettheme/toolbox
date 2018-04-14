@@ -1,6 +1,8 @@
 # v1.3.10
 ## mm/dd/2018
 
+1. [](#improved)
+    * `YamlFile`: Added support for `@data` without quoting it (fixes issues with Symfony 3.4 if `compat=true`)
 1. [](#bugfix)
     * `Session`: Removed broken request counter
     
