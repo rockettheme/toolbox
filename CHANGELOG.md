@@ -3,7 +3,7 @@
 
 1. [](#improved)
     * `YamlFile`: Added support for `@data` without quoting it (fixes issues with Symfony 3.4 if `compat=true`)
-    * `YamlFile`: Added compatibility mode which falls back to Symfony YAML 2.8 if parsing with newer version fails
+    * `YamlFile`: Added compatibility mode which falls back to Symfony YAML 2.8.38 if parsing with newer version fails
     * General code cleanup, some optimizations
 1. [](#bugfix)
     * `Session`: Removed broken request counter

@@ -18,6 +18,7 @@
         "psr-4": {
             "RocketTheme\\Toolbox\\ArrayTraits\\": "ArrayTraits/src",
             "RocketTheme\\Toolbox\\Blueprints\\": "Blueprints/src",
+            "RocketTheme\\Toolbox\\Compat\\": "Compat/src",
             "RocketTheme\\Toolbox\\DI\\": "DI/src",
             "RocketTheme\\Toolbox\\Event\\": "Event/src",
             "RocketTheme\\Toolbox\\File\\": "File/src",
