@@ -17,7 +17,7 @@ class YamlFile extends File
     /**
      * @var array|File[]
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * Constructor.
@@ -43,7 +43,7 @@ class YamlFile extends File
     /**
      * Encode contents into RAW string.
      *
-     * @param string $var
+     * @param array $var
      * @return string
      * @throws DumpException
      */

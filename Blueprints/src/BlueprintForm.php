@@ -301,9 +301,9 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                 $current = $current[$field];
                 $fields = false;
 
-            } elseif (isset($current['.' . $field])) {
+            } elseif (isset($current[$index = '.' . $field])) {
                 $parts[] = array_shift($path);
-                $current = $current['.' . $field];
+                $current = $current[$index];
                 $fields = false;
 
             } else {
@@ -327,24 +327,27 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $head_stack = array($b);
 
         do {
-            end($bref_stack);
+            reset($bref_stack);
             $bref = &$bref_stack[key($bref_stack)];
             $head = array_pop($head_stack);
             unset($bref_stack[key($bref_stack)]);
 
-            foreach (array_keys($head) as $key) {
+            foreach ($head as $key => $value) {
                 if (strpos($key, '@') !== false) {
                     // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
                     $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                     $action = array_shift($list);
-                    if ($action === 'unset' || $action === 'replace') {
-                        $property = array_shift($list);
-                        if (!$property) {
-                            $bref = ['unset@' => true];
-                        } else {
-                            unset($bref[$property]);
-                        }
-                        continue;
+                    $property = array_shift($list);
+
+                    switch ($action) {
+                        case 'unset':
+                        case 'replace':
+                            if (!$property) {
+                                $bref = ['unset@' => true];
+                            } else {
+                                unset($bref[$property]);
+                            }
+                            continue 2;
                     }
                 }
                 if (isset($key, $bref[$key]) && is_array($bref[$key]) && is_array($head[$key])) {
@@ -413,6 +416,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                 }
             }
         }
+        unset($item);
 
         if ($order) {
             // Reorder fields if needed.
@@ -424,25 +428,25 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
 
     /**
      * @param array|string $value
-     * @param array $path
+     * @return array|null
      */
-    protected function doImport(&$value, array &$path)
+    protected function loadImport($value)
     {
-        $type = !is_string($value) ? !isset($value['type']) ? null : $value['type'] : $value;
+        $type = !is_string($value) ? (!isset($value['type']) ? null : $value['type']) : $value;
         $field = 'form';
         if ($type && strpos($type, ':') !== false) {
             list ($type, $field) = explode(':', $type, 2);
         }
 
         if (!$type && !$field) {
-            return;
+            return null;
         }
 
         if ($type) {
             $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
 
             if (!$files) {
-                return;
+                return null;
             }
 
             /** @var BlueprintForm $blueprint */
@@ -452,11 +456,23 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $blueprint = $this;
         }
 
-        $name = implode('/', $path);
+        $import = $blueprint->get($field);
 
-        $value = $blueprint->get($field);
-        if (is_array($value)) {
-            $this->embed($name, $value, '/');
+        return is_array($import) ? $import : null;
+    }
+
+    /**
+     * @param array|string $value
+     * @param array $path
+     */
+    protected function doImport($value, array &$path)
+    {
+        $imported = $this->loadImport($value);
+
+        if ($imported) {
+            $this->deepInit($imported, $path);
+            $name = implode('/', $path);
+            $this->embed($name, $imported, '/', false);
         }
     }
 
@@ -471,6 +487,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $filename = array_shift($files);
         $content = $this->loadFile($filename);
 
+        $key = null;
         if (isset($content['extends@'])) {
             $key = 'extends@';
         } elseif (isset($content['@extends'])) {
@@ -479,9 +496,9 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $key = '@extends@';
         }
 
-        $data = isset($key) ? $this->doExtend($filename, $files, (array) $content[$key]) : [];
-
-        if (isset($key)) {
+        $data = [];
+        if ($key) {
+            $data = $this->doExtend($filename, $files, (array) $content[$key]);
             unset($content[$key]);
         }
 
@@ -504,11 +521,11 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $extends = [$extends];
         }
 
-        $data = [];
+        $data = [[]];
         foreach ($extends as $value) {
             // Accept array of type and context or a string.
             $type = !is_string($value)
-                ? !isset($value['type']) ? null : $value['type'] : $value;
+                ? (!isset($value['type']) ? null : $value['type']) : $value;
 
             if (!$type) {
                 continue;
@@ -541,11 +558,12 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             }
 
             if ($files) {
-                $data = array_merge($data, $this->doLoad($files));
+                $data[] = $this->doLoad($files);
             }
         }
 
-        return $data;
+        // TODO: In PHP 5.6+ use array_merge(...$data);
+        return call_user_func_array('array_merge', $data);
     }
 
     /**
@@ -561,14 +579,14 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
 
         foreach ($keys as $item => $ordering) {
             if ((string)(int) $ordering === (string) $ordering) {
-                $location = array_search($item, $reordered);
+                $location = array_search($item, $reordered, true);
                 $rel = array_splice($reordered, $location, 1);
                 array_splice($reordered, $ordering, 0, $rel);
 
             } elseif (isset($items[$ordering])) {
-                $location = array_search($item, $reordered);
+                $location = array_search($item, $reordered, true);
                 $rel = array_splice($reordered, $location, 1);
-                $location = array_search($ordering, $reordered);
+                $location = array_search($ordering, $reordered, true);
                 array_splice($reordered, $location + 1, 0, $rel);
             }
         }

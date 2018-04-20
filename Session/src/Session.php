@@ -31,12 +31,11 @@ class Session implements \IteratorAggregate
     {
         // Session is a singleton.
         if (isset(self::$instance)) {
-            throw new \RuntimeException("Session has already been initialized.", 500);
+            throw new \RuntimeException('Session has already been initialized.', 500);
         }
 
         // Destroy any existing sessions started with session.auto_start
-        if ($this->isSessionStarted())
-        {
+        if ($this->isSessionStarted()) {
             session_unset();
             session_destroy();
         }
@@ -63,7 +62,7 @@ class Session implements \IteratorAggregate
      */
     public function instance()
     {
-        if (!isset(self::$instance)) {
+        if (null === self::$instance) {
             throw new \RuntimeException("Session hasn't been initialized.", 500);
         }
 

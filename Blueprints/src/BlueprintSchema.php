@@ -127,7 +127,7 @@ class BlueprintSchema
      */
     public function get($name, $default = null, $separator = '.')
     {
-        $name = $separator != '.' ? strtr($name, $separator, '.') : $name;
+        $name = $separator !== '.' ? strtr($name, $separator, '.') : $name;
 
         return isset($this->items[$name]) ? $this->items[$name] : $default;
     }
@@ -143,7 +143,7 @@ class BlueprintSchema
      */
     public function set($name, $value, $separator = '.')
     {
-        $name = $separator != '.' ? strtr($name, $separator, '.') : $name;
+        $name = $separator !== '.' ? strtr($name, $separator, '.') : $name;
 
         $this->items[$name] = $value;
         $this->addProperty($name);
@@ -215,7 +215,7 @@ class BlueprintSchema
             $this->rules = array_merge($this->rules, $value['rules']);
         }
 
-        $name = $separator != '.' ? strtr($name, $separator, '.') : $name;
+        $name = $separator !== '.' ? strtr($name, $separator, '.') : $name;
 
         if (isset($value['form'])) {
             $form = array_diff_key($value['form'], ['fields' => 1, 'field' => 1]);
@@ -326,7 +326,7 @@ class BlueprintSchema
         // Check if the form cannot have extra fields.
         if (isset($rules[''])) {
             $rule = $this->items[''];
-            if (isset($rule['type']) && $rule['type'] != '_root') {
+            if (isset($rule['type']) && $rule['type'] !== '_root') {
                 return [];
             }
         }
@@ -343,7 +343,7 @@ class BlueprintSchema
      */
     protected function getPropertyRecursion($property, $nested)
     {
-        if (!isset($property['type']) || empty($nested) || !is_array($nested)) {
+        if (empty($nested) || !is_array($nested) || !isset($property['type'])) {
             return $property;
         }
 
@@ -443,9 +443,8 @@ class BlueprintSchema
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = is_string($val) ? $this->items[$val] : null;
 
-            if (!empty($rule['type']) && $rule['type'][0] === '_'
-                || (array_key_exists($key, $data1) && is_array($data1[$key]) && is_array($field) && is_array($val) && !isset($val['*']))
-            ) {
+            if ((array_key_exists($key, $data1) && is_array($data1[$key]) && is_array($field) && is_array($val) && !isset($val['*']))
+                || (!empty($rule['type']) && $rule['type'][0] === '_')) {
                 // Array has been defined in blueprints and is not a collection of items.
                 $data1[$key] = $this->mergeArrays($data1[$key], $field, $val);
             } else {
@@ -557,7 +556,7 @@ class BlueprintSchema
     protected function getFieldKey($key, $prefix, $parent)
     {
         // Set name from the array key.
-        if ($key && $key[0] == '.') {
+        if ($key && $key[0] === '.') {
             return ($parent ?: rtrim($prefix, '.')) . $key;
         }
 
@@ -668,7 +667,7 @@ class BlueprintSchema
                 // Item has been defined in blueprints.
             } elseif (is_array($field) && is_array($val)) {
                 // Array has been defined in blueprints.
-                $array += $this->ExtraArray($field, $val, $prefix . $key . '.');
+                $array += $this->extraArray($field, $val, $prefix . $key . '.');
             } else {
                 // Undefined/extra item.
                 $array[$prefix.$key] = $field;
@@ -693,7 +692,7 @@ class BlueprintSchema
             $params = [];
         }
 
-        $list = preg_split('/::/', $function, 2);
+        $list = explode('::', $function, 2);
         $f = array_pop($list);
         $o = array_pop($list);
         if (!$o) {
@@ -708,7 +707,7 @@ class BlueprintSchema
 
         // If function returns a value,
         if (isset($data)) {
-            if (isset($field[$property]) && is_array($field[$property]) && is_array($data)) {
+            if (is_array($data) && isset($field[$property]) && is_array($field[$property])) {
                 // Combine field and @data-field together.
                 $field[$property] += $data;
             } else {

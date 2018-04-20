@@ -12,6 +12,11 @@ class StreamBuilder
      */
     protected $items = [];
 
+    /**
+     * StreamBuilder constructor.
+     * @param StreamInterface[] $items
+     * @throws \InvalidArgumentException
+     */
     public function __construct(array $items = [])
     {
         foreach ($items as $scheme => $handler) {
@@ -20,15 +25,15 @@ class StreamBuilder
     }
 
     /**
-     * @param $scheme
-     * @param $handler
+     * @param string $scheme
+     * @param StreamInterface $handler
      * @return $this
      * @throws \InvalidArgumentException
      */
     public function add($scheme, $handler)
     {
         if (isset($this->items[$scheme])) {
-            if ($handler == $this->items[$scheme]) {
+            if ($handler === $this->items[$scheme]) {
                 return $this;
             }
             throw new \InvalidArgumentException("Stream '{$scheme}' has already been initialized.");
@@ -48,7 +53,7 @@ class StreamBuilder
     }
 
     /**
-     * @param $scheme
+     * @param string $scheme
      * @return $this
      */
     public function remove($scheme)
@@ -70,7 +75,7 @@ class StreamBuilder
     }
 
     /**
-     * @param $scheme
+     * @param string $scheme
      * @return bool
      */
     public function isStream($scheme)
@@ -79,8 +84,8 @@ class StreamBuilder
     }
 
     /**
-     * @param $scheme
-     * @return null
+     * @param string $scheme
+     * @return StreamInterface|null
      */
     public function getStreamType($scheme)
     {

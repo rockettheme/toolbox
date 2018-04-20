@@ -52,7 +52,7 @@ class Stream implements StreamInterface
 
     public function stream_lock($operation)
     {
-        if (in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB])) {
+        if (in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB], true)) {
             return flock($this->handle, $operation);
         }
 
@@ -172,7 +172,7 @@ class Stream implements StreamInterface
         }
 
         // Suppress warnings if requested or if the file or directory does not
-        // exist. This is consistent with PHP's plain filesystem stream wrapper.
+        // exist. This is consistent with PHPs plain filesystem stream wrapper.
         return ($flags & STREAM_URL_STAT_QUIET || !file_exists($path)) ? @stat($path) : stat($path);
     }
 
@@ -212,11 +212,11 @@ class Stream implements StreamInterface
     {
         $path = $this->findPath($uri);
 
-        if ($mode == null || !$path || file_exists($path)) {
+        if ($mode === null || !$path || file_exists($path)) {
             return $path;
         }
 
-        if ($mode[0] == 'r') {
+        if ($mode[0] === 'r') {
             return false;
         }
 

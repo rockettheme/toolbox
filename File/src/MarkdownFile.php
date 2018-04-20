@@ -20,7 +20,7 @@ class MarkdownFile extends File
     /**
      * @var array|File[]
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * Get/set file header.

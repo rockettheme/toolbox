@@ -20,5 +20,5 @@ class Event extends BaseEvent implements \ArrayAccess
     /**
      * @var array
      */
-    protected $items = array();
+    protected $items = [];
 }

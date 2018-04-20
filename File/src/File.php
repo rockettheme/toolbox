@@ -48,7 +48,7 @@ class File implements FileInterface
     /**
      * @var array|File[]
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * Get file instance.
@@ -97,8 +97,6 @@ class File implements FileInterface
 
     /**
      * Prevent constructor from being used.
-     *
-     * @internal
      */
     protected function __construct()
     {
@@ -106,8 +104,6 @@ class File implements FileInterface
 
     /**
      * Prevent cloning.
-     *
-     * @internal
      */
     protected function __clone()
     {
@@ -224,7 +220,7 @@ class File implements FileInterface
     public function unlock()
     {
         if (!$this->handle) {
-            return;
+            return false;
         }
         if ($this->locked) {
             flock($this->handle, LOCK_UN);
@@ -232,6 +228,8 @@ class File implements FileInterface
         }
         fclose($this->handle);
         $this->handle = null;
+
+        return true;
     }
 
     /**
@@ -282,6 +280,7 @@ class File implements FileInterface
      *
      * @param mixed $var
      * @return string|array
+     * @throws \RuntimeException
      */
     public function content($var = null)
     {
