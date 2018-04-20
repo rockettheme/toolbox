@@ -20,6 +20,26 @@ class YamlFile extends File
      */
     static protected $instances = [];
 
+    static protected $globalSettings = [
+        'compat' => true,
+        'native' => true
+    ];
+
+    /**
+     * Set/get settings.
+     *
+     * @param array $settings
+     * @return array
+     */
+    public static function globalSettings(array $settings = null)
+    {
+        if ($settings !== null) {
+            static::$globalSettings = $settings;
+        }
+
+        return static::$globalSettings;
+    }
+
     /**
      * Constructor.
      */
@@ -28,6 +48,38 @@ class YamlFile extends File
         parent::__construct();
 
         $this->extension = '.yaml';
+    }
+
+    /**
+     * Set/get settings.
+     *
+     * @param array $settings
+     * @return array
+     */
+    public function settings(array $settings = null)
+    {
+        if ($settings !== null) {
+            $this->settings = $settings;
+        }
+
+        return $this->settings + static::$globalSettings;
+    }
+
+    /**
+     * Get setting.
+     *
+     * @param string $setting
+     * @param mixed $default
+     * @return mixed
+     */
+    public function setting($setting, $default = null)
+    {
+        $value = parent::setting($setting);
+        if (null === $value) {
+            $value = isset(static::$globalSettings[$setting]) ? static::$globalSettings[$setting] : $default;
+        }
+
+        return $value;
     }
 
     /**
@@ -68,7 +120,7 @@ class YamlFile extends File
         }
 
         // Try native PECL YAML PHP extension first if available.
-        if ($this->setting('native') && function_exists('yaml_parse')) {
+        if ($this->setting('native', true) && function_exists('yaml_parse')) {
             // Safely decode YAML.
             $saved = @ini_get('yaml.decode_php');
             @ini_set('yaml.decode_php', 0);
