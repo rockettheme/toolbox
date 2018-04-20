@@ -3,7 +3,8 @@ namespace RocketTheme\Toolbox\File;
 
 use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Exception\ParseException;
-use \Symfony\Component\Yaml\Yaml as YamlParser;
+use Symfony\Component\Yaml\Yaml as YamlParser;
+use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
 
 /**
  * Implements YAML File reader.
@@ -77,6 +78,14 @@ class YamlFile extends File
             return (array) $data;
         }
 
-        return (array) YamlParser::parse($var);
+        try {
+            return (array) YamlParser::parse($var);
+        } catch (ParseException $e) {
+            if ($this->setting('compat', true)) {
+                return (array) FallbackYamlParser::parse($var);
+            }
+
+            throw $e;
+        }
     }
 }
