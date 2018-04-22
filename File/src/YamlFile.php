@@ -114,11 +114,6 @@ class YamlFile extends File
      */
     protected function decode($var)
     {
-        if ($this->setting('compat', true)) {
-            // Fix illegal @ start character.
-            $var = preg_replace('/ (@[\w\.\-]*)/', " '\${1}'", $var);
-        }
-
         // Try native PECL YAML PHP extension first if available.
         if ($this->setting('native', true) && function_exists('yaml_parse')) {
             // Safely decode YAML.
@@ -127,7 +122,9 @@ class YamlFile extends File
             $data = @yaml_parse($var);
             @ini_set('yaml.decode_php', $saved);
 
-            return (array) $data;
+            if ($data !== false) {
+                return (array) $data;
+            }
         }
 
         try {
