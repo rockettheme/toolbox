@@ -1,5 +1,5 @@
 # v1.4.0
-## mm/dd/2018
+## 06/13/2018
 
 1. [](#new)
     * `BlueprintForm`: Implemented support for multiple `import@`s and partial `import@`s (#17)
@@ -10,7 +10,7 @@
     * General code cleanup, some optimizations
 1. [](#bugfix)
     * `Session`: Removed broken request counter
-    
+
 # v1.3.9
 ## 10/08/2017
 
@@ -54,7 +54,7 @@
     * Fixed `IniFile::content()` should not fail if file doesn't exist
     * Session: Protection against invalid session cookie name throwing exception
     * Session: Do not destroy session on CLI
-    * BlueprintSchema: Fixed warning when field list is not what was expected 
+    * BlueprintSchema: Fixed warning when field list is not what was expected
 
 # v1.3.3
 ## 10/06/2016
@@ -81,9 +81,9 @@
     * Add new function UniformResourceLocator::fillCache()
 1. [](#bugfix)
     * Fix collections support in BluprintSchema::extra()
-    * Fix exception in stream wrapper when scheme is not defined in locator 
+    * Fix exception in stream wrapper when scheme is not defined in locator
     * Prevent UniformResourceLocator from resolving paths outside of defined scheme paths (#8)
-    * Fix breaking YAML files which start with three dashes (#5) 
+    * Fix breaking YAML files which start with three dashes (#5)
 
 # v1.3.0
 ## 03/07/2016
@@ -109,7 +109,7 @@
 ## 10/24/2015
 
 1. [](#new)
-    * **Backwards compatibility break**: Blueprints class needs to be initialized with `init()` if blueprints contain `@data-*` fields 
+    * **Backwards compatibility break**: Blueprints class needs to be initialized with `init()` if blueprints contain `@data-*` fields
     * Renamed NestedArrayAccess::remove() into NestedArrayAccess::undef() to avoid name clashes
 
 # v1.1.4
