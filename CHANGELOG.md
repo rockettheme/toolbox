@@ -1,6 +1,8 @@
 # v1.4.0
 ## mm/dd/2018
 
+1. [](#new)
+    * `BlueprintForm`: Implemented support for multiple `import@`s and partial `import@`s (#17)
 1. [](#improved)
     * `YamlFile`: Added support for `@data` without quoting it (fixes issues with Symfony 3.4 if `compat=true`)
     * `YamlFile`: Added compatibility mode which falls back to Symfony YAML 2.8.38 if parsing with newer version fails
