@@ -18,7 +18,7 @@ class JsonFile extends File
     /**
      * @var array|File[]
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * Check contents and make sure it is in correct format.

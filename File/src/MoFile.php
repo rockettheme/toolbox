@@ -23,7 +23,7 @@ class MoFile extends File
     /**
      * @var array|File[]
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * File can never be written.

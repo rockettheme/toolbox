@@ -18,7 +18,7 @@ class PhpFile extends File
     /**
      * @var array|File[]
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * Saves PHP file and invalidates opcache.
@@ -43,7 +43,7 @@ class PhpFile extends File
     /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array $var
+     * @param array|object $var
      * @return array
      * @throws \RuntimeException
      */
@@ -75,20 +75,20 @@ class PhpFile extends File
      * @param array $a      The array to get as a string.
      * @param int   $level  Used internally to indent rows.
      *
-     * @return array
+     * @return string
      */
     protected function encodeArray(array $a, $level = 0)
     {
         $r = [];
         foreach ($a as $k => $v) {
             if (is_array($v) || is_object($v)) {
-                $r[] = var_export($k, true) . " => " . $this->encodeArray((array) $v, $level + 1);
+                $r[] = var_export($k, true) . ' => ' . $this->encodeArray((array) $v, $level + 1);
             } else {
-                $r[] = var_export($k, true) . " => " . var_export($v, true);
+                $r[] = var_export($k, true) . ' => ' . var_export($v, true);
             }
         }
 
-        $space = str_repeat("    ", $level);
+        $space = str_repeat('    ', $level);
         return "[\n    {$space}" . implode(",\n    {$space}", $r) . "\n{$space}]";
     }
 
@@ -100,7 +100,6 @@ class PhpFile extends File
      */
     protected function decode($var)
     {
-        $var = (array) include $this->filename;
-        return $var;
+        return (array) include $this->filename;
     }
 }

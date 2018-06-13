@@ -40,7 +40,7 @@ class ReadOnlyStream extends Stream implements StreamInterface
     public function stream_lock($operation)
     {
         // Disallow exclusive lock or non-blocking lock requests
-        if (!in_array($operation, [LOCK_SH, LOCK_UN, LOCK_SH | LOCK_NB])) {
+        if (!in_array($operation, [LOCK_SH, LOCK_UN, LOCK_SH | LOCK_NB], true)) {
             trigger_error(
                 'stream_lock() exclusive lock operations not supported for read-only stream wrappers',
                 E_USER_WARNING
