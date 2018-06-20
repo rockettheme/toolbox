@@ -1,3 +1,9 @@
+# v1.4.1
+## 06/20/2018
+
+1. [](#bugfix)
+    * Fixed a bug in blueprint extend and embed
+
 # v1.4.0
 ## 06/13/2018
 
