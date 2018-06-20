@@ -327,7 +327,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $head_stack = array($b);
 
         do {
-            reset($bref_stack);
+            end($bref_stack);
             $bref = &$bref_stack[key($bref_stack)];
             $head = array_pop($head_stack);
             unset($bref_stack[key($bref_stack)]);
