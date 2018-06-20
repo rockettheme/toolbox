@@ -1,5 +1,5 @@
 # v1.4.1
-## mm/dd/2018
+## 06/20/2018
 
 1. [](#bugfix)
     * Fixed a bug in blueprint extend and embed
