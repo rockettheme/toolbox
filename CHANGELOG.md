@@ -1,3 +1,13 @@
+# v1.4.2
+## mm/dd/2018
+
+1. [](#new)
+    * Added `UniformResourceLocator::clearCache()` to allow resource cache to be cleared
+1. [](#improved)
+    * Improved messages in `Stream` exceptions
+1. [](#bugfix)
+    * Fixed bugs when using `mkdir()`, `rmdir()`, `rename()` or creating new files with URIs
+
 # v1.4.1
 ## 06/20/2018
 
