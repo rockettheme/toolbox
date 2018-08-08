@@ -1,5 +1,5 @@
 # v1.4.2
-## mm/dd/2018
+## 08/08/2018
 
 1. [](#new)
     * Added `UniformResourceLocator::clearCache()` to allow resource cache to be cleared
