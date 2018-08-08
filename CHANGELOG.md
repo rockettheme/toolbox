@@ -1,3 +1,14 @@
+# v1.4.2
+## 08/08/2018
+
+1. [](#new)
+    * Added `UniformResourceLocator::clearCache()` to allow resource cache to be cleared
+    * Added `$extends` parameter to `BlueprintForm::load()` to override `extends@`
+1. [](#improved)
+    * Improved messages in `Stream` exceptions
+1. [](#bugfix)
+    * Fixed bugs when using `mkdir()`, `rmdir()`, `rename()` or creating new files with URIs
+
 # v1.4.1
 ## 06/20/2018
 

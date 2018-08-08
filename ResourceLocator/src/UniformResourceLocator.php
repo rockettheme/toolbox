@@ -356,6 +356,30 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Reset locator cache.
+     *
+     * @param string $uri
+     * @return $this
+     */
+    public function clearCache($uri = null)
+    {
+        if ($uri) {
+            $this->clearCached($uri, true, true, true);
+            $this->clearCached($uri, true, true, false);
+            $this->clearCached($uri, true, false, true);
+            $this->clearCached($uri, true, false, false);
+            $this->clearCached($uri, false, true, true);
+            $this->clearCached($uri, false, true, false);
+            $this->clearCached($uri, false, false, true);
+            $this->clearCached($uri, false, false, false);
+        } else {
+            $this->cache = [];
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string $uri
      * @param bool $array
      * @param bool $absolute
@@ -384,6 +408,14 @@ class UniformResourceLocator implements ResourceLocatorInterface
         }
 
         return $this->cache[$key];
+    }
+
+    protected function clearCached($uri, $array, $absolute, $all)
+    {
+        // Local caching: make sure that the function gets only called at once for each file.
+        $key = $uri .'@'. (int) $array . (int) $absolute . (int) $all;
+
+        unset($this->cache[$key]);
     }
 
     /**

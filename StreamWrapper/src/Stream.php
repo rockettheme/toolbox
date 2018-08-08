@@ -2,6 +2,7 @@
 namespace RocketTheme\Toolbox\StreamWrapper;
 
 use RocketTheme\Toolbox\ResourceLocator\ResourceLocatorInterface;
+use RocketTheme\Toolbox\ResourceLocator\UniformResourceLocator;
 
 /**
  * Implements Read/Write Streams.
@@ -13,6 +14,11 @@ use RocketTheme\Toolbox\ResourceLocator\ResourceLocatorInterface;
 class Stream implements StreamInterface
 {
     /**
+     * @var string
+     */
+    protected $uri;
+
+    /**
      * A generic resource handle.
      *
      * @var Resource
@@ -20,7 +26,7 @@ class Stream implements StreamInterface
     protected $handle = null;
 
     /**
-     * @var ResourceLocatorInterface
+     * @var ResourceLocatorInterface|UniformResourceLocator
      */
     protected static $locator;
 
@@ -37,10 +43,19 @@ class Stream implements StreamInterface
         $path = $this->getPath($uri, $mode);
 
         if (!$path) {
+            if ($options & STREAM_REPORT_ERRORS) {
+                trigger_error(sprintf('stream_open(): path for %s does not exist', $uri), E_USER_WARNING);
+            }
+
             return false;
         }
 
+        $this->uri = $uri;
         $this->handle = ($options & STREAM_REPORT_ERRORS) ? fopen($path, $mode) : @fopen($path, $mode);
+
+        if (!in_array($mode, ['r', 'rb', 'rt']) && static::$locator instanceof UniformResourceLocator) {
+            static::$locator->clearCache($this->uri);
+        }
 
         return (bool) $this->handle;
     }
@@ -52,7 +67,7 @@ class Stream implements StreamInterface
 
     public function stream_lock($operation)
     {
-        if (in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB], true)) {
+        if (\in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB], true)) {
             return flock($this->handle, $operation);
         }
 
@@ -61,21 +76,24 @@ class Stream implements StreamInterface
 
     public function stream_metadata($uri, $option, $value)
     {
-        switch ($option) {
-            case STREAM_META_TOUCH:
-                list ($time, $atime) = $value;
-                return touch($uri, $time, $atime);
+        $path = $this->findPath($uri);
+        if ($path) {
+            switch ($option) {
+                case STREAM_META_TOUCH:
+                    list ($time, $atime) = $value;
+                    return touch($path, $time, $atime);
 
-            case STREAM_META_OWNER_NAME:
-            case STREAM_META_OWNER:
-                return chown($uri, $value);
+                case STREAM_META_OWNER_NAME:
+                case STREAM_META_OWNER:
+                    return chown($path, $value);
 
-            case STREAM_META_GROUP_NAME:
-            case STREAM_META_GROUP:
-                return chgrp($uri, $value);
+                case STREAM_META_GROUP_NAME:
+                case STREAM_META_GROUP:
+                    return chgrp($path, $value);
 
-            case STREAM_META_ACCESS:
-                return chmod($uri, $value);
+                case STREAM_META_ACCESS:
+                    return chmod($path, $value);
+            }
         }
 
         return false;
@@ -131,10 +149,15 @@ class Stream implements StreamInterface
     public function rename($fromUri, $toUri)
     {
         $fromPath = $this->getPath($fromUri);
-        $toPath = $this->getPath($toUri);
+        $toPath = $this->getPath($toUri, 'w');
 
-        if (!($fromPath && $toPath)) {
+        if (!$fromPath || !$toPath) {
             return false;
+        }
+
+        if (static::$locator instanceof UniformResourceLocator) {
+            static::$locator->clearCache($fromUri);
+            static::$locator->clearCache($toUri);
         }
 
         return rename($fromPath, $toPath);
@@ -143,10 +166,18 @@ class Stream implements StreamInterface
     public function mkdir($uri, $mode, $options)
     {
         $recursive = (bool) ($options & STREAM_MKDIR_RECURSIVE);
-        $path = $this->getPath($uri, $recursive ? $mode : null);
+        $path = $this->getPath($uri, $recursive ? 'd' : 'w');
 
         if (!$path) {
+            if ($options & STREAM_REPORT_ERRORS) {
+                trigger_error(sprintf('mkdir(): Could not create directory for %s', $uri), E_USER_WARNING);
+            }
+
             return false;
+        }
+
+        if (static::$locator instanceof UniformResourceLocator) {
+            static::$locator->clearCache($uri);
         }
 
         return ($options & STREAM_REPORT_ERRORS) ? mkdir($path, $mode, $recursive) : @mkdir($path, $mode, $recursive);
@@ -157,7 +188,15 @@ class Stream implements StreamInterface
         $path = $this->getPath($uri);
 
         if (!$path) {
+            if ($options & STREAM_REPORT_ERRORS) {
+                trigger_error(sprintf('rmdir(): Directory not found for %s', $uri), E_USER_WARNING);
+            }
+
             return false;
+        }
+
+        if (static::$locator instanceof UniformResourceLocator) {
+            static::$locator->clearCache($uri);
         }
 
         return ($options & STREAM_REPORT_ERRORS) ? rmdir($path) : @rmdir($path);
@@ -184,6 +223,7 @@ class Stream implements StreamInterface
             return false;
         }
 
+        $this->uri = $uri;
         $this->handle = opendir($path);
 
         return (bool) $this->handle;
@@ -210,9 +250,13 @@ class Stream implements StreamInterface
 
     protected function getPath($uri, $mode = null)
     {
+        if ($mode === null) {
+            $mode = 'r';
+        }
+
         $path = $this->findPath($uri);
 
-        if ($mode === null || !$path || file_exists($path)) {
+        if ($path && file_exists($path)) {
             return $path;
         }
 
@@ -223,13 +267,23 @@ class Stream implements StreamInterface
         // We are either opening a file or creating directory.
         list($scheme, $target) = explode('://', $uri, 2);
 
-        $path = $this->findPath($scheme . '://' . dirname($target));
+        if ($target === '') {
+            return false;
+        }
+        $target = explode('/', $target);
+        $filename = [];
+
+        do {
+            $filename[] = array_pop($target);
+
+            $path = $this->findPath($scheme . '://' . implode('/', $target));
+        } while ($target && !$path);
 
         if (!$path) {
             return false;
         }
 
-        return $path . '/' . basename($uri);
+        return $path . '/' .  implode('/', array_reverse($filename));
     }
 
     protected function findPath($uri)
