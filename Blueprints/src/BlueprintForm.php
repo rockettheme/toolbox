@@ -123,7 +123,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      *
      * @return $this
      */
-    public function load()
+    public function load($extends = null)
     {
         // Only load and extend blueprint if it has not yet been loaded.
         if (empty($this->items) && $this->filename) {
@@ -131,7 +131,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $files = $this->getFiles($this->filename);
 
             // Load and extend blueprints.
-            $data = $this->doLoad($files);
+            $data = $this->doLoad($files, $extends);
 
             $this->items = (array) array_shift($data);
 
@@ -480,9 +480,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      * Internal function that handles loading extended blueprints.
      *
      * @param array $files
+     * @param string|array|null $extends
      * @return array
      */
-    protected function doLoad(array $files)
+    protected function doLoad(array $files, $extends = null)
     {
         $filename = array_shift($files);
         $content = $this->loadFile($filename);
@@ -496,12 +497,12 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $key = '@extends@';
         }
 
-        $data = [];
-        if ($key) {
-            $data = $this->doExtend($filename, $files, (array) $content[$key]);
-            unset($content[$key]);
-        }
+        $override = (bool)$extends;
+        $extends = (array)($key && !$extends ? $content[$key] : $extends);
 
+        unset($content['extends@'], $content['@extends'], $content['@extends@']);
+
+        $data = $extends ? $this->doExtend($filename, $files, $extends, $override) : [];
         $data[] = $content;
 
         return $data;
@@ -515,7 +516,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      * @param array $extends
      * @return array
      */
-    protected function doExtend($filename, array $parents, array $extends)
+    protected function doExtend($filename, array $parents, array $extends, $override = false)
     {
         if (is_string(key($extends))) {
             $extends = [$extends];
@@ -524,8 +525,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $data = [[]];
         foreach ($extends as $value) {
             // Accept array of type and context or a string.
-            $type = !is_string($value)
-                ? (!isset($value['type']) ? null : $value['type']) : $value;
+            $type = !is_string($value) ? (!isset($value['type']) ? null : $value['type']) : $value;
 
             if (!$type) {
                 continue;
@@ -539,6 +539,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                 $files = $parents;
             } else {
                 $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
+
+                if ($override && !$files) {
+                    throw new \RuntimeException("Blueprint '{$type}' missing for '{$filename}'");
+                }
 
                 // Detect extend loops.
                 if ($files && array_intersect($files, $parents)) {

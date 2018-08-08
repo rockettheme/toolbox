@@ -3,6 +3,7 @@
 
 1. [](#new)
     * Added `UniformResourceLocator::clearCache()` to allow resource cache to be cleared
+    * Added `$extends` parameter to `BlueprintForm::load()` to override `extends@`
 1. [](#improved)
     * Improved messages in `Stream` exceptions
 1. [](#bugfix)
