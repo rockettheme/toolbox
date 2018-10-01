@@ -115,7 +115,7 @@ class YamlFile extends File
     protected function decode($var)
     {
         // Try native PECL YAML PHP extension first if available.
-        if ($this->setting('native', true) && function_exists('yaml_parse')) {
+        if (\function_exists('yaml_parse') && $this->setting('native', true)) {
             // Safely decode YAML.
             $saved = @ini_get('yaml.decode_php');
             @ini_set('yaml.decode_php', 0);

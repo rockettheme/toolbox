@@ -58,7 +58,7 @@ class File implements FileInterface
      */
     public static function instance($filename)
     {
-        if (!is_string($filename) && $filename) {
+        if (!\is_string($filename) && $filename) {
             throw new \InvalidArgumentException('Filename should be non-empty string');
         }
         if (!isset(static::$instances[$filename])) {
@@ -188,7 +188,7 @@ class File implements FileInterface
     public function lock($block = true)
     {
         if (!$this->handle) {
-            if (!$this->mkdir(dirname($this->filename))) {
+            if (!$this->mkdir(\dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
             $this->handle = @fopen($this->filename, 'cb+');
@@ -239,7 +239,7 @@ class File implements FileInterface
      */
     public function writable()
     {
-        return is_writable($this->filename) || $this->writableDir(dirname($this->filename));
+        return is_writable($this->filename) || $this->writableDir(\dirname($this->filename));
     }
 
     /**
@@ -268,7 +268,7 @@ class File implements FileInterface
             $this->content = null;
         }
 
-        if (!is_string($this->raw)) {
+        if (!\is_string($this->raw)) {
             $this->raw = $this->load();
         }
 
@@ -333,7 +333,7 @@ class File implements FileInterface
         }
 
         // Touch the directory as well, thus marking it modified.
-        @touch(dirname($this->filename));
+        @touch(\dirname($this->filename));
     }
 
     /**
@@ -435,7 +435,7 @@ class File implements FileInterface
     protected function writableDir($dir)
     {
         if ($dir && !file_exists($dir)) {
-            return $this->writableDir(dirname($dir));
+            return $this->writableDir(\dirname($dir));
         }
 
         return $dir && is_dir($dir) && is_writable($dir);

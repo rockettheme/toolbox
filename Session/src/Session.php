@@ -30,7 +30,7 @@ class Session implements \IteratorAggregate
     public function __construct($lifetime, $path, $domain = null)
     {
         // Session is a singleton.
-        if (isset(self::$instance)) {
+        if (null !== self::$instance) {
             throw new \RuntimeException('Session has already been initialized.', 500);
         }
 

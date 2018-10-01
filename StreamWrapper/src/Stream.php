@@ -53,7 +53,7 @@ class Stream implements StreamInterface
         $this->uri = $uri;
         $this->handle = ($options & STREAM_REPORT_ERRORS) ? fopen($path, $mode) : @fopen($path, $mode);
 
-        if (!in_array($mode, ['r', 'rb', 'rt']) && static::$locator instanceof UniformResourceLocator) {
+        if (static::$locator instanceof UniformResourceLocator && !\in_array($mode, ['r', 'rb', 'rt'], true)) {
             static::$locator->clearCache($this->uri);
         }
 
@@ -260,7 +260,7 @@ class Stream implements StreamInterface
             return $path;
         }
 
-        if ($mode[0] === 'r') {
+        if (strpos($mode[0], 'r') === 0) {
             return false;
         }
 

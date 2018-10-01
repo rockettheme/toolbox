@@ -29,9 +29,9 @@ trait NestedArrayAccess
         $path = explode($separator ?: $this->nestedSeparator, $name);
         $current = $this->items;
         foreach ($path as $field) {
-            if (is_object($current) && isset($current->{$field})) {
+            if (\is_object($current) && isset($current->{$field})) {
                 $current = $current->{$field};
-            } elseif (is_array($current) && isset($current[$field])) {
+            } elseif (\is_array($current) && isset($current[$field])) {
                 $current = $current[$field];
             } else {
                 return $default;
@@ -56,18 +56,18 @@ trait NestedArrayAccess
         $path = explode($separator ?: $this->nestedSeparator, $name);
         $current = &$this->items;
         foreach ($path as $field) {
-            if (is_object($current)) {
+            if (\is_object($current)) {
                 // Handle objects.
                 if (!isset($current->{$field})) {
-                    $current->{$field} = array();
+                    $current->{$field} = [];
                 }
                 $current = &$current->{$field};
             } else {
                 // Handle arrays and scalars.
-                if (!is_array($current)) {
-                    $current = array($field => array());
+                if (!\is_array($current)) {
+                    $current = [$field => []];
                 } elseif (!isset($current[$field])) {
-                    $current[$field] = array();
+                    $current[$field] = [];
                 }
                 $current = &$current[$field];
             }
@@ -100,7 +100,7 @@ trait NestedArrayAccess
         $current = &$this->items;
 
         foreach ($path as $field) {
-            if (is_object($current)) {
+            if (\is_object($current)) {
                 // Handle objects.
                 if (!isset($current->{$field})) {
                     return $this;
@@ -108,7 +108,7 @@ trait NestedArrayAccess
                 $current = &$current->{$field};
             } else {
                 // Handle arrays and scalars.
-                if (!is_array($current) || !isset($current[$field])) {
+                if (!\is_array($current) || !isset($current[$field])) {
                     return $this;
                 }
                 $current = &$current[$field];
@@ -167,7 +167,7 @@ trait NestedArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->items[] = $value;
         } else {
             $this->set($offset, $value);
@@ -181,7 +181,7 @@ trait NestedArrayAccess
      */
     public function offsetUnset($offset)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->items[] = [];
         } else {
             $this->undef($offset);

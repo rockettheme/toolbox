@@ -1,3 +1,9 @@
+# v1.4.3
+## mm/dd/2018
+
+1. [](#improved)
+    * Minor code optimizations
+
 # v1.4.2
 ## 08/08/2018
 
