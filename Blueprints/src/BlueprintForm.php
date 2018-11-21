@@ -341,7 +341,17 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                         case 'replace':
                             if (!$property) {
                                 $bref = ['unset@' => true];
-                            } else {
+                            }
+                            // replace-name@ was used to override the name of a field previously imported
+                            elseif ($property == 'name' && isset($head['name'])) {
+                                // in the main array, copy field reference under the new name ($header['name'])
+                                $a[$head['name']] = &$bref;
+                                // unset the previous index
+                                unset($a[$bref['name']]);
+                                // (internal "name" is also replaced)
+                                $bref['name'] = $head['name'];
+                            }
+                            else {
                                 unset($bref[$property]);
                             }
                             continue 2;
