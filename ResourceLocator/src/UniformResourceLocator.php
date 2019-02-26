@@ -284,7 +284,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      */
     public function findResource($uri, $absolute = true, $first = false)
     {
-        if (!is_string($uri)) {
+        if (!\is_string($uri)) {
             throw new \BadMethodCallException('Invalid parameter $uri.');
         }
         return $this->findCached($uri, false, $absolute, $first);

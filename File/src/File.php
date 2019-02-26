@@ -199,7 +199,11 @@ class File implements FileInterface
             }
         }
         $lock = $block ? LOCK_EX : LOCK_EX | LOCK_NB;
-        return $this->locked = $this->handle ? flock($this->handle, $lock) : false;
+
+        // Some filesystems do not support file locks, only fail if another process holds the lock.
+        $this->locked = flock($this->handle, $lock, $wouldblock) || !$wouldblock;
+
+        return $this->locked;
     }
 
     /**
@@ -314,26 +318,24 @@ class File implements FileInterface
             $this->content($data);
         }
 
-        if (!$this->locked) {
-            // Obtain blocking lock or fail.
-            if (!$this->lock()) {
-                throw new \RuntimeException('Obtaining write lock failed on file: ' . $this->filename);
-            }
-            $lock = true;
+        $filename = $this->filename;
+        $dir = \dirname($filename);
+
+        // Create file with a temporary name and rename it to make the save action atomic.
+        $tmp = tempnam($dir, basename($filename));
+        if ($tmp && @file_put_contents($tmp, $this->raw()) && @rename($tmp, $filename)) {
+            @chmod($filename, 0666 & ~umask());
+        } elseif ($tmp) {
+            @unlink($tmp);
+            $tmp = false;
         }
 
-        // As we are using non-truncating locking, make sure that the file is empty before writing.
-        if (@ftruncate($this->handle, 0) === false || @fwrite($this->handle, $this->raw()) === false) {
-            $this->unlock();
-            throw new \RuntimeException('Saving file failed: ' . $this->filename);
-        }
-
-        if (isset($lock)) {
-            $this->unlock();
+        if ($tmp === false) {
+            throw new \RuntimeException('Failed to save file ' . $this->filename);
         }
 
         // Touch the directory as well, thus marking it modified.
-        @touch(\dirname($this->filename));
+        @touch($dir);
     }
 
     /**
@@ -407,20 +409,21 @@ class File implements FileInterface
 
     /**
      * @param  string  $dir
-     * @return bool
-     * @throws \RuntimeException
-     * @internal
      */
-    protected function mkdir($dir)
+    private function mkdir($dir)
     {
         // Silence error for open_basedir; should fail in mkdir instead.
-        if (!@is_dir($dir)) {
-            $success = @mkdir($dir, 0777, true);
+        if (@is_dir($dir)) {
+            return true;
+        }
 
-            if (!$success) {
-                $error = error_get_last();
+        $success = @mkdir($dir, 0777, true);
 
-                throw new \RuntimeException("Creating directory '{$dir}' failed on error {$error['message']}");
+        if (!$success) {
+            // Take yet another look, make sure that the folder doesn't exist.
+            clearstatcache(true, $dir);
+            if (!@is_dir($dir)) {
+                return false;
             }
         }
 
