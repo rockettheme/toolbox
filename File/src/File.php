@@ -321,13 +321,23 @@ class File implements FileInterface
         $filename = $this->filename;
         $dir = \dirname($filename);
 
-        // Create file with a temporary name and rename it to make the save action atomic.
-        $tmp = tempnam($dir, basename($filename));
-        if ($tmp && @file_put_contents($tmp, $this->raw()) && @rename($tmp, $filename)) {
-            @chmod($filename, 0666 & ~umask());
-        } elseif ($tmp) {
-            @unlink($tmp);
-            $tmp = false;
+        if ($this->handle) {
+            $tmp = true;
+            // As we are using non-truncating locking, make sure that the file is empty before writing.
+            if (@ftruncate($this->handle, 0) === false || @fwrite($this->handle, $this->raw()) === false) {
+                // Writing file failed, throw an error.
+                $tmp = false;
+            }
+        } else {
+            // Create file with a temporary name and rename it to make the save action atomic.
+            $tmp = tempnam($dir, basename($filename));
+            if ($tmp && @file_put_contents($tmp, $this->raw()) && @rename($tmp, $filename)) {
+                // We need to chmod() the file as it's using 0600 permissions.
+                @chmod($filename, 0666 & ~umask());
+            } elseif ($tmp) {
+                @unlink($tmp);
+                $tmp = false;
+            }
         }
 
         if ($tmp === false) {

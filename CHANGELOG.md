@@ -3,7 +3,7 @@
 
 1. [](#improved)
     * Minor code optimizations
-    * Improved `File::save()` not to use file lock, but a temporary file
+    * Improved `File::save()` to use a temporary file if file isn't locked
 1. [](#bugfix)
     * Fixed `Obtaining write lock failed on file...`
     * Fixed `mkdir(...)` race condition
