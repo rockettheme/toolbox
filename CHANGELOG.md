@@ -1,5 +1,5 @@
 # v1.4.3
-## mm/dd/2018
+## 02/26/2019
 
 1. [](#improved)
     * Minor code optimizations
