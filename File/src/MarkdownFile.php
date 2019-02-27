@@ -90,10 +90,10 @@ class MarkdownFile extends File
     protected function check($var)
     {
         $var = (array) $var;
-        if (!isset($var['header']) || !is_array($var['header'])) {
+        if (!isset($var['header']) || !\is_array($var['header'])) {
             $var['header'] = array();
         }
-        if (!isset($var['markdown']) || !is_string($var['markdown'])) {
+        if (!isset($var['markdown']) || !\is_string($var['markdown'])) {
             $var['markdown'] = '';
         }
 
@@ -103,7 +103,7 @@ class MarkdownFile extends File
     /**
      * Encode contents into RAW string.
      *
-     * @param string $var
+     * @param array $var
      * @return string
      */
     protected function encode($var)
@@ -142,7 +142,7 @@ class MarkdownFile extends File
             $content['frontmatter'] = $frontmatter = preg_replace("/\n\t/", "\n    ", $m[1]);
 
             // Try native PECL YAML PHP extension first if available.
-            if ($this->setting('native') && function_exists('yaml_parse')) {
+            if (\function_exists('yaml_parse') && $this->setting('native')) {
                 // Safely decode YAML.
                 $saved = @ini_get('yaml.decode_php');
                 @ini_set('yaml.decode_php', 0);

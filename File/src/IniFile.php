@@ -29,7 +29,7 @@ class IniFile extends File
      */
     protected function check($var)
     {
-        if (!is_array($var)) {
+        if (!\is_array($var)) {
             throw new \RuntimeException('Provided data is not an array');
         }
 

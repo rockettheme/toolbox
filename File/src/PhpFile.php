@@ -31,10 +31,10 @@ class PhpFile extends File
         parent::save($data);
 
         // Invalidate configuration file from the opcache.
-        if (function_exists('opcache_invalidate')) {
+        if (\function_exists('opcache_invalidate')) {
             // PHP 5.5.5+
             @opcache_invalidate($this->filename, true);
-        } elseif (function_exists('apc_invalidate')) {
+        } elseif (\function_exists('apc_invalidate')) {
             // APC
             @apc_invalidate($this->filename);
         }
@@ -49,7 +49,7 @@ class PhpFile extends File
      */
     protected function check($var)
     {
-        if (!(is_array($var) || is_object($var))) {
+        if (!(\is_array($var) || \is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
@@ -81,7 +81,7 @@ class PhpFile extends File
     {
         $r = [];
         foreach ($a as $k => $v) {
-            if (is_array($v) || is_object($v)) {
+            if (\is_array($v) || \is_object($v)) {
                 $r[] = var_export($k, true) . ' => ' . $this->encodeArray((array) $v, $level + 1);
             } else {
                 $r[] = var_export($k, true) . ' => ' . var_export($v, true);

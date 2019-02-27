@@ -42,7 +42,7 @@ trait ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->items[] = $value;
         } else {
             $this->items[$offset] = $value;

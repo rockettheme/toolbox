@@ -1,3 +1,13 @@
+# v1.4.3
+## 02/26/2019
+
+1. [](#improved)
+    * Minor code optimizations
+    * Improved `File::save()` to use a temporary file if file isn't locked
+1. [](#bugfix)
+    * Fixed `Obtaining write lock failed on file...`
+    * Fixed `mkdir(...)` race condition
+
 # v1.4.2
 ## 08/08/2018
 

@@ -19,7 +19,7 @@ class ReadOnlyStream extends Stream implements StreamInterface
 
     public function stream_open($uri, $mode, $options, &$opened_url)
     {
-        if (!in_array($mode, ['r', 'rb', 'rt'])) {
+        if (!\in_array($mode, ['r', 'rb', 'rt'], true)) {
             if ($options & STREAM_REPORT_ERRORS) {
                 trigger_error(sprintf('stream_open() write modes not supported for %s', $uri), E_USER_WARNING);
             }
@@ -46,7 +46,7 @@ class ReadOnlyStream extends Stream implements StreamInterface
     public function stream_lock($operation)
     {
         // Disallow exclusive lock or non-blocking lock requests
-        if (!in_array($operation, [LOCK_SH, LOCK_UN, LOCK_SH | LOCK_NB], true)) {
+        if (!\in_array($operation, [LOCK_SH, LOCK_UN, LOCK_SH | LOCK_NB], true)) {
             trigger_error(
                 sprintf('stream_lock() exclusive lock operations not supported for %s', $this->uri),
                 E_USER_WARNING

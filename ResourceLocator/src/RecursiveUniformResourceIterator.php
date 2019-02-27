@@ -16,7 +16,7 @@ class RecursiveUniformResourceIterator extends UniformResourceIterator implement
     {
         $subPath = $this->getSubPathName();
 
-        return (new RecursiveUniformResourceIterator($this->getUrl(), $this->flags, $this->locator))->setSubPath($subPath);
+        return (new static($this->getUrl(), $this->flags, $this->locator))->setSubPath($subPath);
     }
 
     public function hasChildren($allow_links = null)

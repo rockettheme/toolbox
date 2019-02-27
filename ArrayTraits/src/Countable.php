@@ -19,6 +19,6 @@ trait Countable
      */
     public function count()
     {
-        return count($this->items);
+        return \count($this->items);
     }
 }
