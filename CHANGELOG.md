@@ -1,5 +1,5 @@
 # v1.4.4
-## mm/dd/2019
+## 02/28/2019
 
 1. [](#bugfix)
     * Regression: Fixed issue with directory creation when saving non-existing file
