@@ -321,6 +321,10 @@ class File implements FileInterface
         $filename = $this->filename;
         $dir = \dirname($filename);
 
+        if (!$this->mkdir($dir)) {
+            throw new \RuntimeException('Creating directory failed for ' . $filename);
+        }
+
         if ($this->handle) {
             $tmp = true;
             // As we are using non-truncating locking, make sure that the file is empty before writing.
@@ -341,7 +345,7 @@ class File implements FileInterface
         }
 
         if ($tmp === false) {
-            throw new \RuntimeException('Failed to save file ' . $this->filename);
+            throw new \RuntimeException('Failed to save file ' . $filename);
         }
 
         // Touch the directory as well, thus marking it modified.
