@@ -1,3 +1,9 @@
+# v1.4.5
+## 02/28/2019
+
+1. [](#bugfix)
+    * Regression: Fixed undefined variable in `BlueprintSchema`
+
 # v1.4.4
 ## 02/28/2019
 

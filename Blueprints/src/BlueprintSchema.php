@@ -703,7 +703,7 @@ class BlueprintSchema
         }
 
         // If function returns a value,
-        if (null !== $data) {
+        if (isset($data)) {
             if (\is_array($data) && isset($field[$property]) && \is_array($field[$property])) {
                 // Combine field and @data-field together.
                 $field[$property] += $data;
