@@ -3,6 +3,7 @@
 
 1. [](#bugfix)
     * Regression: Fixed issue with directory creation when saving non-existing file
+    * Regression: Fixed undefined variable in `BlueprintSchema`
 
 # v1.4.3
 ## 02/26/2019
