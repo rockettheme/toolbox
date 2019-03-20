@@ -243,7 +243,7 @@ class File implements FileInterface
      */
     public function writable()
     {
-        return is_writable($this->filename) || $this->writableDir(\dirname($this->filename));
+        return file_exists($this->filename) ? is_writable($this->filename) && is_file($this->filename) : $this->writableDir(\dirname($this->filename));
     }
 
     /**
