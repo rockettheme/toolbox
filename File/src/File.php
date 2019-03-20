@@ -243,7 +243,7 @@ class File implements FileInterface
      */
     public function writable()
     {
-        return is_writable($this->filename) || $this->writableDir(\dirname($this->filename));
+        return file_exists($this->filename) ? is_writable($this->filename) && is_file($this->filename) : $this->writableDir(\dirname($this->filename));
     }
 
     /**
@@ -325,23 +325,26 @@ class File implements FileInterface
             throw new \RuntimeException('Creating directory failed for ' . $filename);
         }
 
-        if ($this->handle) {
-            $tmp = true;
-            // As we are using non-truncating locking, make sure that the file is empty before writing.
-            if (@ftruncate($this->handle, 0) === false || @fwrite($this->handle, $this->raw()) === false) {
-                // Writing file failed, throw an error.
-                $tmp = false;
+        try {
+            if ($this->handle) {
+                $tmp = true;
+                // As we are using non-truncating locking, make sure that the file is empty before writing.
+                if (@ftruncate($this->handle, 0) === false || @fwrite($this->handle, $this->raw()) === false) {
+                    // Writing file failed, throw an error.
+                    $tmp = false;
+                }
+            } else {
+                // Create file with a temporary name and rename it to make the save action atomic.
+                $tmp = $this->tempname($filename);
+                if (file_put_contents($tmp, $this->raw()) === false) {
+                    $tmp = false;
+                } elseif (@rename($tmp, $filename) === false) {
+                    @unlink($tmp);
+                    $tmp = false;
+                }
             }
-        } else {
-            // Create file with a temporary name and rename it to make the save action atomic.
-            $tmp = tempnam($dir, basename($filename));
-            if ($tmp && @file_put_contents($tmp, $this->raw()) && @rename($tmp, $filename)) {
-                // We need to chmod() the file as it's using 0600 permissions.
-                @chmod($filename, 0666 & ~umask());
-            } elseif ($tmp) {
-                @unlink($tmp);
-                $tmp = false;
-            }
+        } catch (\Exception $e) {
+            $tmp = false;
         }
 
         if ($tmp === false) {
@@ -456,5 +459,19 @@ class File implements FileInterface
         }
 
         return $dir && is_dir($dir) && is_writable($dir);
+    }
+
+    /**
+     * @param string $filename
+     * @param int $length
+     * @return string
+     */
+    protected function tempname($filename, $length = 5)
+    {
+        do {
+            $test = $filename . substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+        } while (file_exists($test));
+
+        return $test;
     }
 }

@@ -1,3 +1,11 @@
+# v1.4.6
+## 03/20/2019
+
+1. [](#bugfix)
+    * Fixed `File::writable()` returning true if an existing file is read-only with the folder being writable
+    * Fixed `File::save()` silently ignoring failures with read only streams
+    * Regresion: Fixed file saving when temporary file cannot be created to the current folder / stream
+
 # v1.4.5
 ## 02/28/2019
 
