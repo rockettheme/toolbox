@@ -332,7 +332,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             foreach ($head as $key => $value) {
                 if (strpos($key, '@') !== false) {
                     // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
-                    $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
+                    $list = explode('-', preg_replace('/^(?:@*)?(.*?)(?:@\d*)?$/', '\1', $key), 2);
                     $action = array_shift($list);
                     $property = array_shift($list);
 
@@ -380,7 +380,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             // Handle special instructions in the form.
             if (strpos($key, '@') !== false) {
                 // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
-                $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
+                $list = explode('-', preg_replace('/^(?:@*)?(.*?)(?:@\d*)?$/', '\1', $key), 2);
                 $action = array_shift($list);
                 $property = array_shift($list);
 
