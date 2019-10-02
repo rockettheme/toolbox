@@ -14,12 +14,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInterface
 {
-    public function dispatch($eventName, BaseEvent $event = null)
+    public function dispatch($event = null, $eventName)
     {
         if (null === $event) {
             $event = new Event();
         }
 
-        return parent::dispatch($eventName, $event);
+        return parent::dispatch($event, $eventName);
     }
 }
