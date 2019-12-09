@@ -113,7 +113,7 @@ class MoFile extends File
     }
 
     /**
-     * @return int
+     * @return int|false
      */
     protected function readInt()
     {

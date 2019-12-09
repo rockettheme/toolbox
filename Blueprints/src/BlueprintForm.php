@@ -325,6 +325,9 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             end($bref_stack);
             $bref = &$bref_stack[key($bref_stack)];
             $head = array_pop($head_stack);
+            if (!\is_array($head)) {
+                $head = [];
+            }
             unset($bref_stack[key($bref_stack)]);
 
             foreach ($head as $key => $value) {
@@ -346,7 +349,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                     }
                 }
 
-                if (isset($key, $bref[$key]) && \is_array($bref[$key]) && \is_array($head[$key])) {
+                if (isset($bref[$key]) && \is_array($bref[$key]) && \is_array($head[$key])) {
                     $bref_stack[] = &$bref[$key];
                     $head_stack[] = $head[$key];
                 } else {
@@ -361,7 +364,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * @param array $items
      * @param array $path
-     * @return string
+     * @return string|null
      */
     protected function deepInit(array &$items, $path = [])
     {

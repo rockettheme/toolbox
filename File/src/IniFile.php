@@ -20,7 +20,7 @@ class IniFile extends File
     /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array $var
+     * @param mixed $var
      * @return array
      * @throws \RuntimeException
      */

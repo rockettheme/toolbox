@@ -36,7 +36,7 @@ class PhpFile extends File
     /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array|object $var
+     * @param mixed $var
      * @return array
      * @throws \RuntimeException
      */

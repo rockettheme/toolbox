@@ -290,7 +290,7 @@ class UniformResourceIterator extends FilesystemIterator
     }
 
     /**
-     * @param string|null $flags
+     * @param int|null $flags
      */
     public function setFlags($flags = null)
     {

@@ -13,15 +13,15 @@ class File implements FileInterface
 {
     /** @var string */
     protected $filename;
-    /** @var resource */
+    /** @var resource|null */
     protected $handle;
     /** @var bool|null */
     protected $locked;
     /** @var string */
     protected $extension;
-    /** @var string  Raw file contents. */
+    /** @var string|null  Raw file contents. */
     protected $raw;
-    /** @var array  Parsed file contents. */
+    /** @var array|null  Parsed file contents. */
     protected $content;
     /** @var array */
     protected $settings = [];
@@ -375,8 +375,8 @@ class File implements FileInterface
      *
      * Override in derived class.
      *
-     * @param string $var
-     * @return string
+     * @param mixed $var
+     * @return mixed
      */
     protected function check($var)
     {
@@ -388,7 +388,7 @@ class File implements FileInterface
      *
      * Override in derived class.
      *
-     * @param string $var
+     * @param array|string $var
      * @return string
      */
     protected function encode($var)
@@ -402,7 +402,7 @@ class File implements FileInterface
      * Override in derived class.
      *
      * @param string $var
-     * @return string
+     * @return array|string
      */
     protected function decode($var)
     {
@@ -434,7 +434,7 @@ class File implements FileInterface
     }
 
     /**
-     * @param  string  $dir
+     * @param string $dir
      * @return bool
      * @internal
      */

@@ -78,14 +78,18 @@ class MarkdownFile extends File
     /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array $var
+     * @param mixed $var
      * @return array
      */
     protected function check($var)
     {
+        if (!\is_array($var) || !\is_object($var)) {
+            throw new \RuntimeException('Provided data is not an array');
+        }
+
         $var = (array) $var;
         if (!isset($var['header']) || !\is_array($var['header'])) {
-            $var['header'] = array();
+            $var['header'] = [];
         }
         if (!isset($var['markdown']) || !\is_string($var['markdown'])) {
             $var['markdown'] = '';

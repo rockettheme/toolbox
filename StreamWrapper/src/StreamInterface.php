@@ -178,7 +178,7 @@ interface StreamInterface
      *
      * @param string $uri
      *   A string containing the URI to the directory to create.
-     * @param string $mode
+     * @param int $mode
      *   Permission flags - see mkdir().
      * @param int $options
      *   A bit mask of STREAM_REPORT_ERRORS and STREAM_MKDIR_RECURSIVE.

@@ -123,7 +123,7 @@ class ReadOnlyStream extends Stream
     }
 
     /**
-     * @param int $uri
+     * @param string $uri
      * @param int $options
      * @return bool
      */
