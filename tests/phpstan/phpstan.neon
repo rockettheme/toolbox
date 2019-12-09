@@ -23,4 +23,7 @@ parameters:
         - StreamWrapper/tests
     inferPrivatePropertyTypeFromConstructor: true
     reportUnmatchedIgnoredErrors: false
-    ignoreErrors: []
+    ignoreErrors:
+        -
+            message: '#Trying to invoke string but it might not be a callable#'
+            path: 'Blueprints/src/BlueprintSchema.php'

@@ -25,7 +25,7 @@ trait NestedArrayAccess
      */
     public function get($name, $default = null, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name);
+        $path = explode($separator ?: $this->nestedSeparator, $name) ?: [];
         $current = $this->items;
 
         foreach ($path as $field) {
@@ -53,7 +53,7 @@ trait NestedArrayAccess
      */
     public function set($name, $value, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name);
+        $path = explode($separator ?: $this->nestedSeparator, $name) ?: [];
         $current = &$this->items;
 
         foreach ($path as $field) {
@@ -90,13 +90,15 @@ trait NestedArrayAccess
      */
     public function undef($name, $separator = null)
     {
-        if ($name === '') {
+        $path = explode($separator ?: $this->nestedSeparator, $name);
+
+        // Handle empty string.
+        if ($path === false) {
             $this->items = [];
 
             return $this;
         }
 
-        $path = explode($separator ?: $this->nestedSeparator, $name);
         $var = array_pop($path);
         $current = &$this->items;
 

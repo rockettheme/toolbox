@@ -25,6 +25,18 @@ class MoFile extends File
     static protected $instances = [];
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * File can never be written.
      *
      * @return bool
@@ -87,6 +99,10 @@ class MoFile extends File
         // Offset of translation table.
         $translations = $this->readInt();
 
+        if ($originals === false || $translations === false) {
+            throw new \RuntimeException('Bad Gettext file.');
+        }
+
         // Each table consists of string length and offset of the string.
         $this->seek($originals);
         $table_originals = $this->readIntArray($total * 2);
@@ -118,7 +134,6 @@ class MoFile extends File
     protected function readInt()
     {
         $read = $this->read(4);
-
         if ($read === false) {
             return false;
         }
@@ -130,28 +145,34 @@ class MoFile extends File
 
     /**
      * @param int $count
-     * @return array
+     * @return array|false
      */
     protected function readIntArray($count)
     {
-        return unpack($this->endian . (string)$count, $this->read(4 * $count));
+        $read = $this->read(4 * $count);
+
+        return is_string($read) ? unpack($this->endian . (string)$count, $read) : false;
     }
 
     /**
      * @param int $bytes
-     * @return string
+     * @return string|false
      */
     private function read($bytes)
     {
         $data = substr($this->str, $this->pos, $bytes);
         $this->seek($this->pos + $bytes);
 
+        if (strlen($data) < $bytes) {
+            return false;
+        }
+
         return $data;
     }
 
     /**
      * @param int $pos
-     * @return mixed
+     * @return int
      */
     private function seek($pos)
     {

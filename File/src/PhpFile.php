@@ -18,6 +18,18 @@ class PhpFile extends File
     static protected $instances = [];
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * Saves PHP file and invalidates opcache.
      *
      * @param  mixed  $data  Optional data to be saved, usually array.
@@ -46,7 +58,7 @@ class PhpFile extends File
             throw new \RuntimeException('Provided data is not an array');
         }
 
-        return $var;
+        return (array)$var;
     }
 
     /**

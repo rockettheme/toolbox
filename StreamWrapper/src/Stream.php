@@ -17,8 +17,8 @@ class Stream implements StreamInterface
     /** @var string */
     protected $uri;
     /** @var Resource A generic resource handle. */
-    protected $handle = null;
-    /** @var ResourceLocatorInterface|UniformResourceLocator */
+    protected $handle;
+    /** @var ResourceLocatorInterface|UniformResourceLocator|null */
     protected static $locator;
 
     /**
@@ -49,13 +49,19 @@ class Stream implements StreamInterface
         }
 
         $this->uri = $uri;
-        $this->handle = ($options & STREAM_REPORT_ERRORS) ? fopen($path, $mode) : @fopen($path, $mode);
 
-        if (static::$locator instanceof UniformResourceLocator && !\in_array($mode, ['r', 'rb', 'rt'], true)) {
-            static::$locator->clearCache($this->uri);
+        $handle = ($options & STREAM_REPORT_ERRORS) ? fopen($path, $mode) : @fopen($path, $mode);
+        if ($handle) {
+            $this->handle = $handle;
+
+            if (static::$locator instanceof UniformResourceLocator && !\in_array($mode, ['r', 'rb', 'rt'], true)) {
+                static::$locator->clearCache($this->uri);
+            }
+
+            return true;
         }
 
-        return (bool) $this->handle;
+        return false;
     }
 
     /**
@@ -168,7 +174,7 @@ class Stream implements StreamInterface
      */
     public function stream_stat()
     {
-        return fstat($this->handle);
+        return fstat($this->handle) ?: [];
     }
 
     /**
@@ -285,14 +291,20 @@ class Stream implements StreamInterface
     {
         $path = $this->getPath($uri);
 
-        if (!$path) {
+        if ($path === false) {
             return false;
         }
 
         $this->uri = $uri;
-        $this->handle = opendir($path);
 
-        return (bool) $this->handle;
+        $handle = opendir($path);
+        if ($handle) {
+            $this->handle = $handle;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

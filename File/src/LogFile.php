@@ -25,6 +25,18 @@ class LogFile extends File
     }
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * Check contents and make sure it is in correct format.
      *
      * @param mixed $var
@@ -32,7 +44,7 @@ class LogFile extends File
      */
     protected function check($var)
     {
-        if (!\is_array($var) || !\is_object($var)) {
+        if (!(\is_array($var) || \is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
@@ -59,7 +71,7 @@ class LogFile extends File
      */
     protected function decode($var)
     {
-        $lines = (array)preg_split('#(\r\n|\n|\r)#', $var);
+        $lines = preg_split('#(\r\n|\n|\r)#', $var) ?: [];
 
         $results = [];
         foreach ($lines as $line) {

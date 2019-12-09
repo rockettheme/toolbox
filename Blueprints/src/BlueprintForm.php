@@ -324,16 +324,14 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         do {
             end($bref_stack);
             $bref = &$bref_stack[key($bref_stack)];
+            /** @var array $head */
             $head = array_pop($head_stack);
-            if (!\is_array($head)) {
-                $head = [];
-            }
             unset($bref_stack[key($bref_stack)]);
 
             foreach ($head as $key => $value) {
-                if (strpos($key, '@') !== false) {
+                if (\is_string($key) && strpos($key, '@') !== false) {
                     // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
-                    $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
+                    $list = explode('-', (string)preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                     $action = array_shift($list);
                     $property = array_shift($list);
 
@@ -381,7 +379,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             // Handle special instructions in the form.
             if (strpos($key, '@') !== false) {
                 // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
-                $list = explode('-', preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
+                $list = explode('-', (string)preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                 $action = array_shift($list);
                 $property = array_shift($list);
 
@@ -434,8 +432,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     {
         if (\is_string($value)) {
             $type = $value;
+            $context = null;
         } else {
             $type = isset($value['type']) ? $value['type'] : null;
+            $context = isset($value['context']) ? $value['context'] : null;
         }
         $field = 'form';
 
@@ -448,7 +448,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         }
 
         if ($type) {
-            $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
+            $files = $this->getFiles($type, $context);
 
             if (!$files) {
                 return null;
@@ -491,6 +491,9 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     protected function doLoad(array $files, $extends = null)
     {
         $filename = array_shift($files);
+        if (!\is_string($filename)) {
+            throw new \InvalidArgumentException(__METHOD__ . '(): Parameter #1 does not contain array of filenames');
+        }
         $content = $this->loadFile($filename);
 
         $key = '';
@@ -565,7 +568,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                     if ($files !== $parents) {
                         throw new RuntimeException("Loop detected while extending blueprint file '{$filename}'");
                     }
-                    if (!$parents) {
+                    if (empty($parents)) {
                         throw new RuntimeException("Parent blueprint missing for '{$filename}'");
                     }
                 }
@@ -592,14 +595,14 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
 
         foreach ($keys as $item => $ordering) {
             if ((string)(int)$ordering === (string)$ordering) {
-                $location = array_search($item, $reordered, true);
+                $location = array_search($item, $reordered, true) ?: 0;
                 $rel = array_splice($reordered, $location, 1);
                 array_splice($reordered, $ordering, 0, $rel);
 
             } elseif (isset($items[$ordering])) {
-                $location = array_search($item, $reordered, true);
+                $location = array_search($item, $reordered, true) ?: 0;
                 $rel = array_splice($reordered, $location, 1);
-                $location = array_search($ordering, $reordered, true);
+                $location = array_search($ordering, $reordered, true) ?: 0;
                 array_splice($reordered, $location + 1, 0, $rel);
             }
         }

@@ -21,7 +21,7 @@ class File implements FileInterface
     protected $extension;
     /** @var string|null  Raw file contents. */
     protected $raw;
-    /** @var array|null  Parsed file contents. */
+    /** @var array|string|null  Parsed file contents. */
     protected $content;
     /** @var array */
     protected $settings = [];
@@ -37,7 +37,7 @@ class File implements FileInterface
      */
     public static function instance($filename)
     {
-        if (!\is_string($filename) && $filename !== '') {
+        if (!\is_string($filename) || $filename === '') {
             throw new \InvalidArgumentException('Filename should be non-empty string');
         }
 
@@ -174,12 +174,13 @@ class File implements FileInterface
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
 
-            $this->handle = @fopen($this->filename, 'cb+');
-            if (!$this->handle) {
+            $handle = @fopen($this->filename, 'cb+');
+            if (!$handle) {
                 $error = error_get_last();
 
                 throw new \RuntimeException("Opening file for writing failed on error {$error['message']}");
             }
+            $this->handle = $handle;
         }
         $lock = $block ? LOCK_EX : LOCK_EX | LOCK_NB;
 
@@ -380,7 +381,11 @@ class File implements FileInterface
      */
     protected function check($var)
     {
-        return (string) $var;
+        if (!\is_string($var)) {
+            throw new \RuntimeException('Provided data is not a string');
+        }
+
+        return $var;
     }
 
     /**
@@ -393,7 +398,7 @@ class File implements FileInterface
      */
     protected function encode($var)
     {
-        return (string) $var;
+        return \is_string($var) ? $var : '';
     }
 
     /**
@@ -406,7 +411,7 @@ class File implements FileInterface
      */
     protected function decode($var)
     {
-        return (string) $var;
+        return $var;
     }
 
     /**

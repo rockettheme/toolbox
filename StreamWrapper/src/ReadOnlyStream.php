@@ -44,9 +44,15 @@ class ReadOnlyStream extends Stream
         }
 
         $this->uri = $uri;
-        $this->handle = ($options & STREAM_REPORT_ERRORS) ? fopen($path, $mode) : @fopen($path, $mode);
 
-        return (bool)$this->handle;
+        $handle = ($options & STREAM_REPORT_ERRORS) ? fopen($path, $mode) : @fopen($path, $mode);
+        if ($handle) {
+            $this->handle = $handle;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

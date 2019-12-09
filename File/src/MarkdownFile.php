@@ -22,6 +22,18 @@ class MarkdownFile extends File
     static protected $instances = [];
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * Get/set file header.
      *
      * @param array $var
@@ -83,7 +95,7 @@ class MarkdownFile extends File
      */
     protected function check($var)
     {
-        if (!\is_array($var) || !\is_object($var)) {
+        if (!(\is_array($var) || \is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
@@ -110,7 +122,7 @@ class MarkdownFile extends File
         $o = (!empty($var['header']) ? "---\n" . trim(YamlParser::dump($var['header'], 20)) . "\n---\n\n" : '') . $var['markdown'];
 
         // Normalize line endings to Unix style.
-        $o = preg_replace("/(\r\n|\r)/", "\n", $o);
+        $o = (string)preg_replace("/(\r\n|\r)/", "\n", $o);
 
         return $o;
     }
@@ -131,7 +143,7 @@ class MarkdownFile extends File
         $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
         // Normalize line endings to Unix style.
-        $var = preg_replace("/(\r\n|\r)/", "\n", $var);
+        $var = (string)preg_replace("/(\r\n|\r)/", "\n", $var);
 
         // Parse header.
         preg_match($frontmatter_regex, ltrim($var), $m);

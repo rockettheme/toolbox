@@ -86,7 +86,7 @@ interface FileInterface
      * Get/set parsed file contents.
      *
      * @param string $var
-     * @return string
+     * @return string|array
      */
     public function content($var = null);
 

@@ -45,7 +45,11 @@ class Session implements \IteratorAggregate
 
         session_name('msF9kJcW');
         session_set_cookie_params($lifetime, $path, $domain);
-        register_shutdown_function([$this, 'close']);
+
+        /** @var callable $callable */
+        $callable = [$this, 'close'];
+
+        register_shutdown_function($callable);
         session_cache_limiter('nocache');
 
         self::$instance = $this;

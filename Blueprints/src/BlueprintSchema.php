@@ -270,6 +270,10 @@ class BlueprintSchema
      */
     public function getPropertyName($path = null, $separator = '.')
     {
+        if (!$path) {
+            return '';
+        }
+
         $parts = explode($separator, $path);
         $nested = $this->nested;
 
@@ -364,7 +368,8 @@ class BlueprintSchema
         if (!$path) {
             return $this->nested;
         }
-        $parts = explode($separator, $path);
+
+        $parts = explode($separator, $path) ?: [];
         $item = array_pop($parts);
 
         $nested = $this->nested;
@@ -706,13 +711,11 @@ class BlueprintSchema
         $o = array_pop($list);
 
         if (!$o) {
-            if (\function_exists($f)) {
+            if ($f && \function_exists($f)) {
                 $data = $f(...$params);
             }
-        } else {
-            if (\method_exists($o, $f)) {
-                $data = $o->$f(...$params);
-            }
+        } elseif ($f && \method_exists($o, $f)) {
+            $data = $o->$f(...$params);
         }
 
         // If function returns a value,

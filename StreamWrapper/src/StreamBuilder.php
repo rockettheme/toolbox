@@ -38,7 +38,7 @@ class StreamBuilder
             throw new \InvalidArgumentException("Stream '{$scheme}' has already been initialized.");
         }
 
-        if (!is_subclass_of($handler, 'RocketTheme\Toolbox\StreamWrapper\StreamInterface')) {
+        if (!is_subclass_of($handler, StreamInterface::class)) {
             throw new \InvalidArgumentException("Stream '{$scheme}' has unknown or invalid type.");
         }
 

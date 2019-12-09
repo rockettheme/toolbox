@@ -18,6 +18,18 @@ class IniFile extends File
     static protected $instances = [];
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * Check contents and make sure it is in correct format.
      *
      * @param mixed $var

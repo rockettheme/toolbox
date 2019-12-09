@@ -34,7 +34,7 @@ trait Export
      */
     public function toYaml($inline = 3, $indent = 2)
     {
-        return Yaml::dump($this->toArray(), $inline, $indent, true);
+        return Yaml::dump($this->toArray(), $inline, $indent, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
 
     /**
@@ -44,6 +44,11 @@ trait Export
      */
     public function toJson()
     {
-        return json_encode($this->toArray());
+        $string = json_encode($this->toArray());
+        if (!\is_string($string)) {
+            throw new \RuntimeException('Failed to encode array', 500);
+        }
+
+        return $string;
     }
 }

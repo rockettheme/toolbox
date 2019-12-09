@@ -25,6 +25,18 @@ class YamlFile extends File
     ];
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * Set/get settings.
      *
      * @param array|null $settings
@@ -89,7 +101,7 @@ class YamlFile extends File
      */
     protected function check($var)
     {
-        if (!\is_array($var) || !\is_object($var)) {
+        if (!(\is_array($var) || \is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
@@ -105,7 +117,7 @@ class YamlFile extends File
      */
     protected function encode($var)
     {
-        return (string)YamlParser::dump($var, $this->setting('inline', 5), $this->setting('indent', 2), true);
+        return YamlParser::dump($var, $this->setting('inline', 5), $this->setting('indent', 2), YamlParser::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
 
     /**
