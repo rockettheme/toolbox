@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,14 +11,10 @@ namespace RocketTheme\Toolbox\File;
  */
 class JsonFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.json';
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**
@@ -28,7 +25,7 @@ class JsonFile extends File
      */
     protected function check($var)
     {
-        return (array) $var;
+        return (array)$var;
     }
 
     /**
@@ -40,7 +37,7 @@ class JsonFile extends File
      */
     protected function encode($var, $options = 0)
     {
-        return (string) json_encode($var, $options);
+        return (string)json_encode($var, $options);
     }
 
     /**
@@ -48,7 +45,7 @@ class JsonFile extends File
      *
      * @param string $var
      * @param bool $assoc
-     * @return array mixed
+     * @return array
      */
     protected function decode($var, $assoc = false)
     {

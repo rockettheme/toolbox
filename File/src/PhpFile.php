@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,14 +11,10 @@ namespace RocketTheme\Toolbox\File;
  */
 class PhpFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.php';
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**
@@ -68,8 +65,8 @@ class PhpFile extends File
     /**
      * Method to get an array as an exported string.
      *
-     * @param array $a      The array to get as a string.
-     * @param int   $level  Used internally to indent rows.
+     * @param array $a The array to get as a string.
+     * @param int $level Used internally to indent rows.
      *
      * @return string
      */
@@ -85,6 +82,7 @@ class PhpFile extends File
         }
 
         $space = str_repeat('    ', $level);
+
         return "[\n    {$space}" . implode(",\n    {$space}", $r) . "\n{$space}]";
     }
 
@@ -96,6 +94,6 @@ class PhpFile extends File
      */
     protected function decode($var)
     {
-        return (array) include $this->filename;
+        return (array)include $this->filename;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\ArrayTraits;
 
 /**
@@ -7,16 +8,10 @@ namespace RocketTheme\Toolbox\ArrayTraits;
  * @package RocketTheme\Toolbox\ArrayTraits
  * @author RocketTheme
  * @license MIT
- *
- * @property array $items
  */
 trait Iterator
 {
-    /**
-     * Hack to make Iterator work together with unset().
-     *
-     * @var bool
-     */
+    /** @var bool Hack to make Iterator work together with unset(). */
     private $iteratorUnset = false;
 
     /**
@@ -32,17 +27,15 @@ trait Iterator
     /**
      * Returns the key of the current element.
      *
-     * @return mixed  Returns scalar on success, or NULL on failure.
+     * @return string|null  Returns key on success, or NULL on failure.
      */
     public function key()
     {
-        return key($this->items);
+        return (string)key($this->items);
     }
 
     /**
      * Moves the current position to the next element.
-     *
-     * @return void
      */
     public function next()
     {
@@ -56,8 +49,6 @@ trait Iterator
 
     /**
      * Rewinds back to the first element of the Iterator.
-     *
-     * @return void
      */
     public function rewind()
     {

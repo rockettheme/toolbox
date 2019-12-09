@@ -6,11 +6,11 @@
     "homepage": "http://www.rockettheme.com",
     "license": "MIT",
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.6.0",
         "ext-json": "*",
         "pimple/pimple": "~3.0",
-        "symfony/yaml": ">2.5",
-        "symfony/event-dispatcher": ">2.5"
+        "symfony/yaml": ">=3.4",
+        "symfony/event-dispatcher": ">=3.4"
     },
     "require-dev": {
         "phpunit/phpunit": "~5",
@@ -38,7 +38,7 @@
     "scripts": {
         "test": "vendor/bin/phpunit run unit",
         "test-windows": "vendor\\bin\\phpunit run unit",
-        "phpstan": "vendor/bin/phpstan analyse -l 1 -c ./tests/phpstan/phpstan.neon . --memory-limit=128M"
+        "phpstan": "vendor/bin/phpstan analyse -l 2 -c ./tests/phpstan/phpstan.neon . --memory-limit=128M"
     },
      "config": {
         "platform": {

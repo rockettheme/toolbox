@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -13,7 +14,7 @@ interface FileInterface
     /**
      * Get file instance.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return static
      */
     public static function instance($filename);
@@ -92,7 +93,7 @@ interface FileInterface
     /**
      * Save file.
      *
-     * @param  string  $data  Optional data to be saved.
+     * @param string $data Optional data to be saved.
      * @throws \RuntimeException
      */
     public function save($data = null);

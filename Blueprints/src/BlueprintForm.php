@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Blueprints;
 
 use RocketTheme\Toolbox\ArrayTraits\Export;
@@ -18,16 +19,12 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
 
     /** @var array */
     protected $items;
-
-    /** @var string|string[] */
+    /** @var string|string[]|null */
     protected $filename;
-
     /** @var string */
     protected $context;
-
     /** @var array */
     protected $overrides = [];
-
     /** @var array */
     protected $dynamic = [];
 
@@ -42,7 +39,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Get list of blueprint form files (file and its parents for overrides).
      *
-     * @param string|array $path
+     * @param string|string[] $path
      * @param string $context
      * @return array
      */
@@ -51,7 +48,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Constructor.
      *
-     * @param string|array $filename
+     * @param string|string[]|null $filename
      * @param array $items
      */
     public function __construct($filename = null, array $items = [])
@@ -87,7 +84,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Set context for import@ and extend@.
      *
-     * @param $context
+     * @param string $context
      * @return $this
      */
     public function setContext($context)
@@ -113,6 +110,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Load blueprint.
      *
+     * @param string|array|null $extends
      * @return $this
      */
     public function load($extends = null)
@@ -125,7 +123,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             // Load and extend blueprints.
             $data = $this->doLoad($files, $extends);
 
-            $this->items = (array) array_shift($data);
+            $this->items = (array)array_shift($data);
 
             foreach ($data as $content) {
                 $this->extend($content, true);
@@ -191,7 +189,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     public function form()
     {
-        return (array) $this->get('form');
+        return (array)$this->get('form');
     }
 
     /**
@@ -208,7 +206,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             $fields = $field !== null ? ['' => (array) $field] : $fields;
         }
 
-        return (array) $fields;
+        return (array)$fields;
     }
 
     /**
@@ -271,8 +269,8 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      * @example $value = $this->resolve('this/is/my/nested/variable');
      * returns ['this/is/my', 'nested/variable']
      *
-     * @param array  $path
-     * @param string  $separator
+     * @param array $path
+     * @param string $separator
      * @return array
      */
     public function resolve(array $path, $separator = '/')
@@ -431,7 +429,11 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     protected function loadImport($value)
     {
-        $type = !\is_string($value) ? (!isset($value['type']) ? null : $value['type']) : $value;
+        if (\is_string($value)) {
+            $type = $value;
+        } else {
+            $type = isset($value['type']) ? $value['type'] : null;
+        }
         $field = 'form';
 
         if ($type && strpos($type, ':') !== false) {
@@ -479,7 +481,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Internal function that handles loading extended blueprints.
      *
-     * @param array $files
+     * @param string[] $files
      * @param string|array|null $extends
      * @return array
      */
@@ -514,6 +516,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      * @param string $filename
      * @param array $parents
      * @param array $extends
+     * @param bool $override
      * @return array
      */
     protected function doExtend($filename, array $parents, array $extends, $override = false)
@@ -525,7 +528,11 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $data = [[]];
         foreach ($extends as $value) {
             // Accept array of type and context or a string.
-            $type = !\is_string($value) ? (!isset($value['type']) ? null : $value['type']) : $value;
+            if (\is_string($value)) {
+                $type = $value;
+            } else {
+                $type = isset($value['type']) ? $value['type'] : null;
+            }
 
             if (!$type) {
                 continue;
@@ -566,8 +573,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
             }
         }
 
-        // TODO: In PHP 5.6+ use array_merge(...$data);
-        return call_user_func_array('array_merge', $data);
+        return array_merge(...$data);
     }
 
     /**
@@ -582,7 +588,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         $reordered = array_keys($items);
 
         foreach ($keys as $item => $ordering) {
-            if ((string)(int) $ordering === (string) $ordering) {
+            if ((string)(int)$ordering === (string)$ordering) {
                 $location = array_search($item, $reordered, true);
                 $rel = array_splice($reordered, $location, 1);
                 array_splice($reordered, $ordering, 0, $rel);

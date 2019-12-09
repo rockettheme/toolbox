@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Event;
 
 use RocketTheme\Toolbox\ArrayTraits\ArrayAccess;
@@ -17,8 +18,6 @@ class Event extends BaseEvent implements \ArrayAccess
 {
     use ArrayAccess, Constructor, Export;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $items = [];
 }

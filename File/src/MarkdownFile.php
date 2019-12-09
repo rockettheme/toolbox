@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -14,21 +15,16 @@ use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
  */
 class MarkdownFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.md';
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**
      * Get/set file header.
      *
      * @param array $var
-     *
      * @return array
      */
     public function header(array $var = null)
@@ -47,7 +43,6 @@ class MarkdownFile extends File
      * Get/set markdown content.
      *
      * @param string $var
-     *
      * @return string
      */
     public function markdown($var = null)
@@ -55,7 +50,7 @@ class MarkdownFile extends File
         $content = $this->content();
 
         if ($var !== null) {
-            $content['markdown'] = (string) $var;
+            $content['markdown'] = (string)$var;
             $this->content($content);
         }
 
@@ -66,7 +61,6 @@ class MarkdownFile extends File
      * Get/set frontmatter content.
      *
      * @param string $var
-     *
      * @return string
      */
     public function frontmatter($var = null)
@@ -74,7 +68,7 @@ class MarkdownFile extends File
         $content = $this->content();
 
         if ($var !== null) {
-            $content['frontmatter'] = (string) $var;
+            $content['frontmatter'] = (string)$var;
             $this->content($content);
         }
 
@@ -121,7 +115,7 @@ class MarkdownFile extends File
      * Decode RAW string into contents.
      *
      * @param string $var
-     * @return array mixed
+     * @return array
      */
     protected function decode($var)
     {

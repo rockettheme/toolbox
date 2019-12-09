@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,14 +11,10 @@ namespace RocketTheme\Toolbox\File;
  */
 class IniFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.ini';
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**

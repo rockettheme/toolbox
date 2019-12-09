@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\ArrayTraits;
 
 /**
@@ -15,8 +16,8 @@ trait NestedArrayAccessWithGetters
     /**
      * Magic setter method
      *
-     * @param mixed $offset Asset name value
-     * @param mixed $value  Asset value
+     * @param string $offset Asset name value
+     * @param mixed $value Asset value
      */
     public function __set($offset, $value)
     {
@@ -26,8 +27,8 @@ trait NestedArrayAccessWithGetters
     /**
      * Magic getter method
      *
-     * @param  mixed $offset Asset name value
-     * @return mixed         Asset value
+     * @param string $offset Asset name value
+     * @return mixed Asset value
      */
     public function __get($offset)
     {
@@ -37,8 +38,8 @@ trait NestedArrayAccessWithGetters
     /**
      * Magic method to determine if the attribute is set
      *
-     * @param  mixed   $offset Asset name value
-     * @return boolean         True if the value is set
+     * @param  string $offset Asset name value
+     * @return bool True if the value is set
      */
     public function __isset($offset)
     {
@@ -48,7 +49,7 @@ trait NestedArrayAccessWithGetters
     /**
      * Magic method to unset the attribute
      *
-     * @param mixed $offset The name value to unset
+     * @param string $offset The name value to unset
      */
     public function __unset($offset)
     {

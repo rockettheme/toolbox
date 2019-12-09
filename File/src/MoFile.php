@@ -10,19 +10,18 @@ namespace RocketTheme\Toolbox\File;
  */
 class MoFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.mo';
-
+    /** @var int */
     protected $pos = 0;
+    /** @var string */
     protected $str;
+    /** @var int */
     protected $len;
+    /** @var string */
     protected $endian;
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**
@@ -38,6 +37,7 @@ class MoFile extends File
     /**
      * Prevent saving file.
      *
+     * @param mixed $data
      * @throws \BadMethodCallException
      */
     public function save($data = null)
@@ -56,7 +56,7 @@ class MoFile extends File
     }
 
     /**
-     * @param $var
+     * @param string $var
      * @return array
      * @throws \RuntimeException
      */
@@ -129,32 +129,34 @@ class MoFile extends File
     }
 
     /**
-     * @param $count
+     * @param int $count
      * @return array
      */
     protected function readIntArray($count)
     {
-        return unpack($this->endian . $count, $this->read(4 * $count));
+        return unpack($this->endian . (string)$count, $this->read(4 * $count));
     }
 
     /**
-     * @param $bytes
+     * @param int $bytes
      * @return string
      */
     private function read($bytes)
     {
         $data = substr($this->str, $this->pos, $bytes);
         $this->seek($this->pos + $bytes);
+
         return $data;
     }
 
     /**
-     * @param $pos
+     * @param int $pos
      * @return mixed
      */
     private function seek($pos)
     {
         $this->pos = $pos < $this->len ? $pos : $this->len;
+
         return $this->pos;
     }
 }

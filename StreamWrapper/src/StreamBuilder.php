@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\StreamWrapper;
 
 /**
@@ -7,9 +8,7 @@ namespace RocketTheme\Toolbox\StreamWrapper;
  */
 class StreamBuilder
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $items = [];
 
     /**

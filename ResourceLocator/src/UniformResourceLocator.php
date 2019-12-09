@@ -13,21 +13,20 @@ namespace RocketTheme\Toolbox\ResourceLocator;
  */
 class UniformResourceLocator implements ResourceLocatorInterface
 {
-    /**
-     * @var string  Base URL for all the streams.
-     */
+    /** @var string  Base URL for all the streams. */
     public $base;
 
-    /**
-     * @var array[]
-     */
+    /** @var array[] */
     protected $schemes = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $cache = [];
 
+    /**
+     * UniformResourceLocator constructor.
+     *
+     * @param string|null $base
+     */
     public function __construct($base = null)
     {
         // Normalize base path.
@@ -37,8 +36,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
     /**
      * Return iterator for the resource URI.
      *
-     * @param  string $uri
-     * @param  int    $flags    See constants from FilesystemIterator class.
+     * @param string $uri
+     * @param int|null $flags See constants from FilesystemIterator class.
      * @return UniformResourceIterator
      */
     public function getIterator($uri, $flags = null)
@@ -49,8 +48,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
     /**
      * Return recursive iterator for the resource URI.
      *
-     * @param  string $uri
-     * @param  int    $flags    See constants from FilesystemIterator class.
+     * @param string $uri
+     * @param int|null $flags    See constants from FilesystemIterator class.
      * @return RecursiveUniformResourceIterator
      */
     public function getRecursiveIterator($uri, $flags = null)
@@ -75,7 +74,6 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * Reset a locator scheme
      *
      * @param string $scheme The scheme to reset
-     *
      * @return $this
      */
     public function resetScheme($scheme)
@@ -93,7 +91,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $prefix
      * @param string|array $paths
      * @param bool|string  $override  True to add path as override, string
-     * @param bool  $force     True to add paths even if them do not exist.
+     * @param bool $force     True to add paths even if them do not exist.
      * @throws \BadMethodCallException
      */
     public function addPath($scheme, $prefix, $paths, $override = false, $force = false)
@@ -181,12 +179,16 @@ class UniformResourceLocator implements ResourceLocatorInterface
      */
     public function getPaths($scheme = null)
     {
-        return !$scheme ? $this->schemes : (isset($this->schemes[$scheme]) ? $this->schemes[$scheme] : []);
+        if (null !== $scheme) {
+            return isset($this->schemes[$scheme]) ? $this->schemes[$scheme] : [];
+        }
+
+        return $this->schemes;
     }
 
     /**
-     * @param  string $uri
-     * @return string|bool
+     * @param string $uri
+     * @return string|false
      * @throws \BadMethodCallException
      */
     public function __invoke($uri)
@@ -200,7 +202,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
     /**
      * Returns true if uri is resolvable by using locator.
      *
-     * @param  string $uri
+     * @param string $uri
      * @return bool
      */
     public function isStream($uri)
@@ -223,7 +225,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $uri
      * @param bool $throwException
      * @param bool $splitStream
-     * @return string|array|bool
+     * @return string|array|false
      * @throws \BadMethodCallException
      */
     public function normalize($uri, $throwException = false, $splitStream = false)
@@ -270,32 +272,37 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $path = implode('/', $list);
         }
 
-        return $splitStream ? [$scheme, $path] : ($scheme !== 'file' ? "{$scheme}://{$path}" : $path);
+        if ($splitStream) {
+            return [$scheme, $path];
+        }
+
+        return $scheme !== 'file' ? "{$scheme}://{$path}" : $path;
     }
 
     /**
      * Find highest priority instance from a resource.
      *
-     * @param  string $uri      Input URI to be searched.
-     * @param  bool   $absolute Whether to return absolute path.
-     * @param  bool   $first    Whether to return first path even if it doesn't exist.
+     * @param string $uri Input URI to be searched.
+     * @param bool $absolute Whether to return absolute path.
+     * @param bool $first Whether to return first path even if it doesn't exist.
      * @throws \BadMethodCallException
-     * @return string|bool
+     * @return string|false
      */
     public function findResource($uri, $absolute = true, $first = false)
     {
         if (!\is_string($uri)) {
             throw new \BadMethodCallException('Invalid parameter $uri.');
         }
+
         return $this->findCached($uri, false, $absolute, $first);
     }
 
     /**
      * Find all instances from a resource.
      *
-     * @param  string $uri      Input URI to be searched.
-     * @param  bool   $absolute Whether to return absolute path.
-     * @param  bool   $all      Whether to return all paths even if they don't exist.
+     * @param string $uri Input URI to be searched.
+     * @param bool $absolute Whether to return absolute path.
+     * @param bool $all Whether to return all paths even if they don't exist.
      * @throws \BadMethodCallException
      * @return array
      */
@@ -311,9 +318,9 @@ class UniformResourceLocator implements ResourceLocatorInterface
     /**
      * Find all instances from a list of resources.
      *
-     * @param  array  $uris     Input URIs to be searched.
-     * @param  bool   $absolute Whether to return absolute path.
-     * @param  bool   $all      Whether to return all paths even if they don't exist.
+     * @param array $uris Input URIs to be searched.
+     * @param bool $absolute Whether to return absolute path.
+     * @param bool $all Whether to return all paths even if they don't exist.
      * @throws \BadMethodCallException
      * @return array
      */
@@ -326,8 +333,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $lists[] = $this->findResources($uri, $absolute, $all);
         }
 
-        // TODO: In PHP 5.6+ use array_merge(...$list);
-        return call_user_func_array('array_merge', $lists);
+        return array_merge(...$lists);
     }
 
     /**
@@ -384,7 +390,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param bool $array
      * @param bool $absolute
      * @param bool $all
-     * @return array|string|bool
+     * @return array|string|false
      * @throws \BadMethodCallException
      */
     protected function findCached($uri, $array, $absolute, $all)
@@ -410,6 +416,12 @@ class UniformResourceLocator implements ResourceLocatorInterface
         return $this->cache[$key];
     }
 
+    /**
+     * @param string $uri
+     * @param bool $array
+     * @param bool $absolute
+     * @param bool $all
+     */
     protected function clearCached($uri, $array, $absolute, $all)
     {
         // Local caching: make sure that the function gets only called at once for each file.
@@ -419,14 +431,13 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
-     * @param  string $scheme
-     * @param  string $file
-     * @param  bool $array
-     * @param  bool $absolute
-     * @param  bool $all
-     *
+     * @param string $scheme
+     * @param string $file
+     * @param bool $array
+     * @param bool $absolute
+     * @param bool $all
+     * @return array|string|false
      * @throws \InvalidArgumentException
-     * @return array|string|bool
      * @internal
      */
     protected function find($scheme, $file, $array, $absolute, $all)

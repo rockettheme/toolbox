@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 use Symfony\Component\Yaml\Exception\DumpException;
@@ -15,11 +16,9 @@ use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
  */
 class YamlFile extends File
 {
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
-
+    /** @var array */
     static protected $globalSettings = [
         'compat' => true,
         'native' => true
@@ -28,7 +27,7 @@ class YamlFile extends File
     /**
      * Set/get settings.
      *
-     * @param array $settings
+     * @param array|null $settings
      * @return array
      */
     public static function globalSettings(array $settings = null)
@@ -53,7 +52,7 @@ class YamlFile extends File
     /**
      * Set/get settings.
      *
-     * @param array $settings
+     * @param array|null $settings
      * @return array
      */
     public function settings(array $settings = null)
@@ -90,7 +89,7 @@ class YamlFile extends File
      */
     protected function check($var)
     {
-        return (array) $var;
+        return (array)$var;
     }
 
     /**
@@ -102,14 +101,14 @@ class YamlFile extends File
      */
     protected function encode($var)
     {
-        return (string) YamlParser::dump($var, $this->setting('inline', 5), $this->setting('indent', 2), true);
+        return (string)YamlParser::dump($var, $this->setting('inline', 5), $this->setting('indent', 2), true);
     }
 
     /**
      * Decode RAW string into contents.
      *
      * @param string $var
-     * @return array mixed
+     * @return array
      * @throws ParseException
      */
     protected function decode($var)
@@ -123,15 +122,15 @@ class YamlFile extends File
             @ini_set('yaml.decode_php', $saved);
 
             if ($data !== false) {
-                return (array) $data;
+                return (array)$data;
             }
         }
 
         try {
-            return (array) YamlParser::parse($var);
+            return (array)YamlParser::parse($var);
         } catch (ParseException $e) {
             if ($this->setting('compat', true)) {
-                return (array) FallbackYamlParser::parse($var);
+                return (array)FallbackYamlParser::parse($var);
             }
 
             throw $e;

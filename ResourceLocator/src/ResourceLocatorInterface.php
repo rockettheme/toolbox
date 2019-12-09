@@ -14,7 +14,7 @@ interface ResourceLocatorInterface
     /**
      * Alias for findResource()
      *
-     * @param $uri
+     * @param string $uri
      * @return string|bool
      */
     public function __invoke($uri);
@@ -22,23 +22,23 @@ interface ResourceLocatorInterface
     /**
      * Returns true if uri is resolvable by using locator.
      *
-     * @param  string $uri
+     * @param string $uri
      * @return bool
      */
     public function isStream($uri);
 
     /**
-     * @param  string $uri
-     * @param  bool   $absolute
-     * @param  bool   $first
-     * @return string|bool
+     * @param string $uri
+     * @param bool $absolute
+     * @param bool $first
+     * @return string|false
      */
     public function findResource($uri, $absolute = true, $first = false);
 
     /**
-     * @param  string $uri
-     * @param  bool   $absolute
-     * @param  bool   $all
+     * @param string $uri
+     * @param bool $absolute
+     * @param bool $all
      * @return array
      */
     public function findResources($uri, $absolute = true, $all = false);

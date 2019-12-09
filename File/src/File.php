@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,61 +11,41 @@ namespace RocketTheme\Toolbox\File;
  */
 class File implements FileInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $filename;
-
-    /**
-     * @var resource
-     */
+    /** @var resource */
     protected $handle;
-
-    /**
-     * @var bool|null
-     */
+    /** @var bool|null */
     protected $locked;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension;
-
-    /**
-     * @var string  Raw file contents.
-     */
+    /** @var string  Raw file contents. */
     protected $raw;
-
-    /**
-     * @var array  Parsed file contents.
-     */
+    /** @var array  Parsed file contents. */
     protected $content;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $settings = [];
 
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**
      * Get file instance.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return static
      */
     public static function instance($filename)
     {
-        if (!\is_string($filename) && $filename) {
+        if (!\is_string($filename) && $filename !== '') {
             throw new \InvalidArgumentException('Filename should be non-empty string');
         }
+
         if (!isset(static::$instances[$filename])) {
             static::$instances[$filename] = new static;
             static::$instances[$filename]->init($filename);
         }
+
         return static::$instances[$filename];
     }
 
@@ -113,7 +94,7 @@ class File implements FileInterface
     /**
      * Set filename.
      *
-     * @param $filename
+     * @param string $filename
      */
     protected function init($filename)
     {
@@ -145,6 +126,7 @@ class File implements FileInterface
         if ($var !== null) {
             $this->filename = $var;
         }
+
         return $this->filename;
     }
 
@@ -191,6 +173,7 @@ class File implements FileInterface
             if (!$this->mkdir(\dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
+
             $this->handle = @fopen($this->filename, 'cb+');
             if (!$this->handle) {
                 $error = error_get_last();
@@ -226,10 +209,12 @@ class File implements FileInterface
         if (!$this->handle) {
             return false;
         }
+
         if ($this->locked) {
             flock($this->handle, LOCK_UN);
             $this->locked = null;
         }
+
         fclose($this->handle);
         $this->handle = null;
 
@@ -358,7 +343,7 @@ class File implements FileInterface
     /**
      * Rename file in the filesystem if it exists.
      *
-     * @param $filename
+     * @param string $filename
      * @return bool
      */
     public function rename($filename)
@@ -417,7 +402,7 @@ class File implements FileInterface
      * Override in derived class.
      *
      * @param string $var
-     * @return string mixed
+     * @return string
      */
     protected function decode($var)
     {
@@ -425,7 +410,8 @@ class File implements FileInterface
     }
 
     /**
-     * @param  string  $dir
+     * @param string $dir
+     * @return bool
      */
     private function mkdir($dir)
     {

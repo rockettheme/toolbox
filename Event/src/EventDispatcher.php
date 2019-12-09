@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Event;
 
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
@@ -14,6 +15,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInterface
 {
+    /**
+     * @param string $eventName
+     * @param BaseEvent|null $event
+     * @return BaseEvent|null
+     */
     public function dispatch($eventName, BaseEvent $event = null)
     {
         if (null === $event) {

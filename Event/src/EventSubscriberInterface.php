@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface as BaseEventSubscriberInterface;

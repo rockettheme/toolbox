@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,9 +11,7 @@ namespace RocketTheme\Toolbox\File;
  */
 class LogFile extends File
 {
-    /**
-     * @var array|File[]
-     */
+    /** @var File[] */
     static protected $instances = [];
 
     /**
@@ -33,14 +32,14 @@ class LogFile extends File
      */
     protected function check($var)
     {
-        return (array) $var;
+        return (array)$var;
     }
 
     /**
      * Encode contents into RAW string (unsupported).
      *
      * @param string $var
-     * @return string|void
+     * @return string
      * @throws \BadMethodCallException
      */
     protected function encode($var)
@@ -52,13 +51,13 @@ class LogFile extends File
      * Decode RAW string into contents.
      *
      * @param string $var
-     * @return array mixed
+     * @return array
      */
     protected function decode($var)
     {
-        $lines = (array) preg_split('#(\r\n|\n|\r)#', $var);
+        $lines = (array)preg_split('#(\r\n|\n|\r)#', $var);
 
-        $results = array();
+        $results = [];
         foreach ($lines as $line) {
             preg_match('#^\[(.*)\] (.*)  @  (.*)  @@  (.*)$#', $line, $matches);
             if ($matches) {
