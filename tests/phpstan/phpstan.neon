@@ -1,0 +1,26 @@
+includes:
+    #- '../../vendor/phpstan/phpstan-strict-rules/rules.neon'
+    - '../../vendor/phpstan/phpstan-deprecation-rules/rules.neon'
+parameters:
+    fileExtensions:
+        - php
+    bootstrap: tests/phpstan/phpstan-bootstrap.php
+    excludes_analyse:
+        - tests
+        - vendor
+        - ArrayTraits/tests
+        - Blueprints/tests
+        - Compat
+        - Config
+        - Data
+        - DI/tests
+        - Event/tests
+        - File/tests
+        - Filesystem
+        - ResourceLocator/tests
+        - Rules
+        - Session/tests
+        - StreamWrapper/tests
+    inferPrivatePropertyTypeFromConstructor: true
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors: []

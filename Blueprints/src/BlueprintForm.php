@@ -19,7 +19,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /** @var array */
     protected $items;
 
-    /** @var string */
+    /** @var string|string[] */
     protected $filename;
 
     /** @var string */
@@ -64,7 +64,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Set filename for the blueprint. Can also be array of files for parent lookup.
      *
-     * @param string|array $filename
+     * @param string|string[] $filename
      * @return $this
      */
     public function setFilename($filename)
@@ -77,7 +77,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * Get the filename of the blueprint.
      *
-     * @return array|null|string
+     * @return string|string[]|null
      */
     public function getFilename()
     {

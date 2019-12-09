@@ -102,7 +102,7 @@ class YamlFile extends File
      */
     protected function encode($var)
     {
-        return (string) YamlParser::dump($var, $this->setting('inline', 5), $this->setting('indent', 2), true, false);
+        return (string) YamlParser::dump($var, $this->setting('inline', 5), $this->setting('indent', 2), true);
     }
 
     /**

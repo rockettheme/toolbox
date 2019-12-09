@@ -32,11 +32,7 @@ class PhpFile extends File
 
         // Invalidate configuration file from the opcache.
         if (\function_exists('opcache_invalidate')) {
-            // PHP 5.5.5+
             @opcache_invalidate($this->filename, true);
-        } elseif (\function_exists('apc_invalidate')) {
-            // APC
-            @apc_invalidate($this->filename);
         }
     }
 

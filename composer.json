@@ -13,7 +13,9 @@
         "symfony/event-dispatcher": ">2.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "~6"
+        "phpunit/phpunit": "~5",
+        "phpstan/phpstan": "^0.11",
+        "phpstan/phpstan-deprecation-rules": "^0.11"
     },
     "autoload": {
         "psr-4": {
@@ -28,8 +30,19 @@
             "RocketTheme\\Toolbox\\StreamWrapper\\": "StreamWrapper/src"
         }
     },
+    "archive": {
+        "exclude": [
+            "tests"
+        ]
+    },
     "scripts": {
         "test": "vendor/bin/phpunit run unit",
-        "test-windows": "vendor\\bin\\phpunit run unit"
+        "test-windows": "vendor\\bin\\phpunit run unit",
+        "phpstan": "vendor/bin/phpstan analyse -l 1 -c ./tests/phpstan/phpstan.neon . --memory-limit=128M"
+    },
+     "config": {
+        "platform": {
+            "php": "7.1.0"
+        }
     }
 }

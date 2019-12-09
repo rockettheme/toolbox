@@ -1,3 +1,9 @@
+# v1.5.0
+## mm/dd/2019
+
+1. [](#new)
+    * Pass phpstan level 1 tests
+
 # v1.4.6
 ## 03/20/2019
 

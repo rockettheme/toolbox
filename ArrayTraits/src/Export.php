@@ -36,7 +36,7 @@ trait Export
      */
     public function toYaml($inline = 3, $indent = 2)
     {
-        return Yaml::dump($this->toArray(), $inline, $indent, true, false);
+        return Yaml::dump($this->toArray(), $inline, $indent, true);
     }
 
     /**
