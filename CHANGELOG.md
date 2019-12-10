@@ -4,6 +4,11 @@
 1. [](#new)
     * Updated minimum requirement to PHP 5.6.0
     * Pass phpstan level 8 tests
+    * Added new `UniformResourceLocator::getResource()` method to simplify code where filename is always required
+1. [](#bugfix)
+    * Fixed `File::instance()` not throwing exception about empty filename
+    * Fixed `new UniformResourceItarator()` not throwing exception when path is non-existing
+    * Fixed many other edge cases
 
 # v1.4.6
 ## 03/20/2019

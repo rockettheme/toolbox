@@ -97,8 +97,9 @@ class UniformResourceIterator extends FilesystemIterator
     {
         $this->found = [];
         $this->stack = $this->locator->findResources($this->path);
+
         if (!$this->nextIterator()) {
-            throw new \BadMethodCallException('Url needs to exist');
+            throw new \BadMethodCallException('Failed to open dir: ' . $this->path . ' does not exist.');
         }
         $this->next();
     }

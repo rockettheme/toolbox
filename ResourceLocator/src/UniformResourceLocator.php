@@ -290,6 +290,27 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
+     * Get resource path. If resource does not exist, return path with highest priority.
+     *
+     * @param string $uri Input URI to be searched.
+     * @param bool $absolute Whether to return absolute path.
+     * @return string
+     * @throws \BadMethodCallException
+     */
+    public function getResource($uri, $absolute = true)
+    {
+        $path = $this->findResource($uri, $absolute);
+        if ($path === false) {
+            $path = $this->findResource($uri, $absolute, true);
+            if ($path === false) {
+                $path = '';
+            }
+        }
+
+        return $path;
+    }
+
+    /**
      * Find highest priority instance from a resource.
      *
      * @param string $uri Input URI to be searched.
