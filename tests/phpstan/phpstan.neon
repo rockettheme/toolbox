@@ -4,7 +4,7 @@ includes:
 parameters:
     bootstrap: phpstan-bootstrap.php
     inferPrivatePropertyTypeFromConstructor: true
-    reportUnmatchedIgnoredErrors: true
+    reportUnmatchedIgnoredErrors: false
 
     # These checks are new for phpstan 0.12, ignore them for now.
     checkMissingIterableValueType: false
@@ -27,3 +27,11 @@ parameters:
         -
             message: '#Trying to invoke string but it might not be a callable#'
             path: '*/Blueprints/src/BlueprintSchema.php'
+
+        # Deprecated event classes
+        -
+            message: '#deprecated#'
+            path: '*/Event/src/Event.php'
+        -
+           message: '#(deprecated|compatible|expects|returns)#'
+           path: '*/Event/src/EventDispatcher.php'

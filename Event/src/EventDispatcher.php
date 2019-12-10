@@ -4,7 +4,6 @@ namespace RocketTheme\Toolbox\Event;
 
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Implements Symfony EventDispatcher interface.
@@ -13,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @author RocketTheme
  * @license MIT
  */
-class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInterface
+class EventDispatcher extends BaseEventDispatcher
 {
     /**
      * @param string $eventName
