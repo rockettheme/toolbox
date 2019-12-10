@@ -5,8 +5,8 @@
     * Updated minimum requirement to PHP 5.6.0
     * Pass phpstan level 8 tests
     * Added new `UniformResourceLocator::getResource()` method to simplify code where filename is always required
+    * Calling `File::instance()` with empty filename is now deprecated
 1. [](#bugfix)
-    * Fixed `File::instance()` not throwing exception about empty filename
     * Fixed `new UniformResourceItarator()` not throwing exception when path is non-existing
     * Fixed many other edge cases
 

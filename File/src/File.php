@@ -11,7 +11,7 @@ namespace RocketTheme\Toolbox\File;
  */
 class File implements FileInterface
 {
-    /** @var string */
+    /** @var string|null */
     protected $filename;
     /** @var resource|null */
     protected $handle;
@@ -38,7 +38,11 @@ class File implements FileInterface
     public static function instance($filename)
     {
         if (!\is_string($filename) || $filename === '') {
-            throw new \InvalidArgumentException('Filename should be non-empty string');
+            user_error(__METHOD__ . '() should not be called with empty filename, this will stop working in the future!', E_USER_DEPRECATED);
+
+            // TODO: fail in the future (and also remove $this->filename === null checks).
+            //throw new \InvalidArgumentException('Filename should be non-empty string');
+            return new static();
         }
 
         if (!isset(static::$instances[$filename])) {
@@ -115,14 +119,16 @@ class File implements FileInterface
         $this->content = null;
         $this->raw = null;
 
-        unset(static::$instances[$this->filename]);
+        if (null !== $this->filename) {
+            unset(static::$instances[$this->filename]);
+        }
     }
 
     /**
      * Get/set the file location.
      *
      * @param  string $var
-     * @return string
+     * @return string|null
      */
     public function filename($var = null)
     {
@@ -140,7 +146,7 @@ class File implements FileInterface
      */
     public function basename()
     {
-        return basename($this->filename, $this->extension);
+        return null !== $this->filename ? basename($this->filename, $this->extension) : '';
     }
 
     /**
@@ -150,7 +156,7 @@ class File implements FileInterface
      */
     public function exists()
     {
-        return is_file($this->filename);
+        return null !== $this->filename && is_file($this->filename);
     }
 
     /**
@@ -160,7 +166,7 @@ class File implements FileInterface
      */
     public function modified()
     {
-        return is_file($this->filename) ? filemtime($this->filename) : false;
+        return $this->exists() ? filemtime($this->filename) : false;
     }
 
     /**
@@ -172,6 +178,10 @@ class File implements FileInterface
      */
     public function lock($block = true)
     {
+        if (null === $this->filename) {
+            throw new \RuntimeException('Opening file for writing failed because of it has no filename');
+        }
+
         if (!$this->handle) {
             if (!$this->mkdir(\dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
@@ -232,7 +242,11 @@ class File implements FileInterface
      */
     public function writable()
     {
-        return file_exists($this->filename) ? is_writable($this->filename) && is_file($this->filename) : $this->writableDir(\dirname($this->filename));
+        if (null === $this->filename) {
+            return false;
+        }
+
+        return $this->exists() ? is_writable($this->filename) : $this->writableDir(\dirname($this->filename));
     }
 
     /**
@@ -304,6 +318,10 @@ class File implements FileInterface
      */
     public function save($data = null)
     {
+        if (null === $this->filename) {
+            throw new \RuntimeException('Failed to save file: no filename');
+        }
+
         if ($data !== null) {
             $this->content($data);
         }
@@ -372,7 +390,7 @@ class File implements FileInterface
      */
     public function delete()
     {
-        return unlink($this->filename);
+        return $this->exists() && unlink($this->filename);
     }
 
     /**
