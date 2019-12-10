@@ -38,7 +38,7 @@
     "scripts": {
         "test": "vendor/bin/phpunit run unit",
         "test-windows": "vendor\\bin\\phpunit run unit",
-        "phpstan": "vendor/bin/phpstan analyse -l 3 -c ./tests/phpstan/phpstan.neon . --memory-limit=128M"
+        "phpstan": "vendor/bin/phpstan analyse -l 8 -c ./tests/phpstan/phpstan.neon . --memory-limit=128M"
     },
      "config": {
         "platform": {
