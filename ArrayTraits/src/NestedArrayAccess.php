@@ -11,6 +11,7 @@ namespace RocketTheme\Toolbox\ArrayTraits;
  */
 trait NestedArrayAccess
 {
+    /** @var string */
     protected $nestedSeparator = '.';
 
     /**
@@ -167,6 +168,7 @@ trait NestedArrayAccess
      *
      * @param string|null $offset  The offset to assign the value to.
      * @param mixed $value   The value to set.
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -181,6 +183,7 @@ trait NestedArrayAccess
      * Unsets variable at specified offset.
      *
      * @param string|null $offset
+     * @return void
      */
     public function offsetUnset($offset)
     {

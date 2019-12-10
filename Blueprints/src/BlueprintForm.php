@@ -50,6 +50,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      *
      * @param string|string[]|null $filename
      * @param array $items
+     * @return void
      */
     public function __construct($filename = null, array $items = [])
     {
@@ -469,6 +470,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     /**
      * @param array|string $value
      * @param array $path
+     * @return void
      */
     protected function doImport($value, array &$path)
     {

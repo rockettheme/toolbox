@@ -36,6 +36,8 @@ trait Iterator
 
     /**
      * Moves the current position to the next element.
+     *
+     * @return void
      */
     public function next()
     {
@@ -49,6 +51,8 @@ trait Iterator
 
     /**
      * Rewinds back to the first element of the Iterator.
+     *
+     * @return void
      */
     public function rewind()
     {

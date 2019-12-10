@@ -18,7 +18,7 @@ class MarkdownFile extends File
     /** @var string */
     protected $extension = '.md';
 
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**

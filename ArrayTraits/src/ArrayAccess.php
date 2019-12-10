@@ -38,6 +38,7 @@ trait ArrayAccess
      *
      * @param string|null $offset The offset to assign the value to.
      * @param mixed $value The value to set.
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -52,6 +53,7 @@ trait ArrayAccess
      * Unsets an offset.
      *
      * @param string $offset  The offset to unset.
+     * @return void
      */
     public function offsetUnset($offset)
     {

@@ -11,7 +11,7 @@ namespace RocketTheme\Toolbox\File;
  */
 class LogFile extends File
 {
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**

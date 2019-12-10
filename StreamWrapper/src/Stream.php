@@ -23,6 +23,7 @@ class Stream implements StreamInterface
 
     /**
      * @param ResourceLocatorInterface $locator
+     * @return void
      */
     public static function setLocator(ResourceLocatorInterface $locator)
     {

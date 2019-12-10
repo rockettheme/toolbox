@@ -14,7 +14,7 @@ class PhpFile extends File
     /** @var string */
     protected $extension = '.php';
 
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**
@@ -33,6 +33,7 @@ class PhpFile extends File
      * Saves PHP file and invalidates opcache.
      *
      * @param  mixed  $data  Optional data to be saved, usually array.
+     * @return void
      * @throws \RuntimeException
      */
     public function save($data = null)
@@ -79,7 +80,6 @@ class PhpFile extends File
      *
      * @param array $a The array to get as a string.
      * @param int $level Used internally to indent rows.
-     *
      * @return string
      */
     protected function encodeArray(array $a, $level = 0)

@@ -18,6 +18,7 @@ trait NestedArrayAccessWithGetters
      *
      * @param string $offset Asset name value
      * @param mixed $value Asset value
+     * @return void
      */
     public function __set($offset, $value)
     {
@@ -50,6 +51,7 @@ trait NestedArrayAccessWithGetters
      * Magic method to unset the attribute
      *
      * @param string $offset The name value to unset
+     * @return void
      */
     public function __unset($offset)
     {

@@ -26,7 +26,7 @@ class File implements FileInterface
     /** @var array */
     protected $settings = [];
 
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**
@@ -42,7 +42,7 @@ class File implements FileInterface
         }
 
         if (!isset(static::$instances[$filename])) {
-            static::$instances[$filename] = new static;
+            static::$instances[$filename] = new static();
             static::$instances[$filename]->init($filename);
         }
 
@@ -95,6 +95,7 @@ class File implements FileInterface
      * Set filename.
      *
      * @param string $filename
+     * @return void
      */
     protected function init($filename)
     {
@@ -103,6 +104,8 @@ class File implements FileInterface
 
     /**
      * Free the file instance.
+     *
+     * @return void
      */
     public function free()
     {
@@ -176,7 +179,7 @@ class File implements FileInterface
 
             $handle = @fopen($this->filename, 'cb+');
             if (!$handle) {
-                $error = error_get_last();
+                $error = error_get_last() ?: ['message' => 'Unknown error'];
 
                 throw new \RuntimeException("Opening file for writing failed on error {$error['message']}");
             }
@@ -296,6 +299,7 @@ class File implements FileInterface
      * Save file.
      *
      * @param  mixed  $data  Optional data to be saved, usually array.
+     * @return void
      * @throws \RuntimeException
      */
     public function save($data = null)

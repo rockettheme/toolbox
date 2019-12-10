@@ -32,7 +32,7 @@ class RecursiveUniformResourceIterator extends UniformResourceIterator implement
     {
         $allow_links = (bool)($allow_links !== null ? $allow_links : $this->flags & \FilesystemIterator::FOLLOW_SYMLINKS);
 
-        return $this->iterator && $this->isDir() && !$this->isDot() && ($allow_links || !$this->isLink());
+        return $this->isDir() && !$this->isDot() && ($allow_links || !$this->isLink());
     }
 
     /**

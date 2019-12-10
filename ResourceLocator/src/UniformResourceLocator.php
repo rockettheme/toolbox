@@ -92,6 +92,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string|array $paths
      * @param bool|string  $override  True to add path as override, string
      * @param bool $force     True to add paths even if them do not exist.
+     * @return void
      * @throws \BadMethodCallException
      */
     public function addPath($scheme, $prefix, $paths, $override = false, $force = false)
@@ -294,8 +295,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $uri Input URI to be searched.
      * @param bool $absolute Whether to return absolute path.
      * @param bool $first Whether to return first path even if it doesn't exist.
-     * @throws \BadMethodCallException
      * @return string|false
+     * @throws \BadMethodCallException
      */
     public function findResource($uri, $absolute = true, $first = false)
     {
@@ -315,8 +316,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $uri Input URI to be searched.
      * @param bool $absolute Whether to return absolute path.
      * @param bool $all Whether to return all paths even if they don't exist.
-     * @throws \BadMethodCallException
      * @return array
+     * @throws \BadMethodCallException
      */
     public function findResources($uri, $absolute = true, $all = false)
     {
@@ -336,8 +337,8 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param array $uris Input URIs to be searched.
      * @param bool $absolute Whether to return absolute path.
      * @param bool $all Whether to return all paths even if they don't exist.
-     * @throws \BadMethodCallException
      * @return array
+     * @throws \BadMethodCallException
      */
     public function mergeResources(array $uris, $absolute = true, $all = false)
     {
@@ -366,7 +367,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
             $iterator = new \RecursiveIteratorIterator($this->getRecursiveIterator($uri), \RecursiveIteratorIterator::SELF_FIRST);
 
-            /** @var UniformResourceIterator $uri */
+            /** @var UniformResourceIterator $item */
             foreach ($iterator as $item) {
                 $key = $item->getUrl() . '@010';
                 $this->cache[$key] = $item->getPathname();
@@ -436,6 +437,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param bool $array
      * @param bool $absolute
      * @param bool $all
+     * @return void
      */
     protected function clearCached($uri, $array, $absolute, $all)
     {

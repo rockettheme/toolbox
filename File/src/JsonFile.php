@@ -14,7 +14,7 @@ class JsonFile extends File
     /** @var string */
     protected $extension = '.json';
 
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**

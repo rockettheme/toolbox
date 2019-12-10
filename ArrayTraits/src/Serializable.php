@@ -25,6 +25,7 @@ trait Serializable
      * Called during unserialization of the object.
      *
      * @param string $serialized  The string representation of the object.
+     * @return void
      */
     public function unserialize($serialized)
     {

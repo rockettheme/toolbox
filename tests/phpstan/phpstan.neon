@@ -2,28 +2,28 @@ includes:
     #- '../../vendor/phpstan/phpstan-strict-rules/rules.neon'
     - '../../vendor/phpstan/phpstan-deprecation-rules/rules.neon'
 parameters:
+    bootstrap: phpstan-bootstrap.php
+    inferPrivatePropertyTypeFromConstructor: true
+    reportUnmatchedIgnoredErrors: true
+
+    # These checks are new for phpstan 0.12, ignore them for now.
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+
     fileExtensions:
         - php
-    bootstrap: tests/phpstan/phpstan-bootstrap.php
     excludes_analyse:
-        - tests
-        - vendor
-        - ArrayTraits/tests
-        - Blueprints/tests
-        - Compat
-        - Config
-        - Data
-        - DI/tests
-        - Event/tests
-        - File/tests
-        - Filesystem
-        - ResourceLocator/tests
-        - Rules
-        - Session/tests
-        - StreamWrapper/tests
-    inferPrivatePropertyTypeFromConstructor: true
-    reportUnmatchedIgnoredErrors: false
+        - **/tests/**
+        - */vendor/**
+        - */Compat/**
+        - */Config/**
+        - */Data/**
+        - */Filesystem/**
+        - */Rules/**
     ignoreErrors:
+        - '#Unsafe usage of new static\(\)#'
+        - '#Method RocketTheme\\Toolbox\\[^:]+::offset(Set|Unset)\(\) has parameter (\$offset|\$value) with no typehint specified#'
+        - '#Method RocketTheme\\Toolbox\\[^:]+::offset(Set|Unset)\(\) has no return typehint specified#'
         -
             message: '#Trying to invoke string but it might not be a callable#'
-            path: 'Blueprints/src/BlueprintSchema.php'
+            path: '*/Blueprints/src/BlueprintSchema.php'

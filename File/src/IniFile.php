@@ -14,7 +14,7 @@ class IniFile extends File
     /** @var string */
     protected $extension = '.ini';
 
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**

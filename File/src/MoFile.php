@@ -21,7 +21,7 @@ class MoFile extends File
     /** @var string */
     protected $endian;
 
-    /** @var File[] */
+    /** @var static[] */
     static protected $instances = [];
 
     /**
@@ -50,6 +50,7 @@ class MoFile extends File
      * Prevent saving file.
      *
      * @param mixed $data
+     * @return void
      * @throws \BadMethodCallException
      */
     public function save($data = null)
@@ -108,6 +109,10 @@ class MoFile extends File
         $table_originals = $this->readIntArray($total * 2);
         $this->seek($translations);
         $table_translations = $this->readIntArray($total * 2);
+
+        if ($table_originals === false || $table_translations === false) {
+            throw new \RuntimeException('Bad Gettext file.');
+        }
 
         $items = [];
         for ($i = 0; $i < $total; $i++) {

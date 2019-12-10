@@ -90,6 +90,7 @@ class BlueprintSchema
      * Set filter for inherited properties.
      *
      * @param array $filter List of field names to be inherited.
+     * @return void
      */
     public function setFilter(array $filter)
     {
@@ -104,7 +105,6 @@ class BlueprintSchema
      * @param string $name Dot separated path to the requested value.
      * @param mixed $default Default value (or null).
      * @param string $separator Separator, defaults to '.'
-     *
      * @return mixed  Value.
      */
     public function get($name, $default = null, $separator = '.')
@@ -122,6 +122,7 @@ class BlueprintSchema
      * @param string $name Dot separated path to the requested value.
      * @param mixed $value New value.
      * @param string $separator Separator, defaults to '.'
+     * @return void
      */
     public function set($name, $value, $separator = '.')
     {
@@ -139,6 +140,7 @@ class BlueprintSchema
      * @param string $name Dot separated path to the requested value.
      * @param mixed $value New value.
      * @param string $separator Separator, defaults to '.'
+     * @return void
      */
     public function def($name, $value, $separator = '.')
     {
@@ -270,11 +272,11 @@ class BlueprintSchema
      */
     public function getPropertyName($path = null, $separator = '.')
     {
-        if (!$path) {
+        if (null === $path) {
             return '';
         }
 
-        $parts = explode($separator, $path);
+        $parts = explode($separator, $path) ?: [];
         $nested = $this->nested;
 
         $result = [];
@@ -461,6 +463,7 @@ class BlueprintSchema
      * @param string $parent    Parent property.
      * @param bool   $merge     Merge fields instead replacing them.
      * @param array $formPath
+     * @return void
      */
     protected function parseFormFields(array $fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
@@ -482,6 +485,7 @@ class BlueprintSchema
      * @param string $parent
      * @param bool $merge
      * @param array $formPath
+     * @return void
      */
     protected function parseFormField($key, array $field, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
@@ -570,6 +574,7 @@ class BlueprintSchema
     /**
      * @param string $key
      * @param array $properties
+     * @return void
      */
     protected function parseProperties($key, array &$properties)
     {
@@ -599,6 +604,7 @@ class BlueprintSchema
      * Add property to the definition.
      *
      * @param string $path Comma separated path to the property.
+     * @return void
      * @internal
      */
     protected function addProperty($path)
@@ -624,6 +630,7 @@ class BlueprintSchema
      * Remove property to the definition.
      *
      * @param string $path Comma separated path to the property.
+     * @return void
      * @internal
      */
     protected function removeProperty($path)
@@ -694,6 +701,7 @@ class BlueprintSchema
      * @param array $field
      * @param string $property
      * @param array $call
+     * @return void
      */
     protected function dynamicData(array &$field, $property, array $call)
     {

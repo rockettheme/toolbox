@@ -3,7 +3,7 @@
 
 1. [](#new)
     * Updated minimum requirement to PHP 5.6.0
-    * Pass phpstan level 3 tests
+    * Pass phpstan level 8 tests
 
 # v1.4.6
 ## 03/20/2019

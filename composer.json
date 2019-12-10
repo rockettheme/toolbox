@@ -14,8 +14,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~5",
-        "phpstan/phpstan": "^0.11",
-        "phpstan/phpstan-deprecation-rules": "^0.11"
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-deprecation-rules": "^0.12"
     },
     "autoload": {
         "psr-4": {

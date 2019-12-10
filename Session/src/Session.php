@@ -46,7 +46,7 @@ class Session implements \IteratorAggregate
         session_name('msF9kJcW');
         session_set_cookie_params($lifetime, $path, $domain);
 
-        /** @var callable $callable */
+        /** @var callable(): void $callable */
         $callable = [$this, 'close'];
 
         register_shutdown_function($callable);
@@ -203,6 +203,7 @@ class Session implements \IteratorAggregate
      *
      * @param string $name
      * @param mixed $value
+     * @return void
      */
     public function __set($name, $value)
     {
@@ -213,6 +214,7 @@ class Session implements \IteratorAggregate
      * Removes an attribute.
      *
      * @param string $name
+     * @return void
      */
     public function __unset($name)
     {

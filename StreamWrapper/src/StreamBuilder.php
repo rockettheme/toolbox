@@ -13,7 +13,7 @@ class StreamBuilder
 
     /**
      * StreamBuilder constructor.
-     * @param StreamInterface[] $items
+     * @param string[] $items
      * @throws \InvalidArgumentException
      */
     public function __construct(array $items = [])
@@ -25,7 +25,7 @@ class StreamBuilder
 
     /**
      * @param string $scheme
-     * @param StreamInterface $handler
+     * @param string $handler
      * @return $this
      * @throws \InvalidArgumentException
      */

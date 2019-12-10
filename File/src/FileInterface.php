@@ -21,6 +21,8 @@ interface FileInterface
 
     /**
      * Free the file instance.
+     *
+     * @return void
      */
     public function free();
 
@@ -94,6 +96,7 @@ interface FileInterface
      * Save file.
      *
      * @param string $data Optional data to be saved.
+     * @return void
      * @throws \RuntimeException
      */
     public function save($data = null);
