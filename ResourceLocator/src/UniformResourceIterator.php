@@ -101,7 +101,6 @@ class UniformResourceIterator extends FilesystemIterator
         if (!$this->nextIterator()) {
             throw new \BadMethodCallException('Failed to open dir: ' . $this->path . ' does not exist.');
         }
-        $this->next();
     }
 
     /**
