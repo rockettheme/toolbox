@@ -1,5 +1,6 @@
 # ![](https://avatars1.githubusercontent.com/u/1310198?v=2&s=50) RocketTheme Toolbox
 
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 [![Latest Version](http://img.shields.io/packagist/v/rockettheme/toolbox.svg?style=flat)](https://packagist.org/packages/rockettheme/toolbox)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Build Status](https://img.shields.io/travis/rockettheme/toolbox/master.svg?style=flat)](https://travis-ci.org/rockettheme/toolbox)
