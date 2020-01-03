@@ -41,7 +41,7 @@ class PhpFile extends File
         parent::save($data);
 
         // Invalidate configuration file from the opcache.
-        if (\function_exists('opcache_invalidate')) {
+        if (null !== $this->filename && \function_exists('opcache_invalidate')) {
             @opcache_invalidate($this->filename, true);
         }
     }

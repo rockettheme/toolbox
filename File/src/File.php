@@ -166,7 +166,7 @@ class File implements FileInterface
      */
     public function modified()
     {
-        return $this->exists() ? filemtime($this->filename) : false;
+        return null !== $this->filename && $this->exists() ? filemtime($this->filename) : false;
     }
 
     /**
@@ -256,7 +256,7 @@ class File implements FileInterface
      */
     public function load()
     {
-        $this->raw = $this->exists() ? (string) file_get_contents($this->filename) : '';
+        $this->raw = null !== $this->filename && $this->exists() ? (string) file_get_contents($this->filename) : '';
         $this->content = null;
 
         return $this->raw;
@@ -371,7 +371,7 @@ class File implements FileInterface
      */
     public function rename($filename)
     {
-        if ($this->exists() && !@rename($this->filename, $filename)) {
+        if (null !== $this->filename && $this->exists() && !@rename($this->filename, $filename)) {
             return false;
         }
 
@@ -390,7 +390,7 @@ class File implements FileInterface
      */
     public function delete()
     {
-        return $this->exists() && unlink($this->filename);
+        return null !== $this->filename && $this->exists() && unlink($this->filename);
     }
 
     /**
