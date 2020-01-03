@@ -98,7 +98,7 @@ class Stream implements StreamInterface
         if ($path) {
             switch ($option) {
                 case STREAM_META_TOUCH:
-                    list ($time, $atime) = $value;
+                    list($time, $atime) = $value;
                     return touch($path, $time, $atime);
 
                 case STREAM_META_OWNER_NAME:
@@ -176,6 +176,23 @@ class Stream implements StreamInterface
     public function stream_stat()
     {
         return fstat($this->handle) ?: [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function stream_set_option(int $option, int $arg1, int $arg2)
+    {
+        switch ($option) {
+            case STREAM_OPTION_BLOCKING:
+                return stream_set_blocking($this->handle, $arg1);
+            case STREAM_OPTION_READ_TIMEOUT:
+                return stream_set_timeout($this->handle, $arg1, $arg2);
+            case STREAM_OPTION_WRITE_BUFFER:
+                return stream_set_write_buffer($this->handle, $arg2);
+            default:
+                return false;
+        }
     }
 
     /**
