@@ -11,6 +11,7 @@
 RocketTheme\Toolbox package contains a set of reusable PHP interfaces, classes and traits.
 
 * ArrayTraits
+* Blueprints
 * DI
 * Event
 * File
@@ -28,7 +29,7 @@ To add this package as a local, per-project dependency to your project, simply a
 
     {
         "require": {
-            "rockettheme/toolbox": "dev-master"
+            "rockettheme/toolbox": "^1.5"
         }
     }
 
