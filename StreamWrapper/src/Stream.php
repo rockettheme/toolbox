@@ -80,7 +80,7 @@ class Stream implements StreamInterface
         if ($path) {
             switch ($option) {
                 case STREAM_META_TOUCH:
-                    list ($time, $atime) = $value;
+                    list($time, $atime) = $value;
                     return touch($path, $time, $atime);
 
                 case STREAM_META_OWNER_NAME:
@@ -135,6 +135,27 @@ class Stream implements StreamInterface
         return fstat($this->handle);
     }
 
+    /**
+     * @return bool
+     */
+    public function stream_set_option($option, $arg1, $arg2)
+    {
+        switch ((int)$option) {
+            case STREAM_OPTION_BLOCKING:
+                return stream_set_blocking($this->handle, (int)$arg1);
+            case STREAM_OPTION_READ_TIMEOUT:
+                return stream_set_timeout($this->handle, (int)$arg1, (int)$arg2);
+            case STREAM_OPTION_WRITE_BUFFER:
+                return stream_set_write_buffer($this->handle, (int)$arg2);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * @param string $uri
+     * @return bool
+     */
     public function unlink($uri)
     {
         $path = $this->getPath($uri);

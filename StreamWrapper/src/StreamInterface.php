@@ -149,6 +149,21 @@ interface StreamInterface
     public function stream_stat();
 
     /**
+     * Support for stream_set_option 
+     *  - stream_set_blocking()
+     *  - stream_set_timeout()
+     *  - stream_set_write_buffer()
+     *
+     * @param int $option
+     * @param int $arg1
+     * @param int $arg2
+     * @return bool
+     *
+     * @see http://php.net/manual/streamwrapper.stream-set-option.php
+     */
+    public function stream_set_option($option, $arg1, $arg2);
+
+    /**
      * Support for unlink().
      *
      * @param $uri
