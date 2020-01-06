@@ -7,6 +7,7 @@
     * PHP 7.4 compatibility: implemented required `Stream::stream_set_option()` method (#28, thanks @lcharette)
     * Pass phpstan level 8 tests
     * Added new `UniformResourceLocator::getResource()` method to simplify code where filename is always required
+    * Added support for `replace-name@` in blueprints (#24, thanks @drzraf)
     * Calling `File::instance()` with empty filename is now deprecated
 1. [](#bugfix)
     * Fixed `new UniformResourceItarator()` not throwing exception when path is non-existing
