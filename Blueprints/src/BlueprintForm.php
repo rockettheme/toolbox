@@ -116,27 +116,35 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
      */
     public function load($extends = null)
     {
-        // Only load and extend blueprint if it has not yet been loaded.
-        if (empty($this->items) && $this->filename) {
-            // Get list of files.
-            $files = $this->getFiles($this->filename);
-            if ($files) {
-                // Load and extend blueprints.
-                $data = $this->doLoad($files, $extends);
-
-                $this->items = (array)array_shift($data);
-
-                foreach ($data as $content) {
-                    $this->extend($content, true);
-                }
-            } else {
+        try {
+            // Only load and extend blueprint if it has not yet been loaded.
+            if (null === $this->items) {
                 $this->items = [];
+
+                // Get list of files.
+                $files = $this->filename ? $this->getFiles($this->filename) : [];
+                if ($files) {
+                    // Load and extend blueprints.
+                    $data = $this->doLoad($files, $extends);
+
+                    $this->items = (array)array_shift($data);
+
+                    foreach ($data as $content) {
+                        $this->extend($content, true);
+                    }
+                }
             }
 
-        }
+            // Import blueprints.
+            $this->deepInit($this->items);
+        } catch (\Exception $e) {
+            $filename = $this->filename;
+            if (is_array($filename)) {
+                $filename = implode(' | ', $filename);
+            }
 
-        // Import blueprints.
-        $this->deepInit($this->items);
+            throw new RuntimeException(sprintf('Cannot load blueprint %s: %s', $filename, $e->getMessage()), 500, $e);
+        }
 
         return $this;
     }
