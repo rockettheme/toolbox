@@ -133,9 +133,11 @@ class YamlFile extends File
         if (\function_exists('yaml_parse') && $this->setting('native', true)) {
             // Safely decode YAML.
             $saved = @ini_get('yaml.decode_php');
-            @ini_set('yaml.decode_php', 0);
+            @ini_set('yaml.decode_php', '0');
             $data = @yaml_parse($var);
-            @ini_set('yaml.decode_php', $saved);
+            if ($saved !== false) {
+                @ini_set('yaml.decode_php', $saved);
+            }
 
             if ($data !== false) {
                 return (array)$data;

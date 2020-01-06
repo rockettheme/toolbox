@@ -38,10 +38,10 @@ class Session implements \IteratorAggregate
         }
 
         // Disable transparent sid support
-        ini_set('session.use_trans_sid', 0);
+        ini_set('session.use_trans_sid', '0');
 
         // Only allow cookies
-        ini_set('session.use_cookies', 1);
+        ini_set('session.use_cookies', '1');
 
         session_name('msF9kJcW');
         session_set_cookie_params($lifetime, $path, $domain);

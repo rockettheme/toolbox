@@ -155,9 +155,11 @@ class MarkdownFile extends File
             if (\function_exists('yaml_parse') && $this->setting('native')) {
                 // Safely decode YAML.
                 $saved = @ini_get('yaml.decode_php');
-                @ini_set('yaml.decode_php', 0);
+                @ini_set('yaml.decode_php', '0');
                 $content['header'] = @yaml_parse("---\n" . $frontmatter . "\n...");
-                @ini_set('yaml.decode_php', $saved);
+                if ($saved !== false) {
+                    @ini_set('yaml.decode_php', $saved);
+                }
             }
 
             if ($content['header'] === false) {
