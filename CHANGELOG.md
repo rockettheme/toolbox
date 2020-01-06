@@ -6,7 +6,7 @@
     * Pass phpstan level 8 tests
     * Added new `UniformResourceLocator::getResource()` method to simplify code where filename is always required
     * Calling `File::instance()` with empty filename is now deprecated
-    * PHP 7.4 compatibility: implement `Stream::stream_set_option()` method (#28)
+    * PHP 7.4 compatibility: implement `Stream::stream_set_option()` method (#28, thanks @lcharette)
 1. [](#bugfix)
     * Fixed `new UniformResourceItarator()` not throwing exception when path is non-existing
     * Fixed many other edge cases
