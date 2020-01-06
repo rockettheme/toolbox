@@ -118,9 +118,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     {
         try {
             // Only load and extend blueprint if it has not yet been loaded.
-            if (null === $this->items) {
-                $this->items = [];
-
+            if (!$this->items) {
                 // Get list of files.
                 $files = $this->filename ? $this->getFiles($this->filename) : [];
                 if ($files) {
