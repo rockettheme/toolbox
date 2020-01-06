@@ -11,8 +11,8 @@
     * Calling `File::instance()` with empty filename is now deprecated
 1. [](#bugfix)
     * Fixed `new UniformResourceItarator()` not throwing exception when path is non-existing
-    * Fixed many other edge cases
     * Fixed missing frontmatter if markdown file had UTF-8 BOM (#14, thanks @A----)
+    * Fixed many other edge cases
 
 # v1.4.6
 ## 03/20/2019
