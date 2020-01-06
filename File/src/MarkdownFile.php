@@ -142,6 +142,9 @@ class MarkdownFile extends File
 
         $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
+        // Remove UTF-8 BOM if it exists.
+        $var = ltrim($var, "\xef\xbb\xbf");
+
         // Normalize line endings to Unix style.
         $var = (string)preg_replace("/(\r\n|\r)/", "\n", $var);
 
