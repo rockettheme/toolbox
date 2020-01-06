@@ -493,10 +493,7 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     protected function doLoad(array $files, $extends = null)
     {
         $filename = array_shift($files);
-        if (!\is_string($filename)) {
-            throw new \InvalidArgumentException(__METHOD__ . '(): Parameter #1 does not contain array of filenames');
-        }
-        $content = $this->loadFile($filename);
+        $content = \is_string($filename) ? $this->loadFile($filename) : [];
 
         $key = '';
         if (isset($content['extends@'])) {
