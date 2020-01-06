@@ -120,15 +120,19 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
         if (empty($this->items) && $this->filename) {
             // Get list of files.
             $files = $this->getFiles($this->filename);
+            if ($files) {
+                // Load and extend blueprints.
+                $data = $this->doLoad($files, $extends);
 
-            // Load and extend blueprints.
-            $data = $this->doLoad($files, $extends);
+                $this->items = (array)array_shift($data);
 
-            $this->items = (array)array_shift($data);
-
-            foreach ($data as $content) {
-                $this->extend($content, true);
+                foreach ($data as $content) {
+                    $this->extend($content, true);
+                }
+            } else {
+                $this->items = [];
             }
+
         }
 
         // Import blueprints.
@@ -493,7 +497,10 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
     protected function doLoad(array $files, $extends = null)
     {
         $filename = array_shift($files);
-        $content = \is_string($filename) ? $this->loadFile($filename) : [];
+        if (!\is_string($filename)) {
+            throw new \InvalidArgumentException(__METHOD__ . '(): Parameter #1 does not contain array of filenames');
+        }
+        $content = $this->loadFile($filename);
 
         $key = '';
         if (isset($content['extends@'])) {
