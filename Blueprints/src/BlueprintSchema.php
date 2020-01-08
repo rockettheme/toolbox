@@ -473,7 +473,9 @@ class BlueprintSchema
 
         // Go though all the fields in current level.
         foreach ($fields as $key => $field) {
-            $this->parseFormField($key, $field, $params, $prefix, $parent, $merge, $formPath);
+            if (is_array($field)) {
+                $this->parseFormField($key, $field, $params, $prefix, $parent, $merge, $formPath);
+            }
         }
     }
 
