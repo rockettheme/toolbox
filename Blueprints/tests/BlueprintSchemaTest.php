@@ -1,11 +1,12 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use RocketTheme\Toolbox\Blueprints\BlueprintSchema;
 use RocketTheme\Toolbox\File\YamlFile;
 
 require_once 'helper.php';
 
-class BlueprintsBlueprintSchemaTest extends PHPUnit_Framework_TestCase
+class BlueprintsBlueprintSchemaTest extends TestCase
 {
     public function testCreation()
     {
@@ -29,45 +30,43 @@ class BlueprintsBlueprintSchemaTest extends PHPUnit_Framework_TestCase
      */
     public function testLoad($test)
     {
-        $input = $this->loadYaml($test);
+        $blueprint = new Blueprint($test);
+        $blueprint->load()->init();
 
-        $blueprint = new BlueprintSchema;
-        $blueprint->embed('', $input);
+        $schema = $blueprint->schema();
 
         // Save test results if they do not exist (data needs to be verified by human!)
-        /*
         $resultFile = YamlFile::instance(__DIR__ . '/data/schema/state/' . $test . '.yaml');
         if (!$resultFile->exists()) {
-            $resultFile->content($blueprint->getState());
+            $resultFile->content(['unverified' => true] + $schema->getState());
             $resultFile->save();
         }
-        */
 
         // Test 1: Internal state.
-        $this->assertEquals($this->loadYaml($test, 'schema/state'), $blueprint->getState());
+        $this->assertEquals($this->loadYaml($test, 'schema/state'), $schema->getState());
+
+        $schema->init();
 
         // Save test results if they do not exist (data needs to be verified by human!)
-
         $resultFile = YamlFile::instance(__DIR__ . '/data/schema/init/' . $test . '.yaml');
         if (!$resultFile->exists()) {
-            $resultFile->content($blueprint->init()->getState());
+            $resultFile->content(['unverified' => true] + $schema->getState());
             $resultFile->save();
         }
 
-
         // Test 2: Initialize blueprint.
-        $this->assertEquals($this->loadYaml($test, 'schema/init'), $blueprint->init()->getState());
+        $this->assertEquals($this->loadYaml($test, 'schema/init'), $schema->getState());
 
         // Test 3: Default values.
-        $this->assertEquals($this->loadYaml($test, 'schema/defaults'), $blueprint->getDefaults());
+        $this->assertEquals($this->loadYaml($test, 'schema/defaults'), $schema->getDefaults());
 
         // Test 4: Extra values.
-        $this->assertEquals($this->loadYaml($test, 'schema/extra'), $blueprint->extra($this->loadYaml($test, 'input')));
+        $this->assertEquals($this->loadYaml($test, 'schema/extra'), $schema->extra($this->loadYaml($test, 'input')));
 
         // Test 5: Merge data.
         $this->assertEquals(
             $this->loadYaml($test, 'schema/merge'),
-            $blueprint->mergeData($blueprint->getDefaults(), $this->loadYaml($test, 'input'))
+            $schema->mergeData($schema->getDefaults(), $this->loadYaml($test, 'input'))
         );
     }
 

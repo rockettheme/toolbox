@@ -61,21 +61,6 @@ nested:
     name: user.name
     country: user.country
   undefined: undefined
-dynamic:
-  enabled:
-    options:
-      action: data
-      params: blueprint_data_option_test
-  user.country:
-    options:
-      action: data
-      params:
-        - blueprint_data_option_test
-        - { us: 'United States', fi: Finland, po: Poland }
-        - true
-  undefined:
-    options:
-      action: data
-      params: undefined_function
+dynamic: { }
 filter:
   validation: true

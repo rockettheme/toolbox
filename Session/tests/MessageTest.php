@@ -1,8 +1,9 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use RocketTheme\Toolbox\Session\Message;
 
-class SessionMessageTest extends PHPUnit_Framework_TestCase
+class SessionMessageTest extends TestCase
 {
 
     public function testCreation()
