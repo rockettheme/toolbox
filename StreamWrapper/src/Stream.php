@@ -179,13 +179,16 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @return bool
+     * @param int $option
+     * @param int $arg1
+     * @param int $arg2
+     * @return bool|int
      */
-    public function stream_set_option(int $option, int $arg1, int $arg2)
+    public function stream_set_option($option, $arg1, $arg2)
     {
         switch ($option) {
             case STREAM_OPTION_BLOCKING:
-                return stream_set_blocking($this->handle, $arg1);
+                return stream_set_blocking($this->handle, (bool)$arg1);
             case STREAM_OPTION_READ_TIMEOUT:
                 return stream_set_timeout($this->handle, $arg1, $arg2);
             case STREAM_OPTION_WRITE_BUFFER:
