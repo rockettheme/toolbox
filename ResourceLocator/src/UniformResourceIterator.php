@@ -101,6 +101,16 @@ class UniformResourceIterator extends FilesystemIterator
         if (!$this->nextIterator()) {
             throw new \BadMethodCallException('Failed to open dir: ' . $this->path . ' does not exist.');
         }
+
+        // Find the first valid entry.
+        while (!$this->valid()) {
+            if ($this->nextIterator() === false) {
+                return;
+            }
+        }
+
+        // Mark the first file as found.
+        $this->found[$this->getFilename()] = true;
     }
 
     /**
