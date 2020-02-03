@@ -11,7 +11,7 @@ namespace RocketTheme\Toolbox\File;
  */
 class File implements FileInterface
 {
-    /** @var string|null */
+    /** @var string */
     protected $filename;
     /** @var resource|null */
     protected $handle;
