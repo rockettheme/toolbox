@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\DI;
 
 use Pimple\Container as BaseContainer;

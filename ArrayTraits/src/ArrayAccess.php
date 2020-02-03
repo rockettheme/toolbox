@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\ArrayTraits;
 
 /**
@@ -7,16 +8,14 @@ namespace RocketTheme\Toolbox\ArrayTraits;
  * @package RocketTheme\Toolbox\ArrayTraits
  * @author RocketTheme
  * @license MIT
- *
- * @property array $items
  */
 trait ArrayAccess
 {
     /**
      * Whether or not an offset exists.
      *
-     * @param mixed $offset  An offset to check for.
-     * @return bool          Returns TRUE on success or FALSE on failure.
+     * @param string $offset An offset to check for.
+     * @return bool Returns TRUE on success or FALSE on failure.
      */
     public function offsetExists($offset)
     {
@@ -26,8 +25,8 @@ trait ArrayAccess
     /**
      * Returns the value at specified offset.
      *
-     * @param mixed $offset  The offset to retrieve.
-     * @return mixed         Can return all value types.
+     * @param string $offset The offset to retrieve.
+     * @return mixed Can return all value types.
      */
     public function offsetGet($offset)
     {
@@ -37,8 +36,9 @@ trait ArrayAccess
     /**
      * Assigns a value to the specified offset.
      *
-     * @param mixed $offset  The offset to assign the value to.
-     * @param mixed $value   The value to set.
+     * @param string|null $offset The offset to assign the value to.
+     * @param mixed $value The value to set.
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -52,12 +52,13 @@ trait ArrayAccess
     /**
      * Unsets an offset.
      *
-     * @param mixed $offset  The offset to unset.
+     * @param string $offset  The offset to unset.
+     * @return void
      */
     public function offsetUnset($offset)
     {
         // Hack to make Iterator trait work together with unset.
-        if (isset($this->iteratorUnset) && $offset == key($this->items)) {
+        if (isset($this->iteratorUnset) && (string)$offset === (string)key($this->items)) {
             $this->iteratorUnset = true;
         }
 

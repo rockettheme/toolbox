@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\StreamWrapper;
 
 /**
@@ -36,7 +37,7 @@ interface StreamInterface
     /**
      * Support for flock().
      *
-     * @param $operation
+     * @param int $operation
      *     One of the following:
      *     - LOCK_SH to acquire a shared lock (reader).
      *     - LOCK_EX to acquire an exclusive lock (writer).
@@ -52,11 +53,11 @@ interface StreamInterface
     /**
      * Support for touch(), chmod(), chown(), chgrp().
      *
-     * @param $path
+     * @param string $path
      *     The file path or URL to set metadata. Note that in the case of a URL, it must be a :// delimited URL.
      *     Other URL forms are not supported.
      *
-     * @param $option
+     * @param int $option
      *     One of:
      *     - STREAM_META_TOUCH      The method was called in response to touch()
      *     - STREAM_META_OWNER_NAME The method was called in response to chown() with string parameter
@@ -65,7 +66,7 @@ interface StreamInterface
      *     - STREAM_META_GROUP      The method was called in response to chgrp()
      *     - STREAM_META_ACCESS     The method was called in response to chmod()
      *
-     * @param $value
+     * @param int $value
      *     If option is
      *     - STREAM_META_TOUCH:         Array consisting of two arguments of the touch() function.
      *     - STREAM_META_OWNER_NAME or
@@ -84,10 +85,10 @@ interface StreamInterface
     /**
      * Support for fread(), file_get_contents() etc.
      *
-     * @param $count
+     * @param int $count
      *   Maximum number of bytes to be read.
      *
-     * @return string|bool The string that was read, or FALSE in case of an error.
+     * @return string|false The string that was read, or FALSE in case of an error.
      * @see http://php.net/manual/streamwrapper.stream-read.php
      */
     public function stream_read($count);
@@ -95,7 +96,7 @@ interface StreamInterface
     /**
      * Support for fwrite(), file_put_contents() etc.
      *
-     * @param $data
+     * @param string $data
      *   The string to be written.
      *
      * @return int The number of bytes written (integer).
@@ -114,9 +115,9 @@ interface StreamInterface
     /**
      * Support for fseek().
      *
-     * @param $offset
+     * @param int $offset
      *   The byte offset to got to.
-     * @param $whence
+     * @param int $whence
      *   SEEK_SET, SEEK_CUR, or SEEK_END.
      *
      * @return bool TRUE on success.
@@ -149,13 +150,26 @@ interface StreamInterface
     public function stream_stat();
 
     /**
+     * Support for stream_set_option 
+     *  - stream_set_blocking()
+     *  - stream_set_timeout()
+     *  - stream_set_write_buffer()
+     *
+     * @param int $option
+     * @param int $arg1
+     * @param int $arg2
+     * @return bool
+     * @see http://php.net/manual/streamwrapper.stream-set-option.php
+     */
+    public function stream_set_option($option, $arg1, $arg2);
+
+    /**
      * Support for unlink().
      *
-     * @param $uri
+     * @param string $uri
      *   A string containing the URI to the resource to delete.
      *
-     * @return
-     *   TRUE if resource was successfully deleted.
+     * @return bool TRUE if resource was successfully deleted.
      * @see http://php.net/manual/streamwrapper.unlink.php
      */
     public function unlink($uri);
@@ -163,9 +177,9 @@ interface StreamInterface
     /**
      * Support for rename().
      *
-     * @param $from_uri ,
+     * @param string $from_uri ,
      *                  The URI to the file to rename.
-     * @param $to_uri
+     * @param string $to_uri
      *                  The new URI for file.
      *
      * @return bool TRUE if file was successfully renamed.
@@ -176,11 +190,11 @@ interface StreamInterface
     /**
      * Support for mkdir().
      *
-     * @param $uri
+     * @param string $uri
      *   A string containing the URI to the directory to create.
-     * @param $mode
+     * @param int $mode
      *   Permission flags - see mkdir().
-     * @param $options
+     * @param int $options
      *   A bit mask of STREAM_REPORT_ERRORS and STREAM_MKDIR_RECURSIVE.
      *
      * @return bool TRUE if directory was successfully created.
@@ -191,14 +205,12 @@ interface StreamInterface
     /**
      * Support for rmdir().
      *
-     * @param $uri
+     * @param string $uri
      *   A string containing the URI to the directory to delete.
-     * @param $options
+     * @param int $options
      *   A bit mask of STREAM_REPORT_ERRORS.
      *
-     * @return
-     *   TRUE if directory was successfully removed.
-     *
+     * @return bool TRUE if directory was successfully removed.
      * @see http://php.net/manual/streamwrapper.rmdir.php
      */
     public function rmdir($uri, $options);
@@ -206,9 +218,9 @@ interface StreamInterface
     /**
      * Support for stat().
      *
-     * @param $uri
+     * @param string $uri
      *   A string containing the URI to get information about.
-     * @param $flags
+     * @param int $flags
      *   A bit mask of STREAM_URL_STAT_LINK and STREAM_URL_STAT_QUIET.
      *
      * @return array An array with file status, or FALSE in case of an error - see fstat()
@@ -219,9 +231,9 @@ interface StreamInterface
     /**
      * Support for opendir().
      *
-     * @param $uri
+     * @param string $uri
      *   A string containing the URI to the directory to open.
-     * @param $options
+     * @param int $options
      *   Unknown (parameter is not documented in PHP Manual).
      *
      * @return bool TRUE on success.

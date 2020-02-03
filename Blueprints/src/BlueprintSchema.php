@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Blueprints;
 
 /**
@@ -12,22 +13,16 @@ class BlueprintSchema
 {
     /** @var array */
     protected $items = [];
-
     /** @var array */
     protected $rules = [];
-
     /** @var array */
     protected $nested = [];
-
     /** @var array */
     protected $dynamic = [];
-
     /** @var array */
     protected $filter = ['validation' => true];
-
     /** @var array */
     protected $ignoreFormKeys = ['fields' => 1];
-
     /** @var array */
     protected $types = [];
 
@@ -39,11 +34,11 @@ class BlueprintSchema
     public function __construct($serialized = null)
     {
         if (\is_array($serialized) && !empty($serialized)) {
-            $this->items = (array) $serialized['items'];
-            $this->rules = (array) $serialized['rules'];
-            $this->nested = (array) $serialized['nested'];
-            $this->dynamic = (array) $serialized['dynamic'];
-            $this->filter = (array) $serialized['filter'];
+            $this->items = (array)$serialized['items'];
+            $this->rules = (array)$serialized['rules'];
+            $this->nested = (array)$serialized['nested'];
+            $this->dynamic = (array)$serialized['dynamic'];
+            $this->filter = (array)$serialized['filter'];
         }
     }
 
@@ -94,7 +89,8 @@ class BlueprintSchema
     /**
      * Set filter for inherited properties.
      *
-     * @param array $filter     List of field names to be inherited.
+     * @param array $filter List of field names to be inherited.
+     * @return void
      */
     public function setFilter(array $filter)
     {
@@ -106,15 +102,14 @@ class BlueprintSchema
      *
      * @example $value = $data->get('this.is.my.nested.variable');
      *
-     * @param string  $name       Dot separated path to the requested value.
-     * @param mixed   $default    Default value (or null).
-     * @param string  $separator  Separator, defaults to '.'
-     *
+     * @param string $name Dot separated path to the requested value.
+     * @param mixed $default Default value (or null).
+     * @param string $separator Separator, defaults to '.'
      * @return mixed  Value.
      */
     public function get($name, $default = null, $separator = '.')
     {
-        $name = $separator !== '.' ? str_replace($separator, '.', $name) : $name;
+        $name = $separator !== '.' ? (string)str_replace($separator, '.', $name) : $name;
 
         return isset($this->items[$name]) ? $this->items[$name] : $default;
     }
@@ -124,13 +119,14 @@ class BlueprintSchema
      *
      * @example $value = $data->set('this.is.my.nested.variable', $newField);
      *
-     * @param string  $name       Dot separated path to the requested value.
-     * @param mixed   $value      New value.
-     * @param string  $separator  Separator, defaults to '.'
+     * @param string $name Dot separated path to the requested value.
+     * @param mixed $value New value.
+     * @param string $separator Separator, defaults to '.'
+     * @return void
      */
     public function set($name, $value, $separator = '.')
     {
-        $name = $separator !== '.' ? str_replace($separator, '.', $name) : $name;
+        $name = $separator !== '.' ? (string)str_replace($separator, '.', $name) : $name;
 
         $this->items[$name] = $value;
         $this->addProperty($name);
@@ -141,9 +137,10 @@ class BlueprintSchema
      *
      * @example $value = $data->set('this.is.my.nested.variable', true);
      *
-     * @param string  $name       Dot separated path to the requested value.
-     * @param mixed   $value      New value.
-     * @param string  $separator  Separator, defaults to '.'
+     * @param string $name Dot separated path to the requested value.
+     * @param mixed $value New value.
+     * @param string $separator Separator, defaults to '.'
+     * @return void
      */
     public function def($name, $value, $separator = '.')
     {
@@ -152,7 +149,7 @@ class BlueprintSchema
 
     /**
      * @return array
-     * @deprecated
+     * @deprecated 1.4 Use `->getState()` instead
      */
     public function toArray()
     {
@@ -190,7 +187,7 @@ class BlueprintSchema
     /**
      * Embed an array to the blueprint.
      *
-     * @param $name
+     * @param string $name
      * @param array $value
      * @param string $separator
      * @param bool $merge   Merge fields instead replacing them.
@@ -202,7 +199,7 @@ class BlueprintSchema
             $this->rules = array_merge($this->rules, $value['rules']);
         }
 
-        $name = $separator !== '.' ? str_replace($separator, '.', $name) : $name;
+        $name = $separator !== '.' ? (string)str_replace($separator, '.', $name) : $name;
 
         if (isset($value['form'])) {
             $form = array_diff_key($value['form'], ['fields' => 1, 'field' => 1]);
@@ -235,7 +232,7 @@ class BlueprintSchema
      *
      * @param  array $data1
      * @param  array $data2
-     * @param  string $name         Optional
+     * @param  string|null $name         Optional
      * @param  string $separator    Optional
      * @return array
      */
@@ -253,7 +250,7 @@ class BlueprintSchema
     /**
      * Get the property with given path.
      *
-     * @param string $path
+     * @param string|null $path
      * @param string $separator
      * @return mixed
      */
@@ -269,13 +266,17 @@ class BlueprintSchema
     /**
      * Returns name of the property with given path.
      *
-     * @param string $path
+     * @param string|null $path
      * @param string $separator
      * @return string
      */
     public function getPropertyName($path = null, $separator = '.')
     {
-        $parts = explode($separator, $path);
+        if (null === $path) {
+            return '';
+        }
+
+        $parts = explode($separator, $path) ?: [];
         $nested = $this->nested;
 
         $result = [];
@@ -297,8 +298,8 @@ class BlueprintSchema
     /**
      * Return data fields that do not exist in blueprints.
      *
-     * @param  array  $data
-     * @param  string $prefix
+     * @param array $data
+     * @param string $prefix
      * @return array
      */
     public function extra(array $data, $prefix = '')
@@ -327,8 +328,8 @@ class BlueprintSchema
     /**
      * Get the property with given path.
      *
-     * @param $property
-     * @param $nested
+     * @param array|mixed $property
+     * @param array|mixed $nested
      * @return mixed
      */
     protected function getPropertyRecursion($property, $nested)
@@ -359,8 +360,8 @@ class BlueprintSchema
     /**
      * Get property from the definition.
      *
-     * @param  string  $path  Comma separated path to the property.
-     * @param  string  $separator
+     * @param string|null $path  Comma separated path to the property.
+     * @param string $separator
      * @return array|string|null
      * @internal
      */
@@ -369,7 +370,8 @@ class BlueprintSchema
         if (!$path) {
             return $this->nested;
         }
-        $parts = explode($separator, $path);
+
+        $parts = explode($separator, $path) ?: [];
         $item = array_pop($parts);
 
         $nested = $this->nested;
@@ -383,7 +385,11 @@ class BlueprintSchema
             $nested = $nested[$part];
         }
 
-        return isset($nested[$item]) ? $nested[$item] : (isset($nested['*']) ? $nested['*'] : null);
+        if (isset($nested[$item])) {
+            return $nested[$item];
+        }
+
+        return isset($nested['*']) ? $nested['*'] : null;
     }
 
     /**
@@ -457,6 +463,7 @@ class BlueprintSchema
      * @param string $parent    Parent property.
      * @param bool   $merge     Merge fields instead replacing them.
      * @param array $formPath
+     * @return void
      */
     protected function parseFormFields(array $fields, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
@@ -466,7 +473,9 @@ class BlueprintSchema
 
         // Go though all the fields in current level.
         foreach ($fields as $key => $field) {
-            $this->parseFormField($key, $field, $params, $prefix, $parent, $merge, $formPath);
+            if (is_array($field)) {
+                $this->parseFormField($key, $field, $params, $prefix, $parent, $merge, $formPath);
+            }
         }
     }
 
@@ -478,6 +487,7 @@ class BlueprintSchema
      * @param string $parent
      * @param bool $merge
      * @param array $formPath
+     * @return void
      */
     protected function parseFormField($key, array $field, array $params, $prefix = '', $parent = '', $merge = false, array $formPath = [])
     {
@@ -547,6 +557,12 @@ class BlueprintSchema
         }
     }
 
+    /**
+     * @param string $key
+     * @param string $prefix
+     * @param string $parent
+     * @return string
+     */
     protected function getFieldKey($key, $prefix, $parent)
     {
         // Set name from the array key.
@@ -557,6 +573,11 @@ class BlueprintSchema
         return $prefix . $key;
     }
 
+    /**
+     * @param string $key
+     * @param array $properties
+     * @return void
+     */
     protected function parseProperties($key, array &$properties)
     {
         $key = ltrim($key, '.');
@@ -566,7 +587,7 @@ class BlueprintSchema
         }
 
         foreach ($properties as $name => $value) {
-            if (strpos($name[0], '@') !== false) {
+            if (is_string($name) && strpos($name[0], '@') !== false) {
                 $list = explode('-', trim($name, '@'), 2);
                 $action = array_shift($list);
                 $property = array_shift($list);
@@ -584,7 +605,8 @@ class BlueprintSchema
     /**
      * Add property to the definition.
      *
-     * @param  string  $path  Comma separated path to the property.
+     * @param string $path Comma separated path to the property.
+     * @return void
      * @internal
      */
     protected function addProperty($path)
@@ -609,7 +631,8 @@ class BlueprintSchema
     /**
      * Remove property to the definition.
      *
-     * @param  string  $path  Comma separated path to the property.
+     * @param string $path Comma separated path to the property.
+     * @return void
      * @internal
      */
     protected function removeProperty($path)
@@ -632,7 +655,7 @@ class BlueprintSchema
     }
 
     /**
-     * @param $rule
+     * @param string $rule
      * @return array
      * @internal
      */
@@ -656,7 +679,11 @@ class BlueprintSchema
         $array = [];
 
         foreach ($data as $key => $field) {
-            $val = isset($rules[$key]) ? $rules[$key] : (isset($rules['*']) ? $rules['*'] : null);
+            if (isset($rules[$key])) {
+                $val = $rules[$key];
+            } else {
+                $val = isset($rules['*']) ? $rules['*'] : null;
+            }
             $rule = \is_string($val) ? $this->items[$val] : null;
 
             if ($rule || isset($val['*'])) {
@@ -676,6 +703,7 @@ class BlueprintSchema
      * @param array $field
      * @param string $property
      * @param array $call
+     * @return void
      */
     protected function dynamicData(array &$field, $property, array $call)
     {
@@ -693,13 +721,11 @@ class BlueprintSchema
         $o = array_pop($list);
 
         if (!$o) {
-            if (\function_exists($f)) {
-                $data = \call_user_func_array($f, $params);
+            if ($f && \function_exists($f)) {
+                $data = $f(...$params);
             }
-        } else {
-            if (method_exists($o, $f)) {
-                $data = \call_user_func_array(array($o, $f), $params);
-            }
+        } elseif ($f && \method_exists($o, $f)) {
+            $data = $o->$f(...$params);
         }
 
         // If function returns a value,

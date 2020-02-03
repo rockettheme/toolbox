@@ -1,7 +1,11 @@
 <?php
-use RocketTheme\Toolbox\ResourceLocator\UniformResourceLocator;
 
-class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use RocketTheme\Toolbox\ResourceLocator\UniformResourceLocator;
+use RocketTheme\Toolbox\ResourceLocator\UniformResourceIterator;
+use RocketTheme\Toolbox\ResourceLocator\RecursiveUniformResourceIterator;
+
+class UniformResourceLocatorTest extends TestCase
 {
     /**
      * @var UniformResourceLocator
@@ -93,33 +97,33 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testAddPath
+     * @expectedException InvalidArgumentException
      */
     public function testGetIterator()
     {
         $locator = self::$locator;
 
         $this->assertInstanceOf(
-            'RocketTheme\Toolbox\ResourceLocator\UniformResourceIterator',
+            UniformResourceIterator::class,
             $locator->getIterator('all://')
         );
 
-        $this->setExpectedException('InvalidArgumentException', 'Invalid resource fail://');
         $locator->getIterator('fail://');
     }
 
     /**
      * @depends testAddPath
+     * @expectedException InvalidArgumentException
      */
     public function testGetRecursiveIterator()
     {
         $locator = self::$locator;
 
         $this->assertInstanceOf(
-            'RocketTheme\Toolbox\ResourceLocator\RecursiveUniformResourceIterator',
+            RecursiveUniformResourceIterator::class,
             $locator->getRecursiveIterator('all://')
         );
 
-        $this->setExpectedException('InvalidArgumentException', 'Invalid resource fail://');
         $locator->getRecursiveIterator('fail://');
     }
 
@@ -238,9 +242,9 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
+    /* *
      * @depends testAddPath
-     */
+     * /
     public function testMergeResources()
     {
         $locator = self::$locator;
@@ -255,4 +259,5 @@ class UniformResourceLocatorTest extends PHPUnit_Framework_TestCase
     {
         $locator = self::$locator;
     }
+    */
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\StreamWrapper;
 
 /**
@@ -7,14 +8,12 @@ namespace RocketTheme\Toolbox\StreamWrapper;
  */
 class StreamBuilder
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $items = [];
 
     /**
      * StreamBuilder constructor.
-     * @param StreamInterface[] $items
+     * @param string[] $items
      * @throws \InvalidArgumentException
      */
     public function __construct(array $items = [])
@@ -26,7 +25,7 @@ class StreamBuilder
 
     /**
      * @param string $scheme
-     * @param StreamInterface $handler
+     * @param string $handler
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -39,7 +38,7 @@ class StreamBuilder
             throw new \InvalidArgumentException("Stream '{$scheme}' has already been initialized.");
         }
 
-        if (!is_subclass_of($handler, 'RocketTheme\Toolbox\StreamWrapper\StreamInterface')) {
+        if (!is_subclass_of($handler, StreamInterface::class)) {
             throw new \InvalidArgumentException("Stream '{$scheme}' has unknown or invalid type.");
         }
 

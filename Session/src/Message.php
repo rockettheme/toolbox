@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Session;
 
 /**
@@ -10,9 +11,7 @@ namespace RocketTheme\Toolbox\Session;
  */
 class Message
 {
-    /**
-     * @var array|string[]
-     */
+    /** @var array */
     protected $messages = [];
 
     /**
@@ -38,13 +37,13 @@ class Message
     /**
      * Clear message queue.
      *
-     * @param string $scope
+     * @param string|null $scope
      * @return $this
      */
     public function clear($scope = null)
     {
         if ($scope === null) {
-            $this->messages = array();
+            $this->messages = [];
         } else {
             foreach ($this->messages as $key => $message) {
                 if ($message['scope'] === $scope) {
@@ -58,7 +57,7 @@ class Message
     /**
      * Fetch all messages.
      *
-     * @param string $scope
+     * @param string|null $scope
      * @return array
      */
     public function all($scope = null)
@@ -67,7 +66,7 @@ class Message
             return array_values($this->messages);
         }
 
-        $messages = array();
+        $messages = [];
         foreach ($this->messages as $message) {
             if ($message['scope'] === $scope) {
                 $messages[] = $message;
@@ -80,7 +79,7 @@ class Message
     /**
      * Fetch and clear message queue.
      *
-     * @param string $scope
+     * @param string|null $scope
      * @return array
      */
     public function fetch($scope = null)

@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\ArrayTraits;
 
 /**
@@ -7,8 +8,6 @@ namespace RocketTheme\Toolbox\ArrayTraits;
  * @package RocketTheme\Toolbox\ArrayTraits
  * @author RocketTheme
  * @license MIT
- *
- * @property array $items
  */
 trait Serializable
 {
@@ -26,6 +25,7 @@ trait Serializable
      * Called during unserialization of the object.
      *
      * @param string $serialized  The string representation of the object.
+     * @return void
      */
     public function unserialize($serialized)
     {

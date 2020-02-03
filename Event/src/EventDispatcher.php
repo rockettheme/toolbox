@@ -1,9 +1,9 @@
 <?php
+
 namespace RocketTheme\Toolbox\Event;
 
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Implements Symfony EventDispatcher interface.
@@ -11,9 +11,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @package RocketTheme\Toolbox\Event
  * @author RocketTheme
  * @license MIT
+ * @deprecated Event classes will be removed in the future. Use PSR-14 implementation instead.
  */
-class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInterface
+class EventDispatcher extends BaseEventDispatcher
 {
+    /**
+     * @param string $eventName
+     * @param BaseEvent|null $event
+     * @return BaseEvent|null
+     */
     public function dispatch($eventName, BaseEvent $event = null)
     {
         if (null === $event) {

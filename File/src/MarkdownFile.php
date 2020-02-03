@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -14,21 +15,28 @@ use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
  */
 class MarkdownFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.md';
 
-    /**
-     * @var array|File[]
-     */
+    /** @var static[] */
     static protected $instances = [];
+
+    /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
 
     /**
      * Get/set file header.
      *
      * @param array $var
-     *
      * @return array
      */
     public function header(array $var = null)
@@ -47,7 +55,6 @@ class MarkdownFile extends File
      * Get/set markdown content.
      *
      * @param string $var
-     *
      * @return string
      */
     public function markdown($var = null)
@@ -55,7 +62,7 @@ class MarkdownFile extends File
         $content = $this->content();
 
         if ($var !== null) {
-            $content['markdown'] = (string) $var;
+            $content['markdown'] = (string)$var;
             $this->content($content);
         }
 
@@ -66,7 +73,6 @@ class MarkdownFile extends File
      * Get/set frontmatter content.
      *
      * @param string $var
-     *
      * @return string
      */
     public function frontmatter($var = null)
@@ -74,7 +80,7 @@ class MarkdownFile extends File
         $content = $this->content();
 
         if ($var !== null) {
-            $content['frontmatter'] = (string) $var;
+            $content['frontmatter'] = (string)$var;
             $this->content($content);
         }
 
@@ -84,14 +90,18 @@ class MarkdownFile extends File
     /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array $var
+     * @param mixed $var
      * @return array
      */
     protected function check($var)
     {
+        if (!(\is_array($var) || \is_object($var))) {
+            throw new \RuntimeException('Provided data is not an array');
+        }
+
         $var = (array) $var;
         if (!isset($var['header']) || !\is_array($var['header'])) {
-            $var['header'] = array();
+            $var['header'] = [];
         }
         if (!isset($var['markdown']) || !\is_string($var['markdown'])) {
             $var['markdown'] = '';
@@ -112,7 +122,7 @@ class MarkdownFile extends File
         $o = (!empty($var['header']) ? "---\n" . trim(YamlParser::dump($var['header'], 20)) . "\n---\n\n" : '') . $var['markdown'];
 
         // Normalize line endings to Unix style.
-        $o = preg_replace("/(\r\n|\r)/", "\n", $o);
+        $o = (string)preg_replace("/(\r\n|\r)/", "\n", $o);
 
         return $o;
     }
@@ -121,7 +131,7 @@ class MarkdownFile extends File
      * Decode RAW string into contents.
      *
      * @param string $var
-     * @return array mixed
+     * @return array
      */
     protected function decode($var)
     {
@@ -132,8 +142,11 @@ class MarkdownFile extends File
 
         $frontmatter_regex = "/^---\n(.+?)\n---\n{0,}(.*)$/uis";
 
+        // Remove UTF-8 BOM if it exists.
+        $var = ltrim($var, "\xef\xbb\xbf");
+
         // Normalize line endings to Unix style.
-        $var = preg_replace("/(\r\n|\r)/", "\n", $var);
+        $var = (string)preg_replace("/(\r\n|\r)/", "\n", $var);
 
         // Parse header.
         preg_match($frontmatter_regex, ltrim($var), $m);
@@ -145,9 +158,11 @@ class MarkdownFile extends File
             if (\function_exists('yaml_parse') && $this->setting('native')) {
                 // Safely decode YAML.
                 $saved = @ini_get('yaml.decode_php');
-                @ini_set('yaml.decode_php', 0);
+                @ini_set('yaml.decode_php', '0');
                 $content['header'] = @yaml_parse("---\n" . $frontmatter . "\n...");
-                @ini_set('yaml.decode_php', $saved);
+                if ($saved !== false) {
+                    @ini_set('yaml.decode_php', $saved);
+                }
             }
 
             if ($content['header'] === false) {

@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,61 +11,45 @@ namespace RocketTheme\Toolbox\File;
  */
 class File implements FileInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $filename;
-
-    /**
-     * @var resource
-     */
+    /** @var resource|null */
     protected $handle;
-
-    /**
-     * @var bool|null
-     */
+    /** @var bool|null */
     protected $locked;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension;
-
-    /**
-     * @var string  Raw file contents.
-     */
+    /** @var string|null  Raw file contents. */
     protected $raw;
-
-    /**
-     * @var array  Parsed file contents.
-     */
+    /** @var array|string|null  Parsed file contents. */
     protected $content;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $settings = [];
 
-    /**
-     * @var array|File[]
-     */
+    /** @var static[] */
     static protected $instances = [];
 
     /**
      * Get file instance.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return static
      */
     public static function instance($filename)
     {
-        if (!\is_string($filename) && $filename) {
-            throw new \InvalidArgumentException('Filename should be non-empty string');
+        if (!\is_string($filename) || $filename === '') {
+            user_error(__METHOD__ . '() should not be called with empty filename, this will stop working in the future!', E_USER_DEPRECATED);
+
+            // TODO: fail in the future (and also remove $this->filename === null checks).
+            //throw new \InvalidArgumentException('Filename should be non-empty string');
+            return new static();
         }
+
         if (!isset(static::$instances[$filename])) {
-            static::$instances[$filename] = new static;
+            static::$instances[$filename] = new static();
             static::$instances[$filename]->init($filename);
         }
+
         return static::$instances[$filename];
     }
 
@@ -113,7 +98,8 @@ class File implements FileInterface
     /**
      * Set filename.
      *
-     * @param $filename
+     * @param string $filename
+     * @return void
      */
     protected function init($filename)
     {
@@ -122,6 +108,8 @@ class File implements FileInterface
 
     /**
      * Free the file instance.
+     *
+     * @return void
      */
     public function free()
     {
@@ -131,7 +119,9 @@ class File implements FileInterface
         $this->content = null;
         $this->raw = null;
 
-        unset(static::$instances[$this->filename]);
+        if (null !== $this->filename) {
+            unset(static::$instances[$this->filename]);
+        }
     }
 
     /**
@@ -145,6 +135,7 @@ class File implements FileInterface
         if ($var !== null) {
             $this->filename = $var;
         }
+
         return $this->filename;
     }
 
@@ -155,7 +146,7 @@ class File implements FileInterface
      */
     public function basename()
     {
-        return basename($this->filename, $this->extension);
+        return null !== $this->filename ? basename($this->filename, $this->extension) : '';
     }
 
     /**
@@ -165,7 +156,7 @@ class File implements FileInterface
      */
     public function exists()
     {
-        return is_file($this->filename);
+        return null !== $this->filename && is_file($this->filename);
     }
 
     /**
@@ -175,7 +166,7 @@ class File implements FileInterface
      */
     public function modified()
     {
-        return is_file($this->filename) ? filemtime($this->filename) : false;
+        return null !== $this->filename && $this->exists() ? filemtime($this->filename) : false;
     }
 
     /**
@@ -187,16 +178,22 @@ class File implements FileInterface
      */
     public function lock($block = true)
     {
+        if (null === $this->filename) {
+            throw new \RuntimeException('Opening file for writing failed because of it has no filename');
+        }
+
         if (!$this->handle) {
             if (!$this->mkdir(\dirname($this->filename))) {
                 throw new \RuntimeException('Creating directory failed for ' . $this->filename);
             }
-            $this->handle = @fopen($this->filename, 'cb+');
-            if (!$this->handle) {
-                $error = error_get_last();
+
+            $handle = @fopen($this->filename, 'cb+');
+            if (!$handle) {
+                $error = error_get_last() ?: ['message' => 'Unknown error'];
 
                 throw new \RuntimeException("Opening file for writing failed on error {$error['message']}");
             }
+            $this->handle = $handle;
         }
         $lock = $block ? LOCK_EX : LOCK_EX | LOCK_NB;
 
@@ -226,10 +223,12 @@ class File implements FileInterface
         if (!$this->handle) {
             return false;
         }
+
         if ($this->locked) {
             flock($this->handle, LOCK_UN);
             $this->locked = null;
         }
+
         fclose($this->handle);
         $this->handle = null;
 
@@ -243,7 +242,11 @@ class File implements FileInterface
      */
     public function writable()
     {
-        return file_exists($this->filename) ? is_writable($this->filename) && is_file($this->filename) : $this->writableDir(\dirname($this->filename));
+        if (null === $this->filename) {
+            return false;
+        }
+
+        return $this->exists() ? is_writable($this->filename) : $this->writableDir(\dirname($this->filename));
     }
 
     /**
@@ -253,7 +256,7 @@ class File implements FileInterface
      */
     public function load()
     {
-        $this->raw = $this->exists() ? (string) file_get_contents($this->filename) : '';
+        $this->raw = null !== $this->filename && $this->exists() ? (string) file_get_contents($this->filename) : '';
         $this->content = null;
 
         return $this->raw;
@@ -310,10 +313,15 @@ class File implements FileInterface
      * Save file.
      *
      * @param  mixed  $data  Optional data to be saved, usually array.
+     * @return void
      * @throws \RuntimeException
      */
     public function save($data = null)
     {
+        if (null === $this->filename) {
+            throw new \RuntimeException('Failed to save file: no filename');
+        }
+
         if ($data !== null) {
             $this->content($data);
         }
@@ -358,12 +366,12 @@ class File implements FileInterface
     /**
      * Rename file in the filesystem if it exists.
      *
-     * @param $filename
+     * @param string $filename
      * @return bool
      */
     public function rename($filename)
     {
-        if ($this->exists() && !@rename($this->filename, $filename)) {
+        if (null !== $this->filename && $this->exists() && !@rename($this->filename, $filename)) {
             return false;
         }
 
@@ -382,7 +390,7 @@ class File implements FileInterface
      */
     public function delete()
     {
-        return unlink($this->filename);
+        return null !== $this->filename && $this->exists() && unlink($this->filename);
     }
 
     /**
@@ -390,12 +398,16 @@ class File implements FileInterface
      *
      * Override in derived class.
      *
-     * @param string $var
-     * @return string
+     * @param mixed $var
+     * @return mixed
      */
     protected function check($var)
     {
-        return (string) $var;
+        if (!\is_string($var)) {
+            throw new \RuntimeException('Provided data is not a string');
+        }
+
+        return $var;
     }
 
     /**
@@ -403,12 +415,12 @@ class File implements FileInterface
      *
      * Override in derived class.
      *
-     * @param string $var
+     * @param array|string $var
      * @return string
      */
     protected function encode($var)
     {
-        return (string) $var;
+        return \is_string($var) ? $var : '';
     }
 
     /**
@@ -417,15 +429,16 @@ class File implements FileInterface
      * Override in derived class.
      *
      * @param string $var
-     * @return string mixed
+     * @return array|string
      */
     protected function decode($var)
     {
-        return (string) $var;
+        return $var;
     }
 
     /**
-     * @param  string  $dir
+     * @param string $dir
+     * @return bool
      */
     private function mkdir($dir)
     {
@@ -448,7 +461,7 @@ class File implements FileInterface
     }
 
     /**
-     * @param  string  $dir
+     * @param string $dir
      * @return bool
      * @internal
      */

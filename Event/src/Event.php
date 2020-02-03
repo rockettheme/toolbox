@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Event;
 
 use RocketTheme\Toolbox\ArrayTraits\ArrayAccess;
@@ -12,13 +13,12 @@ use Symfony\Component\EventDispatcher\Event as BaseEvent;
  * @package RocketTheme\Toolbox\Event
  * @author RocketTheme
  * @license MIT
+ * @deprecated Event classes will be removed in the future. Use PSR-14 implementation instead.
  */
 class Event extends BaseEvent implements \ArrayAccess
 {
     use ArrayAccess, Constructor, Export;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $items = [];
 }

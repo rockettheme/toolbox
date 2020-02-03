@@ -1,10 +1,26 @@
+# v1.5.0
+## 02/03/2020
+
+1. [](#new)
+    * Updated minimum requirement to PHP 5.6.0
+    * Deprecated Event classes in favor of PSR-14
+    * PHP 7.4 compatibility: implemented required `Stream::stream_set_option()` method (#28, thanks @lcharette)
+    * Pass phpstan level 8 tests
+    * Added new `UniformResourceLocator::getResource()` method to simplify code where filename is always required
+    * Added support for `replace-name@` in blueprints (#24, thanks @drzraf)
+    * Calling `File::instance()` with empty filename is now deprecated
+1. [](#bugfix)
+    * Fixed `new UniformResourceItarator()` not throwing exception when path is non-existing
+    * Fixed missing frontmatter if markdown file had UTF-8 BOM (#14, thanks @A----)
+    * Fixed many other edge cases
+
 # v1.4.6
 ## 03/20/2019
 
 1. [](#bugfix)
     * Fixed `File::writable()` returning true if an existing file is read-only with the folder being writable
     * Fixed `File::save()` silently ignoring failures with read only streams
-    * Regresion: Fixed file saving when temporary file cannot be created to the current folder / stream
+    * Regression: Fixed file saving when temporary file cannot be created to the current folder / stream
 
 # v1.4.5
 ## 02/28/2019

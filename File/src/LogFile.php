@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,9 +11,7 @@ namespace RocketTheme\Toolbox\File;
  */
 class LogFile extends File
 {
-    /**
-     * @var array|File[]
-     */
+    /** @var static[] */
     static protected $instances = [];
 
     /**
@@ -26,21 +25,37 @@ class LogFile extends File
     }
 
     /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
+
+    /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array $var
+     * @param mixed $var
      * @return array
      */
     protected function check($var)
     {
-        return (array) $var;
+        if (!(\is_array($var) || \is_object($var))) {
+            throw new \RuntimeException('Provided data is not an array');
+        }
+
+        return (array)$var;
     }
 
     /**
      * Encode contents into RAW string (unsupported).
      *
      * @param string $var
-     * @return string|void
+     * @return string
      * @throws \BadMethodCallException
      */
     protected function encode($var)
@@ -52,13 +67,13 @@ class LogFile extends File
      * Decode RAW string into contents.
      *
      * @param string $var
-     * @return array mixed
+     * @return array
      */
     protected function decode($var)
     {
-        $lines = (array) preg_split('#(\r\n|\n|\r)#', $var);
+        $lines = preg_split('#(\r\n|\n|\r)#', $var) ?: [];
 
-        $results = array();
+        $results = [];
         foreach ($lines as $line) {
             preg_match('#^\[(.*)\] (.*)  @  (.*)  @@  (.*)$#', $line, $matches);
             if ($matches) {

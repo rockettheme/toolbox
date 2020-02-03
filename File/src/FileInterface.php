@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -13,13 +14,15 @@ interface FileInterface
     /**
      * Get file instance.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return static
      */
     public static function instance($filename);
 
     /**
      * Free the file instance.
+     *
+     * @return void
      */
     public function free();
 
@@ -85,14 +88,15 @@ interface FileInterface
      * Get/set parsed file contents.
      *
      * @param string $var
-     * @return string
+     * @return string|array
      */
     public function content($var = null);
 
     /**
      * Save file.
      *
-     * @param  string  $data  Optional data to be saved.
+     * @param string $data Optional data to be saved.
+     * @return void
      * @throws \RuntimeException
      */
     public function save($data = null);

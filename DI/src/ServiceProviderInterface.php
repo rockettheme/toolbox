@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\DI;
 
 use \Pimple\ServiceProviderInterface as BaseServiceProviderInterface;

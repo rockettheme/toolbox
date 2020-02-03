@@ -1,5 +1,6 @@
 # ![](https://avatars1.githubusercontent.com/u/1310198?v=2&s=50) RocketTheme Toolbox
 
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 [![Latest Version](http://img.shields.io/packagist/v/rockettheme/toolbox.svg?style=flat)](https://packagist.org/packages/rockettheme/toolbox)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Build Status](https://img.shields.io/travis/rockettheme/toolbox/master.svg?style=flat)](https://travis-ci.org/rockettheme/toolbox)
@@ -10,6 +11,7 @@
 RocketTheme\Toolbox package contains a set of reusable PHP interfaces, classes and traits.
 
 * ArrayTraits
+* Blueprints
 * DI
 * Event
 * File
@@ -27,7 +29,7 @@ To add this package as a local, per-project dependency to your project, simply a
 
     {
         "require": {
-            "rockettheme/toolbox": "dev-master"
+            "rockettheme/toolbox": "^1.5"
         }
     }
 

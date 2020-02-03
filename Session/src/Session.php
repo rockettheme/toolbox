@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\Session;
 
 /**
@@ -10,21 +11,17 @@ namespace RocketTheme\Toolbox\Session;
  */
 class Session implements \IteratorAggregate
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $started = false;
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     protected static $instance;
 
 
     /**
-     * @param int    $lifetime Defaults to 1800 seconds.
+     * @param int $lifetime Defaults to 1800 seconds.
      * @param string $path     Cookie path.
-     * @param string $domain   Optional, domain for the session
+     * @param string|null $domain   Optional, domain for the session
      * @throws \RuntimeException
      */
     public function __construct($lifetime, $path, $domain = null)
@@ -41,14 +38,18 @@ class Session implements \IteratorAggregate
         }
 
         // Disable transparent sid support
-        ini_set('session.use_trans_sid', 0);
+        ini_set('session.use_trans_sid', '0');
 
         // Only allow cookies
-        ini_set('session.use_cookies', 1);
+        ini_set('session.use_cookies', '1');
 
         session_name('msF9kJcW');
         session_set_cookie_params($lifetime, $path, $domain);
-        register_shutdown_function([$this, 'close']);
+
+        /** @var callable(): void $callable */
+        $callable = [$this, 'close'];
+
+        register_shutdown_function($callable);
         session_cache_limiter('nocache');
 
         self::$instance = $this;
@@ -105,7 +106,6 @@ class Session implements \IteratorAggregate
      * Set session Id
      *
      * @param string $id Session ID
-     *
      * @return $this
      */
     public function setId($id)
@@ -130,7 +130,6 @@ class Session implements \IteratorAggregate
      * Set session name
      *
      * @param string $name
-     *
      * @return $this
      */
     public function setName($name)
@@ -181,7 +180,6 @@ class Session implements \IteratorAggregate
      * Checks if an attribute is defined.
      *
      * @param string $name The attribute name
-     *
      * @return bool True if the attribute is defined, false otherwise
      */
     public function __isset($name)
@@ -193,7 +191,6 @@ class Session implements \IteratorAggregate
      * Returns an attribute.
      *
      * @param string $name    The attribute name
-     *
      * @return mixed
      */
     public function __get($name)
@@ -205,7 +202,8 @@ class Session implements \IteratorAggregate
      * Sets an attribute.
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
+     * @return void
      */
     public function __set($name, $value)
     {
@@ -216,6 +214,7 @@ class Session implements \IteratorAggregate
      * Removes an attribute.
      *
      * @param string $name
+     * @return void
      */
     public function __unset($name)
     {
@@ -246,7 +245,7 @@ class Session implements \IteratorAggregate
     /**
      * Checks if the session was started.
      *
-     * @return Boolean
+     * @return bool
      */
     public function started()
     {
@@ -256,6 +255,7 @@ class Session implements \IteratorAggregate
     /**
      * http://php.net/manual/en/function.session-status.php#113468
      * Check if session is started nicely.
+     *
      * @return bool
      */
     protected function isSessionStarted()

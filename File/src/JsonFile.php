@@ -1,4 +1,5 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
 
 /**
@@ -10,25 +11,37 @@ namespace RocketTheme\Toolbox\File;
  */
 class JsonFile extends File
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.json';
 
-    /**
-     * @var array|File[]
-     */
+    /** @var static[] */
     static protected $instances = [];
+
+    /**
+     * @param array|null $var
+     * @return array
+     */
+    public function content($var = null)
+    {
+        /** @var array $content */
+        $content = parent::content($var);
+
+        return $content;
+    }
 
     /**
      * Check contents and make sure it is in correct format.
      *
-     * @param array $var
+     * @param mixed $var
      * @return array
      */
     protected function check($var)
     {
-        return (array) $var;
+        if (!(\is_array($var) || \is_object($var))) {
+            throw new \RuntimeException('Provided data is not an array');
+        }
+
+        return (array)$var;
     }
 
     /**
@@ -40,7 +53,7 @@ class JsonFile extends File
      */
     protected function encode($var, $options = 0)
     {
-        return (string) json_encode($var, $options);
+        return (string)json_encode($var, $options);
     }
 
     /**
@@ -48,7 +61,7 @@ class JsonFile extends File
      *
      * @param string $var
      * @param bool $assoc
-     * @return array mixed
+     * @return array
      */
     protected function decode($var, $assoc = false)
     {
