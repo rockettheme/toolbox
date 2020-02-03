@@ -128,7 +128,7 @@ class File implements FileInterface
      * Get/set the file location.
      *
      * @param  string $var
-     * @return string|null
+     * @return string
      */
     public function filename($var = null)
     {
