@@ -1,5 +1,5 @@
 # v1.5.0
-## mm/dd/2019
+## 02/03/2020
 
 1. [](#new)
     * Updated minimum requirement to PHP 5.6.0
