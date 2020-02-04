@@ -1,3 +1,9 @@
+# v1.5.1
+## mm/dd/2020
+
+1. [](#bugfix)
+    * Fixed static method call from Blueprints
+
 # v1.5.0
 ## 02/03/2020
 
