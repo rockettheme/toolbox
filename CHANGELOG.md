@@ -1,3 +1,9 @@
+# v1.4.7
+## mm/dd/2020
+
+1. [](#bugfix)
+    * PHP 7.4 compatibility: implemented required `Stream::stream_set_option()` method (#28, thanks @lcharette)
+
 # v1.4.6
 ## 03/20/2019
 
