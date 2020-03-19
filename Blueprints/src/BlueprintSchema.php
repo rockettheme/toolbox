@@ -725,7 +725,7 @@ class BlueprintSchema
                 $data = $f(...$params);
             }
         } elseif ($f && \method_exists($o, $f)) {
-            $data = $o->$f(...$params);
+            $data = $o::{$f}(...$params);
         }
 
         // If function returns a value,
