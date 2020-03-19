@@ -1,5 +1,5 @@
 # v1.5.1
-## mm/dd/2020
+## 03/19/2020
 
 1. [](#bugfix)
     * Fixed static method call from Blueprints
