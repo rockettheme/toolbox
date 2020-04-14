@@ -327,6 +327,11 @@ class File implements FileInterface
         }
 
         $filename = $this->filename;
+
+        if (is_link($filename)) {
+            $filename = realpath($filename);
+        }
+
         $dir = \dirname($filename);
 
         if (!$this->mkdir($dir)) {
