@@ -1,5 +1,5 @@
 # v1.5.2
-## mm/dd/2020
+## 05/18/2020
 
 1. [](#improved)
     * Support symlinks when saving `File` (#30, thanks @schliflo)
