@@ -1,3 +1,9 @@
+# v1.5.2
+## 05/18/2020
+
+1. [](#improved)
+    * Support symlinks when saving `File` (#30, thanks @schliflo)
+
 # v1.5.1
 ## 03/19/2020
 
