@@ -1,5 +1,5 @@
 # v1.5.3
-## mm/dd/2020
+## 11/23/2020
 
 1. [](#bugfix)
     * Fixed `UniformResourceLocator::addPath()` not working properly if override is a stream
