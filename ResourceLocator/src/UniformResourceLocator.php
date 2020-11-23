@@ -90,7 +90,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $scheme
      * @param string $prefix
      * @param string|array $paths
-     * @param bool|string  $override  True to add path as override, string
+     * @param bool|string|string[]  $override  True to add path as override, string
      * @param bool $force     True to add paths even if them do not exist.
      * @return void
      * @throws \BadMethodCallException
@@ -129,6 +129,11 @@ class UniformResourceLocator implements ResourceLocatorInterface
             if (!$override || $override == 1) {
                 $list = $override ? array_merge($paths, $list) : array_merge($list, $paths);
             } else {
+                if (false !== strpos($override, '://')) {
+                    // Support stream lookup in 'theme://path/to' format.
+                    $override = explode('://', $override, 2);
+                    $override[1] = trim($override[1], '/');
+                }
                 $location = (int)array_search($override, $paths, true) ?: \count($paths);
                 array_splice($paths, $location, 0, $list);
                 $list = $paths;
