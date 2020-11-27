@@ -162,7 +162,7 @@ abstract class AbstractFile implements FileInterface
     /**
      * Return file modification time.
      *
-     * @return int|bool Timestamp or false if file doesn't exist.
+     * @return int|false Timestamp or false if file doesn't exist.
      */
     public function modified()
     {
