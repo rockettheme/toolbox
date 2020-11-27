@@ -129,7 +129,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
             if (!$override || $override == 1) {
                 $list = $override ? array_merge($paths, $list) : array_merge($list, $paths);
             } else {
-                if (false !== strpos($override, '://')) {
+                if (is_string($override) && false !== strpos($override, '://')) {
                     // Support stream lookup in 'theme://path/to' format.
                     $override = explode('://', $override, 2);
                     $override[1] = trim($override[1], '/');
