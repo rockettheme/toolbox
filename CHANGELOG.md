@@ -1,3 +1,11 @@
+# v1.5.4
+## 11/27/2020
+
+1. [](#new)
+    * Added PHP 8.0 support
+1. [](#bugfix)
+    * Fixed `UniformResourceLocator::addPath()` with PHP 8
+
 # v1.5.3
 ## 11/23/2020
 
