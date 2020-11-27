@@ -583,6 +583,8 @@ abstract class BlueprintForm implements \ArrayAccess, ExportInterface
                     // Let's check if user really meant extends@: parent@.
                     $index = \array_search($filename, $files, true);
                     if ($index !== false) {
+                        $index = (int)$index;
+
                         // We want to grab only the parents of the file which is currently being loaded.
                         $files = \array_slice($files, $index + 1);
                     }

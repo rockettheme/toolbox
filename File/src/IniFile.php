@@ -9,7 +9,7 @@ namespace RocketTheme\Toolbox\File;
  * @author RocketTheme
  * @license MIT
  */
-class IniFile extends File
+class IniFile extends AbstractFile
 {
     /** @var string */
     protected $extension = '.ini';
