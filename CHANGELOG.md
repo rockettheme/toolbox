@@ -1,5 +1,5 @@
 # v1.5.4
-## mm/dd/2020
+## 11/27/2020
 
 1. [](#new)
     * Added PHP 8.0 support
