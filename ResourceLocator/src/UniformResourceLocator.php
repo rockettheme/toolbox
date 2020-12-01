@@ -256,9 +256,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $path = array_pop($segments);
         $scheme = array_pop($segments) ?: 'file';
 
-        if ($path === null) {
-            $path = '';
-        } elseif ($path) {
+        if ($path) {
             $path = (string)preg_replace('|\\\|u', '/', $path);
             $parts = explode('/', $path);
 

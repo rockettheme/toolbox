@@ -8,7 +8,7 @@ namespace RocketTheme\Toolbox\File;
  * @author RocketTheme
  * @license MIT
  */
-class MoFile extends File
+class MoFile extends AbstractFile
 {
     /** @var string */
     protected $extension = '.mo';

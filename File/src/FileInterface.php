@@ -87,7 +87,7 @@ interface FileInterface
     /**
      * Get/set parsed file contents.
      *
-     * @param string $var
+     * @param string|array|null $var
      * @return string|array
      */
     public function content($var = null);
@@ -95,7 +95,7 @@ interface FileInterface
     /**
      * Save file.
      *
-     * @param string $data Optional data to be saved.
+     * @param string|array|null $data Optional data to be saved.
      * @return void
      * @throws \RuntimeException
      */

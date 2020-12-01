@@ -13,7 +13,7 @@ use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
  * @author RocketTheme
  * @license MIT
  */
-class MarkdownFile extends File
+class MarkdownFile extends AbstractFile
 {
     /** @var string */
     protected $extension = '.md';
