@@ -9,7 +9,7 @@ namespace RocketTheme\Toolbox\File;
  * @author RocketTheme
  * @license MIT
  */
-class PhpFile extends AbstractFile
+class PhpFile extends File
 {
     /** @var string */
     protected $extension = '.php';
