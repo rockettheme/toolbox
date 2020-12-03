@@ -14,7 +14,7 @@ use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
  * @author RocketTheme
  * @license MIT
  */
-class YamlFile extends AbstractFile
+class YamlFile extends File
 {
     /** @var static[] */
     static protected $instances = [];

@@ -9,7 +9,7 @@ namespace RocketTheme\Toolbox\File;
  * @author RocketTheme
  * @license MIT
  */
-class LogFile extends AbstractFile
+class LogFile extends File
 {
     /** @var static[] */
     static protected $instances = [];

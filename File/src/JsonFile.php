@@ -9,7 +9,7 @@ namespace RocketTheme\Toolbox\File;
  * @author RocketTheme
  * @license MIT
  */
-class JsonFile extends AbstractFile
+class JsonFile extends File
 {
     /** @var string */
     protected $extension = '.json';

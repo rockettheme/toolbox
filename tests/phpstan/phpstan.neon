@@ -22,8 +22,6 @@ parameters:
         - */Rules/**
     ignoreErrors:
         - '#Unsafe usage of new static\(\)#'
-        - '#Method RocketTheme\\Toolbox\\[^:]+::offset(Set|Unset)\(\) has parameter (\$offset|\$value) with no typehint specified#'
-        - '#Method RocketTheme\\Toolbox\\[^:]+::offset(Set|Unset)\(\) has no return typehint specified#'
         -
             message: '#Trying to invoke string but it might not be a callable#'
             path: '*/Blueprints/src/BlueprintSchema.php'
@@ -35,3 +33,11 @@ parameters:
         -
            message: '#(deprecated|compatible|expects|returns)#'
            path: '*/Event/src/EventDispatcher.php'
+
+        # File class hacks
+        -
+            message: '#RocketTheme\\Toolbox\\File\\[^:]+::content\(\) should be compatible#'
+            path: '*/File/src/*.php'
+        -
+            message: '#RocketTheme\\Toolbox\\File\\[^:]+::content\(\) expects#'
+            path: '*/File/src/*.php'

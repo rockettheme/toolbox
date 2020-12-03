@@ -1,3 +1,9 @@
+# v1.5.6
+## 12/03/2020
+
+1. [](#bugfix)
+    * Fixed incompatible `File` class
+
 # v1.5.5
 ## 12/01/2020
 

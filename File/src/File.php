@@ -21,7 +21,7 @@ class File extends AbstractFile
     public function content($var = null)
     {
         /** @var string $content */
-        $content = parent::content();
+        $content = parent::content($var);
 
         return $content;
     }
