@@ -144,6 +144,9 @@ class MoFile extends File
         }
 
         $read = unpack($this->endian, $read);
+        if ($read === false) {
+            return false;
+        }
 
         return array_shift($read);
     }

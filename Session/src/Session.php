@@ -99,7 +99,7 @@ class Session implements \IteratorAggregate
      */
     public function getId()
     {
-        return session_id();
+        return session_id() ?: null;
     }
 
     /**
@@ -123,7 +123,7 @@ class Session implements \IteratorAggregate
      */
     public function getName()
     {
-        return session_name();
+        return session_name() ?: null;
     }
 
     /**
@@ -146,11 +146,14 @@ class Session implements \IteratorAggregate
      */
     public function invalidate()
     {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params['path'], $params['domain'],
-            $params['secure'], $params['httponly']
-        );
+        $name = $this->getName();
+        if (null !== $name) {
+            $params = session_get_cookie_params();
+            setcookie($name, '', time() - 42000,
+                $params['path'], $params['domain'],
+                $params['secure'], $params['httponly']
+            );
+        }
 
         session_unset();
         session_destroy();

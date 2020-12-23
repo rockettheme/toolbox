@@ -1,3 +1,9 @@
+# v1.5.7
+## mm/dd/yyyy
+
+1. [](#new)
+   * Pass new phpstan level 8 tests
+
 # v1.5.6
 ## 12/03/2020
 

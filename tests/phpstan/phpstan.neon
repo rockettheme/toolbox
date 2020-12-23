@@ -2,7 +2,8 @@ includes:
     #- '../../vendor/phpstan/phpstan-strict-rules/rules.neon'
     - '../../vendor/phpstan/phpstan-deprecation-rules/rules.neon'
 parameters:
-    bootstrap: phpstan-bootstrap.php
+    bootstrapFiles:
+        - phpstan-bootstrap.php
     inferPrivatePropertyTypeFromConstructor: true
     reportUnmatchedIgnoredErrors: false
 
