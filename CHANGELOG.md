@@ -1,5 +1,5 @@
 # v1.5.7
-## mm/dd/yyyy
+## 02/17/2021
 
 1. [](#new)
    * Pass new phpstan level 8 tests
