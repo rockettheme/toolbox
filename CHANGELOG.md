@@ -6,7 +6,6 @@
 1. [](#bugfix)
    * Fixed `Trying to access array offset on value of type int` in `BlueprintSchema::getFieldKey()`
 
-
 # v1.5.6
 ## 12/03/2020
 
