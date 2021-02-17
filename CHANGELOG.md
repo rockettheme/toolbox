@@ -1,3 +1,11 @@
+# v1.5.7
+## 02/17/2021
+
+1. [](#new)
+   * Pass new phpstan level 8 tests
+1. [](#bugfix)
+   * Fixed `Trying to access array offset on value of type int` in `BlueprintSchema::getFieldKey()`
+
 # v1.5.6
 ## 12/03/2020
 

@@ -566,7 +566,7 @@ class BlueprintSchema
     protected function getFieldKey($key, $prefix, $parent)
     {
         // Set name from the array key.
-        if (strpos($key[0], '.') === 0) {
+        if (is_string($key) && strpos($key[0], '.') === 0) {
             return ($parent ?: rtrim($prefix, '.')) . $key;
         }
 
