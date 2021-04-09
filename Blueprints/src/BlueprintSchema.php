@@ -503,10 +503,10 @@ class BlueprintSchema
         $properties = array_diff_key($field, $this->ignoreFormKeys) + $params;
         $properties['name'] = $key;
 
-        // Set default properties for the field type.
+        // Add all default properties for the field type (field needs to override them).
         $type = isset($properties['type']) ? $properties['type'] : '';
         if (isset($this->types[$type])) {
-            $properties += $this->types[$type];
+            $properties = array_merge_recursive($this->types[$type], $properties);
         }
 
         // Merge properties with existing ones.

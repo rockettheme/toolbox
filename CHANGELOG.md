@@ -1,3 +1,9 @@
+# v1.5.8
+## mm/dd/2021
+
+1. [](#bugfix)
+    * Fixed default field type settings not being merged recursively causing default validation rules to get missing
+
 # v1.5.7
 ## 02/17/2021
 
