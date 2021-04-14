@@ -506,7 +506,7 @@ class BlueprintSchema
         // Add all default properties for the field type (field needs to override them).
         $type = isset($properties['type']) ? $properties['type'] : '';
         if (isset($this->types[$type])) {
-            $properties = array_merge_recursive($this->types[$type], $properties);
+            $properties = $this->mergeTypeDefaults($properties, $this->types[$type]);
         }
 
         // Merge properties with existing ones.
@@ -555,6 +555,24 @@ class BlueprintSchema
         if ($isInputField) {
             $this->items[$key] = $properties;
         }
+    }
+
+    /**
+     * @param array $properties
+     * @param array $defaults
+     * @return array
+     */
+    protected function mergeTypeDefaults(array $properties, array $defaults)
+    {
+        foreach ($properties as $key => $value) {
+            if (is_array($value) && isset($defaults[$key]) && is_array($defaults[$key])) {
+                $defaults[$key] = $this->mergeTypeDefaults($value, $defaults[$key]);
+            } else {
+                $defaults[$key] = $value;
+            }
+        }
+
+        return $defaults;
     }
 
     /**
