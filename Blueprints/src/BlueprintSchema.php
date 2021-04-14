@@ -565,9 +565,16 @@ class BlueprintSchema
     protected function mergeTypeDefaults(array $properties, array $defaults)
     {
         foreach ($properties as $key => $value) {
-            if (is_array($value) && isset($defaults[$key]) && is_array($defaults[$key])) {
+            if (is_int($key)) {
+                // Handle items in a list, but avoid duplicates.
+                if (!in_array($value, $defaults, true)) {
+                    $defaults[] = $value;
+                }
+            } elseif (is_array($value) && isset($defaults[$key]) && is_array($defaults[$key])) {
+                // Recursively merge array value.
                 $defaults[$key] = $this->mergeTypeDefaults($value, $defaults[$key]);
             } else {
+                // Replace value.
                 $defaults[$key] = $value;
             }
         }
