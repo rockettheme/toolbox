@@ -437,17 +437,18 @@ class BlueprintSchema
      */
     protected function mergeArrays(array $data1, array $data2, array $rules)
     {
-        foreach ($data2 as $key => $field) {
+        foreach ($data2 as $key => $field2) {
             $val = isset($rules[$key]) ? $rules[$key] : null;
             $rule = \is_string($val) ? $this->items[$val] : null;
+            $field1 = isset($data1[$key]) ? $data1[$key] : null;
 
-            if ((array_key_exists($key, $data1) && \is_array($data1[$key]) && \is_array($field) && \is_array($val) && !isset($val['*']))
-                || (!empty($rule['type']) && strpos($rule['type'], '_') === 0)) {
+            if (\is_array($field1) && \is_array($field2) && \is_array($val)
+                && (!isset($val['*']) || (!empty($rule['type']) && strpos($rule['type'], '_') === 0))) {
                 // Array has been defined in blueprints and is not a collection of items.
-                $data1[$key] = $this->mergeArrays($data1[$key], $field, $val);
+                $data1[$key] = $this->mergeArrays($field1, $field2, $val);
             } else {
                 // Otherwise just take value from the data2.
-                $data1[$key] = $field;
+                $data1[$key] = $field2;
             }
         }
 
