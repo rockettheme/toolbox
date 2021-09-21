@@ -3,6 +3,7 @@
 
 1. [](#bugfix)
     * Fixed blueprint merge where second blueprint has non-array field definition
+    * Fixed implicit cast from null to string in `UniformResourceLocator`
 
 # v1.5.9
 ## 04/14/2021

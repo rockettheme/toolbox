@@ -238,7 +238,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
      * @param string $uri
      * @param bool $throwException
      * @param bool $splitStream
-     * @return string|array|false
+     * @return string[]|false
      * @throws \BadMethodCallException
      */
     public function normalize($uri, $throwException = false, $splitStream = false)
@@ -254,9 +254,12 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $uri = (string)preg_replace('|\\\|u', '/', $uri);
         $segments = explode('://', $uri, 2);
         $path = array_pop($segments);
+        if (null === $path) {
+            $path = '';
+        }
         $scheme = array_pop($segments) ?: 'file';
 
-        if ($path) {
+        if ('' !== $path) {
             $path = (string)preg_replace('|\\\|u', '/', $path);
             $parts = explode('/', $path);
 
@@ -440,10 +443,19 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
         if (!isset($this->cache[$key])) {
             try {
+                if (strpos($uri, '://') === false) {
+                    $absolute = strpos($uri, '/') === 0;
+                    $uri = $absolute ? $uri :
+                }
+
                 list ($scheme, $file) = $this->normalize($uri, true, true);
 
-                if (!$file && $scheme === 'file') {
-                    $file = $this->base;
+                if ($scheme === 'file') {
+                    if ('' === $file) {
+                        return $this->base;
+                    }
+
+                    return $this->base . '/' . $file;
                 }
 
                 $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
