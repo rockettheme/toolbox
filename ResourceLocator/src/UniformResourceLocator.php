@@ -443,25 +443,50 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
         if (!isset($this->cache[$key])) {
             try {
-                if (strpos($uri, '://') === false) {
-                    $absolute = strpos($uri, '/') === 0;
-                    $uri = $absolute ? $uri :
-                }
-
-                list ($scheme, $file) = $this->normalize($uri, true, true);
-
-                if ($scheme === 'file') {
-                    if ('' === $file) {
-                        return $this->base;
+                $isFileStream = strpos($uri, 'file://') === 0;
+                if ($isFileStream || strpos($uri, '://') === false) {
+                    if ($isFileStream) {
+                        // Remove file://
+                        $uri = substr($uri, 7);
                     }
 
-                    return $this->base . '/' . $file;
+                    // Convert filesystem path to desired format.
+                    $uri = str_replace('\\', '/', $uri);
+                    if ($uri === '') {
+                        // No path.
+                        $file = $absolute ? $this->base : '/';
+                    } elseif (preg_match('`^(/|([a-z]:/))`ui', $uri) === 1) {
+                        // Absolute path (Unix and Windows).
+                        if ($absolute) {
+                            $file = $uri;
+                        } else {
+                            // Make uri relative.
+                            if ($uri === $this->base) {
+                                $file = '/';
+                            } elseif (strpos($uri, $this->base . '/') === 0) {
+                                $file = substr($uri, strlen($this->base));
+                            } else {
+                                throw new \RuntimeException("UniformResourceLocator: Absolute file path with relative lookup not allowed", 500);
+                            }
+                        }
+                    } else {
+                        // Relative path.
+                        $file = $absolute ? "{$this->base}/{$uri}" : "/{$uri}";
+                    }
+
+                    if (!$all && !file_exists($file)) {
+                        $this->cache[$key] = $array ? [] : false;
+                    } else {
+                        $this->cache[$key] = $array ? [$file] : $file;
+                    }
+               } else {
+                    list ($scheme, $file) = $this->normalize($uri, true, true);
+
+                    $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
                 }
 
-                $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
-
             } catch (\BadMethodCallException $e) {
-                $this->cache[$key] =  $array ? [] : false;
+                $this->cache[$key] = $array ? [] : false;
             }
         }
 
