@@ -2,6 +2,8 @@
 ## mm/dd/2021
 
 1. [](#bugfix)
+    * Improved `UniformResourceLocator` to support `file://` scheme
+1. [](#bugfix)
     * Fixed blueprint merge where second blueprint has non-array field definition
     * Fixed implicit cast from null to string in `UniformResourceLocator`
 
