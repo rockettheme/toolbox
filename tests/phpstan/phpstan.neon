@@ -42,3 +42,8 @@ parameters:
         -
             message: '#RocketTheme\\Toolbox\\File\\[^:]+::content\(\) expects#'
             path: '*/File/src/*.php'
+
+        # False alarm as there's check for function_exists()
+        -
+            message: '#Trying to invoke non-empty-string but it might not be a callable#'
+            path: '*/Blueprints/src/BlueprintSchema.php'
