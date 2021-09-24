@@ -27,14 +27,6 @@ parameters:
             message: '#Trying to invoke string but it might not be a callable#'
             path: '*/Blueprints/src/BlueprintSchema.php'
 
-        # Deprecated event classes
-        -
-            message: '#deprecated#'
-            path: '*/Event/src/Event.php'
-        -
-           message: '#(deprecated|compatible|expects|returns)#'
-           path: '*/Event/src/EventDispatcher.php'
-
         # File class hacks
         -
             message: '#RocketTheme\\Toolbox\\File\\[^:]+::content\(\) should be compatible#'

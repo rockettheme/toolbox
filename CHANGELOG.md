@@ -3,6 +3,7 @@
 
 1. [](#new)
    * Updated minimum requirement to PHP 7.2.5
+   * Removed deprecated `Event` classes
 
 # v1.5.10
 ## mm/dd/2021
