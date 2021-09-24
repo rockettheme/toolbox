@@ -2,7 +2,8 @@
 ## mm/dd/2021
 
 1. [](#new)
-   * Updated minimum requirement to PHP 7.2.5
+   * Updated minimum requirement to **PHP 7.2.5** and **Symfony 4.0**
+   * Added **Symfony 5** support
    * Removed deprecated `Event` classes
    * Removed deprecated `Blueprints` class
 
