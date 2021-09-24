@@ -1,3 +1,9 @@
+# v1.6.0
+## mm/dd/2021
+
+1. [](#new)
+   * Updated minimum requirement to PHP 7.2.5
+
 # v1.5.10
 ## mm/dd/2021
 
