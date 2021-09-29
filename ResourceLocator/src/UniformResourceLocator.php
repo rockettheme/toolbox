@@ -230,15 +230,17 @@ class UniformResourceLocator implements ResourceLocatorInterface
     }
 
     /**
-     * Returns the canonicalized URI on success. The resulting path will have no '/./' or '/../' components.
+     * Returns the canonicalized URI on success. The resulting path will have no '//', '/./' or '/../' components.
      * Trailing delimiter `/` is kept.
+     *
+     * If URI is a local file, method always returns absolute path to the file.
      *
      * By default (if $throwException parameter is not set to true) returns false on failure.
      *
      * @param string $uri
      * @param bool $throwException
      * @param bool $splitStream
-     * @return string|array|false
+     * @return string[]|string|false
      * @throws \BadMethodCallException
      */
     public function normalize($uri, $throwException = false, $splitStream = false)
@@ -251,13 +253,24 @@ class UniformResourceLocator implements ResourceLocatorInterface
             return false;
         }
 
-        $uri = (string)preg_replace('|\\\|u', '/', $uri);
+        $uri = (string)preg_replace('|\\\\|u', '/', $uri);
         $segments = explode('://', $uri, 2);
         $path = array_pop($segments);
         $scheme = array_pop($segments) ?: 'file';
 
-        if ($path) {
-            $path = (string)preg_replace('|\\\|u', '/', $path);
+        // Make all file scheme paths absolute.
+        if ($scheme === 'file') {
+            if ('' === $path) {
+                // Empty path.
+                $path = $this->base;
+            } elseif (preg_match('`^(/|([a-z]:/))`ui', $uri) !== 1) {
+                // Relative path.
+                $path = "{$this->base}/$path";
+            }
+        }
+
+        // Clean path from '..', '.' and ''.
+        if ('' !== $path) {
             $parts = explode('/', $path);
 
             $list = [];
@@ -442,14 +455,31 @@ class UniformResourceLocator implements ResourceLocatorInterface
             try {
                 list ($scheme, $file) = $this->normalize($uri, true, true);
 
-                if (!$file && $scheme === 'file') {
-                    $file = $this->base;
+                if ($scheme === 'file') {
+                    // File stream is a special case.
+                    if (!$absolute) {
+                        // Make uri relative.
+                        if ($uri === $this->base) {
+                            $file = '/';
+                        } elseif (strpos($uri, $this->base . '/') === 0) {
+                            $file = substr($uri, strlen($this->base));
+                        } else {
+                            throw new \RuntimeException("UniformResourceLocator: Absolute file path with relative lookup not allowed", 500);
+                        }
+                    }
+
+                    if (!$all && !file_exists($file)) {
+                        $this->cache[$key] = $array ? [] : false;
+                    } else {
+                        $this->cache[$key] = $array ? [$file] : $file;
+                    }
+               } else {
+                    // Locate files in resource locator streams.
+                    $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
                 }
 
-                $this->cache[$key] = $this->find($scheme, $file, $array, $absolute, $all);
-
             } catch (\BadMethodCallException $e) {
-                $this->cache[$key] =  $array ? [] : false;
+                $this->cache[$key] = $array ? [] : false;
             }
         }
 
