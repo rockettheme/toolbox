@@ -1,3 +1,9 @@
+# v1.5.11
+## mm/dd/2021
+
+1. [](#bugfix)
+    * Fixed deprecated warnings on `ArrayAccess` in PHP 8.1
+
 # v1.5.10
 ## 09/29/2021
 

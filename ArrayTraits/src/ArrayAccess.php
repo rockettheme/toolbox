@@ -17,6 +17,7 @@ trait ArrayAccess
      * @param string $offset An offset to check for.
      * @return bool Returns TRUE on success or FALSE on failure.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->items[$offset]);
@@ -28,6 +29,7 @@ trait ArrayAccess
      * @param string $offset The offset to retrieve.
      * @return mixed Can return all value types.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->items[$offset]) ? $this->items[$offset] : null;
@@ -40,6 +42,7 @@ trait ArrayAccess
      * @param mixed $value The value to set.
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (null === $offset) {
@@ -55,6 +58,7 @@ trait ArrayAccess
      * @param string $offset  The offset to unset.
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         // Hack to make Iterator trait work together with unset.
