@@ -6,6 +6,7 @@ use BadMethodCallException;
 use Exception;
 use InvalidArgumentException;
 use RecursiveIteratorIterator;
+use RuntimeException;
 use function count;
 use function is_array;
 use function is_string;
@@ -229,7 +230,13 @@ class UniformResourceLocator implements ResourceLocatorInterface
     public function isStream($uri)
     {
         try {
-            list ($scheme,) = $this->normalize($uri, true, true);
+            $normalized = $this->normalize($uri, true, true);
+            \assert(is_array($normalized));
+
+            list ($scheme,) = $normalized;
+            if (!is_string($scheme)) {
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }
@@ -461,7 +468,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
 
         if (!isset($this->cache[$key])) {
             try {
-                list ($scheme, $file) = $this->normalize($uri, true, true);
+                $normalized = $this->normalize($uri, true, true);
+                \assert(is_array($normalized));
+
+                list ($scheme, $file) = $normalized;
 
                 if ($scheme === 'file') {
                     // File stream is a special case.
@@ -472,7 +482,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         } elseif (strpos($uri, $this->base . '/') === 0) {
                             $file = substr($uri, strlen($this->base));
                         } else {
-                            throw new \RuntimeException("UniformResourceLocator: Absolute file path with relative lookup not allowed", 500);
+                            throw new RuntimeException("UniformResourceLocator: Absolute file path with relative lookup not allowed", 500);
                         }
                     }
 
@@ -526,6 +536,10 @@ class UniformResourceLocator implements ResourceLocatorInterface
         }
 
         $results = $array ? [] : false;
+        /**
+         * @var string $prefix
+         * @var array $paths
+         */
         foreach ($this->schemes[$scheme] as $prefix => $paths) {
             if ($prefix && strpos($file, $prefix) !== 0) {
                 continue;
@@ -562,7 +576,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                         if ($absolute) {
                             $current = $fullPath;
                         } elseif (null === $relPath) {
-                            throw new \RuntimeException("UniformResourceLocator: Absolute stream path with relative lookup not allowed ({$prefix})", 500);
+                            throw new RuntimeException("UniformResourceLocator: Absolute stream path with relative lookup not allowed ({$prefix})", 500);
                         } else {
                             $current = $relPath;
                         }

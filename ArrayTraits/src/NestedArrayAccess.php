@@ -14,7 +14,10 @@ use function is_object;
  */
 trait NestedArrayAccess
 {
-    /** @var string */
+    /**
+     * @var string
+     * @phpstan-var non-empty-string
+     */
     protected $nestedSeparator = '.';
 
     /**
@@ -24,13 +27,17 @@ trait NestedArrayAccess
      *
      * @param string $name Dot separated path to the requested value.
      * @param mixed $default Default value (or null).
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return mixed Value.
      */
     public function get($name, $default = null, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name) ?: [];
         $current = $this->items;
+        if ($name === '') {
+            return $current;
+        }
+
+        $path = explode($separator ?: $this->nestedSeparator, $name);
 
         foreach ($path as $field) {
             if (is_object($current) && isset($current->{$field})) {
@@ -52,12 +59,12 @@ trait NestedArrayAccess
      *
      * @param string $name Dot separated path to the requested value.
      * @param mixed $value New value.
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return $this
      */
     public function set($name, $value, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name) ?: [];
+        $path = $name !== '' ? explode($separator ?: $this->nestedSeparator, $name) : [];
         $current = &$this->items;
 
         foreach ($path as $field) {
@@ -89,19 +96,19 @@ trait NestedArrayAccess
      * @example $data->undef('this.is.my.nested.variable');
      *
      * @param string $name Dot separated path to the requested value.
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return $this
      */
     public function undef($name, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name);
-
         // Handle empty string.
-        if ($path === false) {
+        if ($name === '') {
             $this->items = [];
 
             return $this;
         }
+
+        $path = explode($separator ?: $this->nestedSeparator, $name);
 
         $var = array_pop($path);
         $current = &$this->items;
@@ -134,7 +141,7 @@ trait NestedArrayAccess
      *
      * @param string $name Dot separated path to the requested value.
      * @param mixed $default Default value (or null).
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return $this
      */
     public function def($name, $default = null, $separator = null)

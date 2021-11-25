@@ -129,6 +129,10 @@ class Stream implements StreamInterface
     #[\ReturnTypeWillChange]
     public function stream_read($count)
     {
+        if ($count < 1) {
+            return false;
+        }
+
         return fread($this->handle, $count);
     }
 

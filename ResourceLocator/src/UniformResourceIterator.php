@@ -353,7 +353,7 @@ class UniformResourceIterator extends FilesystemIterator
     {
         // Move to the next iterator if it exists.
         $path = array_shift($this->stack);
-        $hasNext = (null !== $path);
+        $hasNext = null !== $path;
         if ($hasNext) {
             $this->iterator = new FilesystemIterator($path, $this->getFlags());
         }

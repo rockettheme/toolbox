@@ -281,7 +281,7 @@ class BlueprintSchema
             return '';
         }
 
-        $parts = explode($separator, $path) ?: [];
+        $parts = $separator !== '' ? explode($separator, $path) : [];
         $nested = $this->nested;
 
         $result = [];
@@ -376,7 +376,7 @@ class BlueprintSchema
             return $this->nested;
         }
 
-        $parts = explode($separator, $path) ?: [];
+        $parts = $separator !== '' ? explode($separator, $path) : [];
         $item = array_pop($parts);
 
         $nested = $this->nested;
@@ -523,7 +523,7 @@ class BlueprintSchema
         // Parent type override.
         $properties['type'] = !empty($properties['parent@']) ? '_parent' : $type;
 
-        $isInputField = !isset($properties['input@']) || $properties['input@'];
+        $isInputField = !isset($properties['input@']) || (bool)$properties['input@'];
 
         $propertyExists = isset($this->items[$key]);
         if (!$isInputField) {
