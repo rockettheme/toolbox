@@ -2,7 +2,9 @@
 
 namespace RocketTheme\Toolbox\StreamWrapper;
 
+use BadMethodCallException;
 use RocketTheme\Toolbox\ResourceLocator\ResourceLocatorInterface;
+use function in_array;
 
 /**
  * Implements Read Only Streams.
@@ -23,9 +25,10 @@ class ReadOnlyStream extends Stream
      * @param string $opened_url
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_open($uri, $mode, $options, &$opened_url)
     {
-        if (!\in_array($mode, ['r', 'rb', 'rt'], true)) {
+        if (!in_array($mode, ['r', 'rb', 'rt'], true)) {
             if ($options & STREAM_REPORT_ERRORS) {
                 trigger_error(sprintf('stream_open() write modes not allowed for %s', $uri), E_USER_WARNING);
             }
@@ -59,10 +62,11 @@ class ReadOnlyStream extends Stream
      * @param int $operation
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_lock($operation)
     {
         // Disallow exclusive lock or non-blocking lock requests
-        if (!\in_array($operation, [LOCK_SH, LOCK_UN, LOCK_SH | LOCK_NB], true)) {
+        if (!in_array($operation, [LOCK_SH, LOCK_UN, LOCK_SH | LOCK_NB], true)) {
             trigger_error(
                 sprintf('stream_lock() exclusive lock operations not allowed for %s', $this->uri),
                 E_USER_WARNING
@@ -80,10 +84,11 @@ class ReadOnlyStream extends Stream
      * @param mixed $value
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_metadata($uri, $option, $value)
     {
         if ($option !== STREAM_META_TOUCH) {
-            throw new \BadMethodCallException(sprintf('stream_metadata() not allowed for %s', $uri));
+            throw new BadMethodCallException(sprintf('stream_metadata() not allowed for %s', $uri));
         }
 
         return parent::stream_metadata($uri, $option, $value);
@@ -93,18 +98,20 @@ class ReadOnlyStream extends Stream
      * @param string $data
      * @return int|false
      */
+    #[\ReturnTypeWillChange]
     public function stream_write($data)
     {
-        throw new \BadMethodCallException(sprintf('stream_write() not allowed for %s', $this->uri));
+        throw new BadMethodCallException(sprintf('stream_write() not allowed for %s', $this->uri));
     }
 
     /**
      * @param string $uri
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function unlink($uri)
     {
-        throw new \BadMethodCallException(sprintf('unlink() not allowed for %s', $uri));
+        throw new BadMethodCallException(sprintf('unlink() not allowed for %s', $uri));
     }
 
     /**
@@ -112,9 +119,10 @@ class ReadOnlyStream extends Stream
      * @param string $to_uri
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function rename($from_uri, $to_uri)
     {
-        throw new \BadMethodCallException(sprintf('rename() not allowed for %s', $from_uri));
+        throw new BadMethodCallException(sprintf('rename() not allowed for %s', $from_uri));
     }
 
     /**
@@ -123,9 +131,10 @@ class ReadOnlyStream extends Stream
      * @param int $options
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function mkdir($uri, $mode, $options)
     {
-        throw new \BadMethodCallException(sprintf('mkdir() not allowed for %s', $uri));
+        throw new BadMethodCallException(sprintf('mkdir() not allowed for %s', $uri));
     }
 
     /**
@@ -133,8 +142,9 @@ class ReadOnlyStream extends Stream
      * @param int $options
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function rmdir($uri, $options)
     {
-        throw new \BadMethodCallException(sprintf('rmdir() not allowed for %s', $uri));
+        throw new BadMethodCallException(sprintf('rmdir() not allowed for %s', $uri));
     }
 }

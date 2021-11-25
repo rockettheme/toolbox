@@ -16,10 +16,11 @@ trait ArrayAccessWithGetters
     /**
      * Magic setter method
      *
-     * @param string $offset Asset name value
+     * @param string|int $offset Asset name value
      * @param mixed $value Asset value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function __set($offset, $value)
     {
         $this->offsetSet($offset, $value);
@@ -31,6 +32,7 @@ trait ArrayAccessWithGetters
      * @param string $offset Asset name value
      * @return mixed Asset value
      */
+    #[\ReturnTypeWillChange]
     public function __get($offset)
     {
        return $this->offsetGet($offset);
@@ -42,6 +44,7 @@ trait ArrayAccessWithGetters
      * @param string $offset Asset name value
      * @return bool True if the value is set
      */
+    #[\ReturnTypeWillChange]
     public function __isset($offset)
     {
         return $this->offsetExists($offset);
@@ -53,6 +56,7 @@ trait ArrayAccessWithGetters
      * @param string $offset The name value to unset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function __unset($offset)
     {
         $this->offsetUnset($offset);

@@ -1,5 +1,10 @@
 <?php
+
 namespace RocketTheme\Toolbox\File;
+
+use BadMethodCallException;
+use RuntimeException;
+use function strlen;
 
 /**
  * Implements Gettext Mo File reader (readonly).
@@ -51,11 +56,11 @@ class MoFile extends File
      *
      * @param mixed $data
      * @return void
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function save($data = null)
     {
-        throw new \BadMethodCallException('save() not supported for .mo files.');
+        throw new BadMethodCallException('save() not supported for .mo files.');
     }
 
     /**
@@ -71,13 +76,13 @@ class MoFile extends File
     /**
      * @param string $var
      * @return array
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function decode($var)
     {
         $this->endian = 'V';
         $this->str = $var;
-        $this->len = \strlen($var);
+        $this->len = strlen($var);
 
         $magic = $this->readInt() & 0xffffffff;
 
@@ -88,7 +93,7 @@ class MoFile extends File
             // Big endian.
             $this->endian = 'N';
         } else {
-            throw new \RuntimeException('Not a Gettext file (.mo).');
+            throw new RuntimeException('Not a Gettext file (.mo).');
         }
 
         // Skip revision number.
@@ -101,7 +106,7 @@ class MoFile extends File
         $translations = $this->readInt();
 
         if ($originals === false || $translations === false) {
-            throw new \RuntimeException('Bad Gettext file.');
+            throw new RuntimeException('Bad Gettext file.');
         }
 
         // Each table consists of string length and offset of the string.
@@ -111,7 +116,7 @@ class MoFile extends File
         $table_translations = $this->readIntArray($total * 2);
 
         if ($table_originals === false || $table_translations === false) {
-            throw new \RuntimeException('Bad Gettext file.');
+            throw new RuntimeException('Bad Gettext file.');
         }
 
         $items = [];

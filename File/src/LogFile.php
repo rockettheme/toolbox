@@ -2,6 +2,10 @@
 
 namespace RocketTheme\Toolbox\File;
 
+use BadMethodCallException;
+use function is_array;
+use function is_object;
+
 /**
  * Implements Log File reader.
  *
@@ -44,7 +48,7 @@ class LogFile extends File
      */
     protected function check($var)
     {
-        if (!(\is_array($var) || \is_object($var))) {
+        if (!(is_array($var) || is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
@@ -56,11 +60,11 @@ class LogFile extends File
      *
      * @param string $var
      * @return string
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     protected function encode($var)
     {
-        throw new \BadMethodCallException('Saving log file is forbidden.');
+        throw new BadMethodCallException('Saving log file is forbidden.');
     }
 
     /**

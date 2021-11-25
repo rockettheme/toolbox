@@ -5,6 +5,8 @@ namespace RocketTheme\Toolbox\File;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml as YamlParser;
 use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
+use function is_array;
+use function is_object;
 
 /**
  * Implements Markdown File reader.
@@ -36,7 +38,7 @@ class MarkdownFile extends File
     /**
      * Get/set file header.
      *
-     * @param array $var
+     * @param array|null $var
      * @return array
      */
     public function header(array $var = null)
@@ -54,7 +56,7 @@ class MarkdownFile extends File
     /**
      * Get/set markdown content.
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
      */
     public function markdown($var = null)
@@ -72,7 +74,7 @@ class MarkdownFile extends File
     /**
      * Get/set frontmatter content.
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
      */
     public function frontmatter($var = null)
@@ -95,12 +97,12 @@ class MarkdownFile extends File
      */
     protected function check($var)
     {
-        if (!(\is_array($var) || \is_object($var))) {
+        if (!(is_array($var) || is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
         $var = (array) $var;
-        if (!isset($var['header']) || !\is_array($var['header'])) {
+        if (!isset($var['header']) || !is_array($var['header'])) {
             $var['header'] = [];
         }
         if (!isset($var['markdown']) || !\is_string($var['markdown'])) {

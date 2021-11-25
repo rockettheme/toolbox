@@ -2,6 +2,9 @@
 
 namespace RocketTheme\Toolbox\File;
 
+use RuntimeException;
+use function is_array;
+
 /**
  * Implements INI File reader.
  *
@@ -34,12 +37,12 @@ class IniFile extends File
      *
      * @param mixed $var
      * @return array
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function check($var)
     {
-        if (!\is_array($var)) {
-            throw new \RuntimeException('Provided data is not an array');
+        if (!is_array($var)) {
+            throw new RuntimeException('Provided data is not an array');
         }
 
         return $var;
@@ -50,7 +53,6 @@ class IniFile extends File
      *
      * @param array $var
      * @return string
-     * @throws \RuntimeException
      */
     protected function encode($var)
     {
@@ -62,6 +64,7 @@ class IniFile extends File
                     $value
                 ) . "\"\n";
         }
+
         return $string;
     }
 
@@ -70,14 +73,14 @@ class IniFile extends File
      *
      * @param string $var
      * @return array
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function decode($var)
     {
         $decoded = null !== $this->filename && file_exists($this->filename) ? @parse_ini_file($this->filename) : [];
 
         if ($decoded === false) {
-            throw new \RuntimeException("Decoding file '{$this->filename}' failed'");
+            throw new RuntimeException("Decoding file '{$this->filename}' failed'");
         }
 
         return $decoded;

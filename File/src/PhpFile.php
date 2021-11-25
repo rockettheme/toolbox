@@ -2,6 +2,11 @@
 
 namespace RocketTheme\Toolbox\File;
 
+use RuntimeException;
+use function function_exists;
+use function is_array;
+use function is_object;
+
 /**
  * Implements PHP File reader.
  *
@@ -34,14 +39,14 @@ class PhpFile extends File
      *
      * @param  mixed  $data  Optional data to be saved, usually array.
      * @return void
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function save($data = null)
     {
         parent::save($data);
 
         // Invalidate configuration file from the opcache.
-        if (null !== $this->filename && \function_exists('opcache_invalidate')) {
+        if (null !== $this->filename && function_exists('opcache_invalidate')) {
             @opcache_invalidate($this->filename, true);
         }
     }
@@ -51,12 +56,12 @@ class PhpFile extends File
      *
      * @param mixed $var
      * @return array
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function check($var)
     {
-        if (!(\is_array($var) || \is_object($var))) {
-            throw new \RuntimeException('Provided data is not an array');
+        if (!(is_array($var) || is_object($var))) {
+            throw new RuntimeException('Provided data is not an array');
         }
 
         return (array)$var;
@@ -67,7 +72,7 @@ class PhpFile extends File
      *
      * @param array $var
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function encode($var)
     {
@@ -86,7 +91,7 @@ class PhpFile extends File
     {
         $r = [];
         foreach ($a as $k => $v) {
-            if (\is_array($v) || \is_object($v)) {
+            if (is_array($v) || is_object($v)) {
                 $r[] = var_export($k, true) . ' => ' . $this->encodeArray((array) $v, $level + 1);
             } else {
                 $r[] = var_export($k, true) . ' => ' . var_export($v, true);

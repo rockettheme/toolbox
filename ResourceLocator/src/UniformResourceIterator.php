@@ -2,7 +2,9 @@
 
 namespace RocketTheme\Toolbox\ResourceLocator;
 
+use BadMethodCallException;
 use FilesystemIterator;
+use RuntimeException;
 
 /**
  * Implements FilesystemIterator for uniform resource locator.
@@ -35,10 +37,10 @@ class UniformResourceIterator extends FilesystemIterator
     public function __construct($path, $flags = null, UniformResourceLocator $locator = null)
     {
         if (null === $locator) {
-            throw new \BadMethodCallException('Use $locator->getIterator() instead');
+            throw new BadMethodCallException('Use $locator->getIterator() instead');
         }
         if ($path === '') {
-            throw new \BadMethodCallException('Url cannot be empty');
+            throw new BadMethodCallException('Url cannot be empty');
         }
 
         $this->path = $path;
@@ -99,7 +101,7 @@ class UniformResourceIterator extends FilesystemIterator
         $this->stack = $this->locator->findResources($this->path);
 
         if (!$this->nextIterator()) {
-            throw new \BadMethodCallException('Failed to open dir: ' . $this->path . ' does not exist.');
+            throw new BadMethodCallException('Failed to open dir: ' . $this->path . ' does not exist.');
         }
 
         // Find the first valid entry.
@@ -129,7 +131,7 @@ class UniformResourceIterator extends FilesystemIterator
      */
     public function seek($position)
     {
-        throw new \RuntimeException('Seek not implemented');
+        throw new RuntimeException('Seek not implemented');
     }
 
     /**
@@ -353,7 +355,7 @@ class UniformResourceIterator extends FilesystemIterator
         $path = array_shift($this->stack);
         $hasNext = (null !== $path);
         if ($hasNext) {
-            $this->iterator = new \FilesystemIterator($path, $this->getFlags());
+            $this->iterator = new FilesystemIterator($path, $this->getFlags());
         }
 
         return $hasNext;

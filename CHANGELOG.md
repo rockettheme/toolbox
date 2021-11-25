@@ -4,7 +4,7 @@
 1. [](#improved)
     * Added `parent@: true` option for blueprints to include rules for parent fields
 1. [](#bugfix)
-    * Fixed deprecated warnings on `ArrayAccess` in PHP 8.1
+    * Fixed deprecated warnings in PHP 8.1
 
 # v1.5.10
 ## 09/29/2021

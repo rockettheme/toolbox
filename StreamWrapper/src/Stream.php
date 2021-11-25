@@ -4,6 +4,7 @@ namespace RocketTheme\Toolbox\StreamWrapper;
 
 use RocketTheme\Toolbox\ResourceLocator\ResourceLocatorInterface;
 use RocketTheme\Toolbox\ResourceLocator\UniformResourceLocator;
+use function in_array;
 
 /**
  * Implements Read/Write Streams.
@@ -37,6 +38,7 @@ class Stream implements StreamInterface
      * @param string $opened_url
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_open($uri, $mode, $options, &$opened_url)
     {
         $path = $this->getPath($uri, $mode);
@@ -55,7 +57,7 @@ class Stream implements StreamInterface
         if ($handle) {
             $this->handle = $handle;
 
-            if (static::$locator instanceof UniformResourceLocator && !\in_array($mode, ['r', 'rb', 'rt'], true)) {
+            if (static::$locator instanceof UniformResourceLocator && !in_array($mode, ['r', 'rb', 'rt'], true)) {
                 static::$locator->clearCache($this->uri);
             }
 
@@ -68,6 +70,7 @@ class Stream implements StreamInterface
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_close()
     {
         return fclose($this->handle);
@@ -77,9 +80,10 @@ class Stream implements StreamInterface
      * @param int $operation
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_lock($operation)
     {
-        if (\in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB], true)) {
+        if (in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB], true)) {
             return flock($this->handle, $operation);
         }
 
@@ -92,6 +96,7 @@ class Stream implements StreamInterface
      * @param mixed $value
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_metadata($uri, $option, $value)
     {
         $path = $this->findPath($uri);
@@ -121,6 +126,7 @@ class Stream implements StreamInterface
      * @param int $count
      * @return string|false
      */
+    #[\ReturnTypeWillChange]
     public function stream_read($count)
     {
         return fread($this->handle, $count);
@@ -130,6 +136,7 @@ class Stream implements StreamInterface
      * @param string $data
      * @return int|false
      */
+    #[\ReturnTypeWillChange]
     public function stream_write($data)
     {
         return fwrite($this->handle, $data);
@@ -138,6 +145,7 @@ class Stream implements StreamInterface
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_eof()
     {
         return feof($this->handle);
@@ -148,6 +156,7 @@ class Stream implements StreamInterface
      * @param int $whence
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_seek($offset, $whence)
     {
         // fseek returns 0 on success and -1 on a failure.
@@ -157,6 +166,7 @@ class Stream implements StreamInterface
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function stream_flush()
     {
         return fflush($this->handle);
@@ -165,6 +175,7 @@ class Stream implements StreamInterface
     /**
      * @return int|false
      */
+    #[\ReturnTypeWillChange]
     public function stream_tell()
     {
         return ftell($this->handle);
@@ -173,6 +184,7 @@ class Stream implements StreamInterface
     /**
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function stream_stat()
     {
         return fstat($this->handle) ?: [];
@@ -184,6 +196,7 @@ class Stream implements StreamInterface
      * @param int $arg2
      * @return bool|int
      */
+    #[\ReturnTypeWillChange]
     public function stream_set_option($option, $arg1, $arg2)
     {
         switch ($option) {
@@ -202,6 +215,7 @@ class Stream implements StreamInterface
      * @param string $uri
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function unlink($uri)
     {
         $path = $this->getPath($uri);
@@ -218,6 +232,7 @@ class Stream implements StreamInterface
      * @param string $toUri
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function rename($fromUri, $toUri)
     {
         $fromPath = $this->getPath($fromUri);
@@ -241,6 +256,7 @@ class Stream implements StreamInterface
      * @param int $options
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function mkdir($uri, $mode, $options)
     {
         $recursive = (bool) ($options & STREAM_MKDIR_RECURSIVE);
@@ -266,6 +282,7 @@ class Stream implements StreamInterface
      * @param int $options
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function rmdir($uri, $options)
     {
         $path = $this->getPath($uri);
@@ -290,6 +307,7 @@ class Stream implements StreamInterface
      * @param int $flags
      * @return array|false
      */
+    #[\ReturnTypeWillChange]
     public function url_stat($uri, $flags)
     {
         $path = $this->getPath($uri);
@@ -308,6 +326,7 @@ class Stream implements StreamInterface
      * @param int $options
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function dir_opendir($uri, $options)
     {
         $path = $this->getPath($uri);
@@ -331,6 +350,7 @@ class Stream implements StreamInterface
     /**
      * @return string|false
      */
+    #[\ReturnTypeWillChange]
     public function dir_readdir()
     {
         return readdir($this->handle);
@@ -339,6 +359,7 @@ class Stream implements StreamInterface
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function dir_rewinddir()
     {
         rewinddir($this->handle);
@@ -349,6 +370,7 @@ class Stream implements StreamInterface
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function dir_closedir()
     {
         closedir($this->handle);

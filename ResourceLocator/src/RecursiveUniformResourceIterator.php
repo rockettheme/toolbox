@@ -2,6 +2,8 @@
 
 namespace RocketTheme\Toolbox\ResourceLocator;
 
+use RecursiveIterator;
+
 /**
  * Implements recursive iterator over filesystem.
  *
@@ -9,7 +11,7 @@ namespace RocketTheme\Toolbox\ResourceLocator;
  * @author RocketTheme
  * @license MIT
  */
-class RecursiveUniformResourceIterator extends UniformResourceIterator implements \RecursiveIterator
+class RecursiveUniformResourceIterator extends UniformResourceIterator implements RecursiveIterator
 {
     /** @var string|null */
     protected $subPath;
