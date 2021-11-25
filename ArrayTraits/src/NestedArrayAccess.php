@@ -147,6 +147,7 @@ trait NestedArrayAccess
      * @param string $offset An offset to check for.
      * @return bool Returns TRUE on success or FALSE on failure.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->get($offset) !== null;
@@ -158,6 +159,7 @@ trait NestedArrayAccess
      * @param string $offset The offset to retrieve.
      * @return mixed Can return all value types.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
@@ -170,6 +172,7 @@ trait NestedArrayAccess
      * @param mixed $value   The value to set.
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (null === $offset) {
@@ -185,6 +188,7 @@ trait NestedArrayAccess
      * @param string|null $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         if (null === $offset) {

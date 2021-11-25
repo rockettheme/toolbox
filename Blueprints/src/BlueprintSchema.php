@@ -515,6 +515,9 @@ class BlueprintSchema
             $properties += $this->items[$key];
         }
 
+        // Parent type override.
+        $properties['type'] = !empty($properties['parent@']) ? '_parent' : $type;
+
         $isInputField = !isset($properties['input@']) || $properties['input@'];
 
         $propertyExists = isset($this->items[$key]);

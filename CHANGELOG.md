@@ -6,9 +6,17 @@
    * Added **Symfony 5** support
    * Removed deprecated `Event` classes
    * Removed deprecated `Blueprints` class
+   
+# v1.5.11
+## mm/dd/2021
+
+1. [](#improved)
+    * Added `parent@: true` option for blueprints to include rules for parent fields
+1. [](#bugfix)
+    * Fixed deprecated warnings on `ArrayAccess` in PHP 8.1
 
 # v1.5.10
-## mm/dd/2021
+## 09/29/2021
 
 1. [](#improved)
     * Improved `UniformResourceLocator` to support `file://` scheme
