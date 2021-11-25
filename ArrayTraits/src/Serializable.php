@@ -16,6 +16,7 @@ trait Serializable
      *
      * @return string  Returns the string representation of the object.
      */
+    #[\ReturnTypeWillChange]
     public function serialize()
     {
         return serialize($this->items);
@@ -27,6 +28,7 @@ trait Serializable
      * @param string $serialized  The string representation of the object.
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function unserialize($serialized)
     {
         $this->items = unserialize($serialized);

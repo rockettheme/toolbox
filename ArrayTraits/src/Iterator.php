@@ -19,6 +19,7 @@ trait Iterator
      *
      * @return mixed  Can return any type.
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->items);
@@ -29,6 +30,7 @@ trait Iterator
      *
      * @return string|null  Returns key on success, or NULL on failure.
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return (string)key($this->items);
@@ -39,6 +41,7 @@ trait Iterator
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->iteratorUnset) {
@@ -54,6 +57,7 @@ trait Iterator
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->iteratorUnset = false;
@@ -65,6 +69,7 @@ trait Iterator
      *
      * @return bool  Returns TRUE on success or FALSE on failure.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return key($this->items) !== null;

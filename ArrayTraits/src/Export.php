@@ -2,6 +2,7 @@
 
 namespace RocketTheme\Toolbox\ArrayTraits;
 
+use RuntimeException;
 use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -46,7 +47,7 @@ trait Export
     {
         $string = json_encode($this->toArray());
         if (!\is_string($string)) {
-            throw new \RuntimeException('Failed to encode array', 500);
+            throw new RuntimeException('Failed to encode array', 500);
         }
 
         return $string;

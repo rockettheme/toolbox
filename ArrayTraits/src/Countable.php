@@ -2,6 +2,8 @@
 
 namespace RocketTheme\Toolbox\ArrayTraits;
 
+use function count;
+
 /**
  * Implements \Countable interface.
  *
@@ -16,8 +18,9 @@ trait Countable
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
-        return \count($this->items);
+        return count($this->items);
     }
 }

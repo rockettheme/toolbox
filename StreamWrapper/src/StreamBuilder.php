@@ -2,6 +2,8 @@
 
 namespace RocketTheme\Toolbox\StreamWrapper;
 
+use InvalidArgumentException;
+
 /**
  * Class StreamBuilder
  * @package RocketTheme\Toolbox\StreamWrapper
@@ -14,7 +16,7 @@ class StreamBuilder
     /**
      * StreamBuilder constructor.
      * @param string[] $items
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(array $items = [])
     {
@@ -27,7 +29,7 @@ class StreamBuilder
      * @param string $scheme
      * @param string $handler
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function add($scheme, $handler)
     {
@@ -35,15 +37,15 @@ class StreamBuilder
             if ($handler === $this->items[$scheme]) {
                 return $this;
             }
-            throw new \InvalidArgumentException("Stream '{$scheme}' has already been initialized.");
+            throw new InvalidArgumentException("Stream '{$scheme}' has already been initialized.");
         }
 
         if (!is_subclass_of($handler, StreamInterface::class)) {
-            throw new \InvalidArgumentException("Stream '{$scheme}' has unknown or invalid type.");
+            throw new InvalidArgumentException("Stream '{$scheme}' has unknown or invalid type.");
         }
 
         if (!@stream_wrapper_register($scheme, $handler)) {
-            throw new \InvalidArgumentException("Stream '{$scheme}' could not be initialized.");
+            throw new InvalidArgumentException("Stream '{$scheme}' could not be initialized.");
         }
 
         $this->items[$scheme] = $handler;

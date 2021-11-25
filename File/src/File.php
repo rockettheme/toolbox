@@ -2,6 +2,8 @@
 
 namespace RocketTheme\Toolbox\File;
 
+use RuntimeException;
+
 /**
  * Implements Universal File Reader.
  *
@@ -16,7 +18,7 @@ class File extends AbstractFile
      *
      * @param string|null $var
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function content($var = null)
     {

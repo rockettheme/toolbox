@@ -2,6 +2,9 @@
 
 namespace RocketTheme\Toolbox\ArrayTraits;
 
+use function is_array;
+use function is_object;
+
 /**
  * Implements nested ArrayAccess interface with dot notation.
  *
@@ -11,7 +14,10 @@ namespace RocketTheme\Toolbox\ArrayTraits;
  */
 trait NestedArrayAccess
 {
-    /** @var string */
+    /**
+     * @var string
+     * @phpstan-var non-empty-string
+     */
     protected $nestedSeparator = '.';
 
     /**
@@ -21,18 +27,22 @@ trait NestedArrayAccess
      *
      * @param string $name Dot separated path to the requested value.
      * @param mixed $default Default value (or null).
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return mixed Value.
      */
     public function get($name, $default = null, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name) ?: [];
         $current = $this->items;
+        if ($name === '') {
+            return $current;
+        }
+
+        $path = explode($separator ?: $this->nestedSeparator, $name);
 
         foreach ($path as $field) {
-            if (\is_object($current) && isset($current->{$field})) {
+            if (is_object($current) && isset($current->{$field})) {
                 $current = $current->{$field};
-            } elseif (\is_array($current) && isset($current[$field])) {
+            } elseif (is_array($current) && isset($current[$field])) {
                 $current = $current[$field];
             } else {
                 return $default;
@@ -49,16 +59,16 @@ trait NestedArrayAccess
      *
      * @param string $name Dot separated path to the requested value.
      * @param mixed $value New value.
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return $this
      */
     public function set($name, $value, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name) ?: [];
+        $path = $name !== '' ? explode($separator ?: $this->nestedSeparator, $name) : [];
         $current = &$this->items;
 
         foreach ($path as $field) {
-            if (\is_object($current)) {
+            if (is_object($current)) {
                 // Handle objects.
                 if (!isset($current->{$field})) {
                     $current->{$field} = [];
@@ -66,7 +76,7 @@ trait NestedArrayAccess
                 $current = &$current->{$field};
             } else {
                 // Handle arrays and scalars.
-                if (!\is_array($current)) {
+                if (!is_array($current)) {
                     $current = [$field => []];
                 } elseif (!isset($current[$field])) {
                     $current[$field] = [];
@@ -86,25 +96,25 @@ trait NestedArrayAccess
      * @example $data->undef('this.is.my.nested.variable');
      *
      * @param string $name Dot separated path to the requested value.
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return $this
      */
     public function undef($name, $separator = null)
     {
-        $path = explode($separator ?: $this->nestedSeparator, $name);
-
         // Handle empty string.
-        if ($path === false) {
+        if ($name === '') {
             $this->items = [];
 
             return $this;
         }
 
+        $path = explode($separator ?: $this->nestedSeparator, $name);
+
         $var = array_pop($path);
         $current = &$this->items;
 
         foreach ($path as $field) {
-            if (\is_object($current)) {
+            if (is_object($current)) {
                 // Handle objects.
                 if (!isset($current->{$field})) {
                     return $this;
@@ -112,7 +122,7 @@ trait NestedArrayAccess
                 $current = &$current->{$field};
             } else {
                 // Handle arrays and scalars.
-                if (!\is_array($current) || !isset($current[$field])) {
+                if (!is_array($current) || !isset($current[$field])) {
                     return $this;
                 }
                 $current = &$current[$field];
@@ -131,7 +141,7 @@ trait NestedArrayAccess
      *
      * @param string $name Dot separated path to the requested value.
      * @param mixed $default Default value (or null).
-     * @param string $separator Separator, defaults to '.'
+     * @param string|null $separator Separator, defaults to '.'
      * @return $this
      */
     public function def($name, $default = null, $separator = null)
@@ -147,6 +157,7 @@ trait NestedArrayAccess
      * @param string $offset An offset to check for.
      * @return bool Returns TRUE on success or FALSE on failure.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->get($offset) !== null;
@@ -158,6 +169,7 @@ trait NestedArrayAccess
      * @param string $offset The offset to retrieve.
      * @return mixed Can return all value types.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
@@ -170,6 +182,7 @@ trait NestedArrayAccess
      * @param mixed $value   The value to set.
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (null === $offset) {
@@ -185,6 +198,7 @@ trait NestedArrayAccess
      * @param string|null $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         if (null === $offset) {
