@@ -2,6 +2,7 @@
 
 namespace RocketTheme\Toolbox\ResourceLocator;
 
+use FilesystemIterator;
 use RecursiveIterator;
 
 /**
