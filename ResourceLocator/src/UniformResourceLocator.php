@@ -198,7 +198,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
     public function getPaths($scheme = null)
     {
         if (null !== $scheme) {
-            return isset($this->schemes[$scheme]) ? $this->schemes[$scheme] : [];
+            return $this->schemes[$scheme] ?? [];
         }
 
         return $this->schemes;
@@ -233,7 +233,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $normalized = $this->normalize($uri, true, true);
             \assert(is_array($normalized));
 
-            list ($scheme,) = $normalized;
+            [$scheme,] = $normalized;
             if (!is_string($scheme)) {
                 return false;
             }

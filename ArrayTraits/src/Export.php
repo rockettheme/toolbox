@@ -2,6 +2,7 @@
 
 namespace RocketTheme\Toolbox\ArrayTraits;
 
+use JsonException;
 use RuntimeException;
 use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Yaml;
@@ -45,8 +46,9 @@ trait Export
      */
     public function toJson()
     {
-        $string = json_encode($this->toArray());
-        if (!\is_string($string)) {
+        try {
+            $string = json_encode($this->toArray(), JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
             throw new RuntimeException('Failed to encode array', 500);
         }
 

@@ -116,7 +116,7 @@ class BlueprintSchema
     {
         $name = $separator !== '.' ? (string)str_replace($separator, '.', $name) : $name;
 
-        return isset($this->items[$name]) ? $this->items[$name] : $default;
+        return $this->items[$name] ?? $default;
     }
 
     /**
@@ -212,7 +212,7 @@ class BlueprintSchema
             $form = [];
         }
 
-        $items = isset($this->items[$name]) ? $this->items[$name] : ['type' => '_root', 'form_field' => false];
+        $items = $this->items[$name] ?? ['type' => '_root', 'form_field' => false];
 
         $this->items[$name] = $items;
         $this->addProperty($name);
@@ -315,7 +315,7 @@ class BlueprintSchema
         if (!empty($prefix)) {
             $parts = explode('.', trim($prefix, '.'));
             foreach ($parts as $part) {
-                $rules = isset($rules[$part]) ? $rules[$part] : [];
+                $rules = $rules[$part] ?? [];
             }
         }
 
@@ -390,11 +390,7 @@ class BlueprintSchema
             $nested = $nested[$part];
         }
 
-        if (isset($nested[$item])) {
-            return $nested[$item];
-        }
-
-        return isset($nested['*']) ? $nested['*'] : null;
+        return $nested[$item] ?? $nested['*'] ?? null;
     }
 
     /**
@@ -443,9 +439,9 @@ class BlueprintSchema
     protected function mergeArrays(array $data1, array $data2, array $rules)
     {
         foreach ($data2 as $key => $field2) {
-            $val = isset($rules[$key]) ? $rules[$key] : null;
+            $val = $rules[$key] ?? null;
             $rule = is_string($val) ? $this->items[$val] : null;
-            $field1 = isset($data1[$key]) ? $data1[$key] : null;
+            $field1 = $data1[$key] ?? null;
 
             if (is_array($field1) && is_array($field2) && is_array($val)
                 && (!isset($val['*']) || (!empty($rule['type']) && strpos($rule['type'], '_') === 0))) {
@@ -510,7 +506,7 @@ class BlueprintSchema
         $properties['name'] = $key;
 
         // Add all default properties for the field type (field needs to override them).
-        $type = isset($properties['type']) ? $properties['type'] : '';
+        $type = $properties['type'] ?? '';
         if (isset($this->types[$type])) {
             $properties = $this->mergeTypeDefaults($properties, $this->types[$type]);
         }

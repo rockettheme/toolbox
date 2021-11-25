@@ -103,7 +103,7 @@ class Stream implements StreamInterface
         if ($path) {
             switch ($option) {
                 case STREAM_META_TOUCH:
-                    list($time, $atime) = $value;
+                    [$time, $atime] = $value;
                     return touch($path, $time, $atime);
 
                 case STREAM_META_OWNER_NAME:

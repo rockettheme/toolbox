@@ -90,6 +90,6 @@ class StreamBuilder
      */
     public function getStreamType($scheme)
     {
-        return isset($this->items[$scheme]) ? $this->items[$scheme] : null;
+        return $this->items[$scheme] ?? null;
     }
 }

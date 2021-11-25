@@ -31,6 +31,6 @@ trait Serializable
     #[\ReturnTypeWillChange]
     public function unserialize($serialized)
     {
-        $this->items = unserialize($serialized);
+        $this->items = unserialize($serialized, ['allowed_classes' => false]);
     }
 }

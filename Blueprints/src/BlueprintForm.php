@@ -462,13 +462,13 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             $type = $value;
             $context = null;
         } else {
-            $type = isset($value['type']) ? $value['type'] : null;
-            $context = isset($value['context']) ? $value['context'] : null;
+            $type = $value['type'] ?? null;
+            $context = $value['context'] ?? null;
         }
         $field = 'form';
 
         if ($type && strpos($type, ':') !== false) {
-            list ($type, $field) = explode(':', $type, 2);
+            [$type, $field] = explode(':', $type, 2);
         }
 
         if (!$type && !$field) {
@@ -565,7 +565,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             if (is_string($value)) {
                 $type = $value;
             } else {
-                $type = isset($value['type']) ? $value['type'] : null;
+                $type = $value['type'] ?? null;
             }
 
             if (!$type) {
@@ -579,7 +579,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
 
                 $files = $parents;
             } else {
-                $files = $this->getFiles($type, isset($value['context']) ? $value['context'] : null);
+                $files = $this->getFiles($type, $value['context'] ?? null);
 
                 if ($override && !$files) {
                     throw new RuntimeException("Blueprint '{$type}' missing for '{$filename}'");

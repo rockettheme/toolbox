@@ -90,7 +90,7 @@ class YamlFile extends File
     {
         $value = parent::setting($setting);
         if (null === $value) {
-            $value = isset(static::$globalSettings[$setting]) ? static::$globalSettings[$setting] : $default;
+            $value = static::$globalSettings[$setting] ?? $default;
         }
 
         return $value;

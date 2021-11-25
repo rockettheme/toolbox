@@ -316,7 +316,7 @@ class UniformResourceIterator extends FilesystemIterator
      */
     public function getFlags()
     {
-        return $this->flags !== null ? $this->flags : static::KEY_AS_PATHNAME | static::CURRENT_AS_SELF | static::SKIP_DOTS;
+        return $this->flags ?? (static::KEY_AS_PATHNAME | static::CURRENT_AS_SELF | static::SKIP_DOTS);
     }
 
     /**

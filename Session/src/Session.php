@@ -204,7 +204,7 @@ class Session implements IteratorAggregate
     #[\ReturnTypeWillChange]
     public function __get($name)
     {
-        return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
+        return $_SESSION[$name] ?? null;
     }
 
     /**
