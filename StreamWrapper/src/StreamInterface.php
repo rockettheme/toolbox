@@ -24,6 +24,7 @@ interface StreamInterface
      * @return bool Returns TRUE if file was opened successfully.
      * @see http://php.net/manual/streamwrapper.stream-open.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_open($uri, $mode, $options, &$opened_url);
 
     /**
@@ -32,6 +33,7 @@ interface StreamInterface
      * @return bool TRUE if stream was successfully closed.
      * @see http://php.net/manual/streamwrapper.stream-close.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_close();
 
     /**
@@ -48,6 +50,7 @@ interface StreamInterface
      * @return bool Always returns TRUE at the present time.
      * @see http://php.net/manual/streamwrapper.stream-lock.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_lock($operation);
 
     /**
@@ -80,6 +83,7 @@ interface StreamInterface
      * @return bool
      * @see http://php.net/manual/en/streamwrapper.stream-metadata.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_metadata($path, $option, $value);
 
     /**
@@ -91,6 +95,7 @@ interface StreamInterface
      * @return string|false The string that was read, or FALSE in case of an error.
      * @see http://php.net/manual/streamwrapper.stream-read.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_read($count);
 
     /**
@@ -102,6 +107,7 @@ interface StreamInterface
      * @return int The number of bytes written (integer).
      * @see http://php.net/manual/streamwrapper.stream-write.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_write($data);
 
     /**
@@ -110,6 +116,7 @@ interface StreamInterface
      * @return bool TRUE if end-of-file has been reached.
      * @see http://php.net/manual/streamwrapper.stream-eof.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_eof();
 
     /**
@@ -123,6 +130,7 @@ interface StreamInterface
      * @return bool TRUE on success.
      * @see http://php.net/manual/streamwrapper.stream-seek.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_seek($offset, $whence);
 
     /**
@@ -131,6 +139,7 @@ interface StreamInterface
      * @return bool TRUE if data was successfully stored (or there was no data to store).
      * @see http://php.net/manual/streamwrapper.stream-flush.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_flush();
 
     /**
@@ -139,6 +148,7 @@ interface StreamInterface
      * @return int The current offset in bytes from the beginning of file.
      * @see http://php.net/manual/streamwrapper.stream-tell.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_tell();
 
     /**
@@ -147,6 +157,7 @@ interface StreamInterface
      * @return array An array with file status, or FALSE in case of an error - see fstat()
      * @see http://php.net/manual/streamwrapper.stream-stat.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_stat();
 
     /**
@@ -161,6 +172,7 @@ interface StreamInterface
      * @return bool
      * @see http://php.net/manual/streamwrapper.stream-set-option.php
      */
+    #[\ReturnTypeWillChange]
     public function stream_set_option($option, $arg1, $arg2);
 
     /**
@@ -172,6 +184,7 @@ interface StreamInterface
      * @return bool TRUE if resource was successfully deleted.
      * @see http://php.net/manual/streamwrapper.unlink.php
      */
+    #[\ReturnTypeWillChange]
     public function unlink($uri);
 
     /**
@@ -185,6 +198,7 @@ interface StreamInterface
      * @return bool TRUE if file was successfully renamed.
      * @see http://php.net/manual/streamwrapper.rename.php
      */
+    #[\ReturnTypeWillChange]
     public function rename($from_uri, $to_uri);
 
     /**
@@ -200,6 +214,7 @@ interface StreamInterface
      * @return bool TRUE if directory was successfully created.
      * @see http://php.net/manual/streamwrapper.mkdir.php
      */
+    #[\ReturnTypeWillChange]
     public function mkdir($uri, $mode, $options);
 
     /**
@@ -213,6 +228,7 @@ interface StreamInterface
      * @return bool TRUE if directory was successfully removed.
      * @see http://php.net/manual/streamwrapper.rmdir.php
      */
+    #[\ReturnTypeWillChange]
     public function rmdir($uri, $options);
 
     /**
@@ -226,6 +242,7 @@ interface StreamInterface
      * @return array An array with file status, or FALSE in case of an error - see fstat()
      * @see http://php.net/manual/streamwrapper.url-stat.php
      */
+    #[\ReturnTypeWillChange]
     public function url_stat($uri, $flags);
 
     /**
@@ -239,6 +256,7 @@ interface StreamInterface
      * @return bool TRUE on success.
      * @see http://php.net/manual/streamwrapper.dir-opendir.php
      */
+    #[\ReturnTypeWillChange]
     public function dir_opendir($uri, $options);
 
     /**
@@ -247,6 +265,7 @@ interface StreamInterface
      * @return string The next filename, or FALSE if there are no more files in the directory.
      * @see http://php.net/manual/streamwrapper.dir-readdir.php
      */
+    #[\ReturnTypeWillChange]
     public function dir_readdir();
 
     /**
@@ -255,6 +274,7 @@ interface StreamInterface
      * @return bool TRUE on success.
      * @see http://php.net/manual/streamwrapper.dir-rewinddir.php
      */
+    #[\ReturnTypeWillChange]
     public function dir_rewinddir();
 
     /**
@@ -263,5 +283,6 @@ interface StreamInterface
      * @return bool TRUE on success.
      * @see http://php.net/manual/streamwrapper.dir-closedir.php
      */
+    #[\ReturnTypeWillChange]
     public function dir_closedir();
 }

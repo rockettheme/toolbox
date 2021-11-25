@@ -13,7 +13,7 @@ parameters:
 
     fileExtensions:
         - php
-    excludes_analyse:
+    excludePaths:
         - **/tests/**
         - */vendor/**
         - */Compat/**

@@ -2,6 +2,9 @@
 
 namespace RocketTheme\Toolbox\File;
 
+use function is_array;
+use function is_object;
+
 /**
  * Implements Json File reader.
  *
@@ -37,7 +40,7 @@ class JsonFile extends File
      */
     protected function check($var)
     {
-        if (!(\is_array($var) || \is_object($var))) {
+        if (!(is_array($var) || is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 

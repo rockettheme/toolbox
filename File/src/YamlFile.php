@@ -6,6 +6,9 @@ use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml as YamlParser;
 use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
+use function function_exists;
+use function is_array;
+use function is_object;
 
 /**
  * Implements YAML File reader.
@@ -101,7 +104,7 @@ class YamlFile extends File
      */
     protected function check($var)
     {
-        if (!(\is_array($var) || \is_object($var))) {
+        if (!(is_array($var) || is_object($var))) {
             throw new \RuntimeException('Provided data is not an array');
         }
 
@@ -130,7 +133,7 @@ class YamlFile extends File
     protected function decode($var)
     {
         // Try native PECL YAML PHP extension first if available.
-        if (\function_exists('yaml_parse') && $this->setting('native', true)) {
+        if (function_exists('yaml_parse') && $this->setting('native', true)) {
             // Safely decode YAML.
             $saved = @ini_get('yaml.decode_php');
             @ini_set('yaml.decode_php', '0');

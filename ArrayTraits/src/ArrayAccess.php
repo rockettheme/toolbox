@@ -12,9 +12,9 @@ namespace RocketTheme\Toolbox\ArrayTraits;
 trait ArrayAccess
 {
     /**
-     * Whether or not an offset exists.
+     * Tests if an offset exists.
      *
-     * @param string $offset An offset to check for.
+     * @param string|int $offset An offset to check for.
      * @return bool Returns TRUE on success or FALSE on failure.
      */
     #[\ReturnTypeWillChange]
@@ -26,7 +26,7 @@ trait ArrayAccess
     /**
      * Returns the value at specified offset.
      *
-     * @param string $offset The offset to retrieve.
+     * @param string|int $offset The offset to retrieve.
      * @return mixed Can return all value types.
      */
     #[\ReturnTypeWillChange]
@@ -38,7 +38,7 @@ trait ArrayAccess
     /**
      * Assigns a value to the specified offset.
      *
-     * @param string|null $offset The offset to assign the value to.
+     * @param string|int|null $offset The offset to assign the value to.
      * @param mixed $value The value to set.
      * @return void
      */
@@ -55,7 +55,7 @@ trait ArrayAccess
     /**
      * Unsets an offset.
      *
-     * @param string $offset  The offset to unset.
+     * @param string|int $offset  The offset to unset.
      * @return void
      */
     #[\ReturnTypeWillChange]

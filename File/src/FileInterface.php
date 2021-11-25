@@ -79,7 +79,7 @@ interface FileInterface
     /**
      * Get/set raw file contents.
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
      */
     public function raw($var = null);

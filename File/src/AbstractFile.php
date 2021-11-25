@@ -2,6 +2,11 @@
 
 namespace RocketTheme\Toolbox\File;
 
+use Exception;
+use RuntimeException;
+use function dirname;
+use function is_string;
+
 /**
  * Implements Universal File Reader.
  *
@@ -37,7 +42,7 @@ abstract class AbstractFile implements FileInterface
      */
     public static function instance($filename)
     {
-        if (!\is_string($filename) || $filename === '') {
+        if (!is_string($filename) || $filename === '') {
             user_error(__METHOD__ . '() should not be called with empty filename, this will stop working in the future!', E_USER_DEPRECATED);
 
             // TODO: fail in the future (and also remove $this->filename === null checks).
@@ -56,7 +61,7 @@ abstract class AbstractFile implements FileInterface
     /**
      * Set/get settings.
      *
-     * @param array $settings
+     * @param array|null $settings
      * @return array
      */
     public function settings(array $settings = null)
@@ -127,7 +132,7 @@ abstract class AbstractFile implements FileInterface
     /**
      * Get/set the file location.
      *
-     * @param  string $var
+     * @param  string|null $var
      * @return string
      */
     public function filename($var = null)
@@ -174,24 +179,24 @@ abstract class AbstractFile implements FileInterface
      *
      * @param bool $block  For non-blocking lock, set the parameter to false.
      * @return bool
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function lock($block = true)
     {
         if (null === $this->filename) {
-            throw new \RuntimeException('Opening file for writing failed because of it has no filename');
+            throw new RuntimeException('Opening file for writing failed because of it has no filename');
         }
 
         if (!$this->handle) {
-            if (!$this->mkdir(\dirname($this->filename))) {
-                throw new \RuntimeException('Creating directory failed for ' . $this->filename);
+            if (!$this->mkdir(dirname($this->filename))) {
+                throw new RuntimeException('Creating directory failed for ' . $this->filename);
             }
 
             $handle = @fopen($this->filename, 'cb+');
             if (!$handle) {
                 $error = error_get_last() ?: ['message' => 'Unknown error'];
 
-                throw new \RuntimeException("Opening file for writing failed on error {$error['message']}");
+                throw new RuntimeException("Opening file for writing failed on error {$error['message']}");
             }
             $this->handle = $handle;
         }
@@ -246,7 +251,7 @@ abstract class AbstractFile implements FileInterface
             return false;
         }
 
-        return $this->exists() ? is_writable($this->filename) : $this->writableDir(\dirname($this->filename));
+        return $this->exists() ? is_writable($this->filename) : $this->writableDir(dirname($this->filename));
     }
 
     /**
@@ -275,7 +280,7 @@ abstract class AbstractFile implements FileInterface
             $this->content = null;
         }
 
-        if (!\is_string($this->raw)) {
+        if (!is_string($this->raw)) {
             $this->raw = $this->load();
         }
 
@@ -287,7 +292,7 @@ abstract class AbstractFile implements FileInterface
      *
      * @param string|array|null $var
      * @return string|array
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function content($var = null)
     {
@@ -301,8 +306,8 @@ abstract class AbstractFile implements FileInterface
             // Decode RAW file.
             try {
                 $this->content = $this->decode($this->raw());
-            } catch (\Exception $e) {
-                throw new \RuntimeException(sprintf('Failed to read %s: %s', $this->filename, $e->getMessage()), 500, $e);
+            } catch (Exception $e) {
+                throw new RuntimeException(sprintf('Failed to read %s: %s', $this->filename, $e->getMessage()), 500, $e);
             }
         }
 
@@ -314,12 +319,12 @@ abstract class AbstractFile implements FileInterface
      *
      * @param  mixed  $data  Optional data to be saved, usually array.
      * @return void
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function save($data = null)
     {
         if (null === $this->filename) {
-            throw new \RuntimeException('Failed to save file: no filename');
+            throw new RuntimeException('Failed to save file: no filename');
         }
 
         if ($data !== null) {
@@ -331,16 +336,16 @@ abstract class AbstractFile implements FileInterface
         if (is_link($filename)) {
             $realname = realpath($filename);
             if ($realname === false) {
-                throw new \RuntimeException('Failed to save file ' . $filename);
+                throw new RuntimeException('Failed to save file ' . $filename);
             }
 
             $filename = $realname;
         }
 
-        $dir = \dirname($filename);
+        $dir = dirname($filename);
 
         if (!$dir || !$this->mkdir($dir)) {
-            throw new \RuntimeException('Creating directory failed for ' . $filename);
+            throw new RuntimeException('Creating directory failed for ' . $filename);
         }
 
         try {
@@ -361,12 +366,12 @@ abstract class AbstractFile implements FileInterface
                     $tmp = false;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $tmp = false;
         }
 
         if ($tmp === false) {
-            throw new \RuntimeException('Failed to save file ' . $filename);
+            throw new RuntimeException('Failed to save file ' . $filename);
         }
 
         // Touch the directory as well, thus marking it modified.
@@ -413,8 +418,8 @@ abstract class AbstractFile implements FileInterface
      */
     protected function check($var)
     {
-        if (!\is_string($var)) {
-            throw new \RuntimeException('Provided data is not a string');
+        if (!is_string($var)) {
+            throw new RuntimeException('Provided data is not a string');
         }
 
         return $var;
@@ -430,7 +435,7 @@ abstract class AbstractFile implements FileInterface
      */
     protected function encode($var)
     {
-        return \is_string($var) ? $var : '';
+        return is_string($var) ? $var : '';
     }
 
     /**
@@ -478,7 +483,7 @@ abstract class AbstractFile implements FileInterface
     protected function writableDir($dir)
     {
         if ($dir && !file_exists($dir)) {
-            return $this->writableDir(\dirname($dir));
+            return $this->writableDir(dirname($dir));
         }
 
         return $dir && is_dir($dir) && is_writable($dir);
