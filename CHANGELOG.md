@@ -7,8 +7,14 @@
    * Removed deprecated `Event` classes
    * Removed deprecated `Blueprints` class
    
-# v1.5.11
+# v1.6.0
 ## mm/dd/2021
+
+1. [](#new)
+    * Added **PHP 8.1** support
+
+# v1.5.11
+## 10/25/2021
 
 1. [](#new)
     * Updated phpstan to v1.0
