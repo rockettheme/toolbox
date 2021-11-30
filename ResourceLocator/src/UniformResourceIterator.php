@@ -72,6 +72,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         do {
@@ -87,6 +88,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->iterator->valid();
@@ -95,6 +97,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->found = [];
@@ -129,6 +132,7 @@ class UniformResourceIterator extends FilesystemIterator
      * @param int $position
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function seek($position)
     {
         throw new RuntimeException('Seek not implemented');
@@ -137,6 +141,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getATime()
     {
         return $this->iterator->getATime();
@@ -146,6 +151,7 @@ class UniformResourceIterator extends FilesystemIterator
      * @param string|null $suffix
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function getBasename($suffix = null)
     {
         return null !== $suffix ? $this->iterator->getBasename($suffix) : $this->iterator->getBasename();
@@ -154,6 +160,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getCTime()
     {
         return $this->iterator->getCTime();
@@ -162,6 +169,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function getExtension()
     {
         return $this->iterator->getExtension();
@@ -170,6 +178,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function getFilename()
     {
         return $this->iterator->getFilename();
@@ -178,6 +187,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getGroup()
     {
         return $this->iterator->getGroup();
@@ -186,6 +196,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getInode()
     {
         return $this->iterator->getInode();
@@ -194,6 +205,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getMTime()
     {
         return $this->iterator->getMTime();
@@ -202,6 +214,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getOwner()
     {
         return $this->iterator->getOwner();
@@ -210,6 +223,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function getPath()
     {
         return $this->iterator->getPath();
@@ -218,6 +232,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function getPathname()
     {
         return $this->iterator->getPathname();
@@ -226,6 +241,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getPerms()
     {
         return $this->iterator->getPerms();
@@ -234,6 +250,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getSize()
     {
         return $this->iterator->getSize();
@@ -242,6 +259,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function getType()
     {
         return $this->iterator->getType();
@@ -250,6 +268,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isDir()
     {
         return $this->iterator->isDir();
@@ -258,6 +277,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isDot()
     {
         return $this->iterator->isDot();
@@ -266,6 +286,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isExecutable()
     {
         return $this->iterator->isExecutable();
@@ -274,6 +295,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isFile()
     {
         return $this->iterator->isFile();
@@ -282,6 +304,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isLink()
     {
         return $this->iterator->isLink();
@@ -290,6 +313,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isReadable()
     {
         return $this->iterator->isReadable();
@@ -298,6 +322,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function isWritable()
     {
         return $this->iterator->isWritable();
@@ -314,6 +339,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getFlags()
     {
         return $this->flags !== null ? $this->flags : static::KEY_AS_PATHNAME | static::CURRENT_AS_SELF | static::SKIP_DOTS;
@@ -323,6 +349,7 @@ class UniformResourceIterator extends FilesystemIterator
      * @param int|null $flags
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function setFlags($flags = null)
     {
         $this->flags = $flags;
@@ -348,6 +375,7 @@ class UniformResourceIterator extends FilesystemIterator
 
     /**
      * @return bool
+     * @phpstan-impure
      */
     protected function nextIterator()
     {

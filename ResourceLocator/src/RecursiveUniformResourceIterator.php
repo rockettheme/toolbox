@@ -19,6 +19,7 @@ class RecursiveUniformResourceIterator extends UniformResourceIterator implement
     /**
      * @return RecursiveUniformResourceIterator
      */
+    #[\ReturnTypeWillChange]
     public function getChildren()
     {
         $subPath = $this->getSubPathName();
@@ -30,6 +31,7 @@ class RecursiveUniformResourceIterator extends UniformResourceIterator implement
      * @param bool|null $allow_links
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function hasChildren($allow_links = null)
     {
         $allow_links = (bool)($allow_links !== null ? $allow_links : $this->flags & \FilesystemIterator::FOLLOW_SYMLINKS);
