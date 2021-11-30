@@ -12,6 +12,7 @@
 
 1. [](#new)
     * Added **PHP 8.1** support
+    * If you use `ArrayTraits\Seriazable`, make sure you do not override the methods (use PHP 8 methods instead)
 
 # v1.5.11
 ## 10/25/2021
