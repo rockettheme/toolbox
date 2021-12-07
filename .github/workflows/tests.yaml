@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  unit-tests:
+  phpstan-tests:
 
     runs-on: ${{ matrix.os }}
 
