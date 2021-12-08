@@ -52,6 +52,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return $this|\SplFileInfo|string
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->getFlags() & static::CURRENT_AS_SELF) {
@@ -64,6 +65,7 @@ class UniformResourceIterator extends FilesystemIterator
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iterator->key();
