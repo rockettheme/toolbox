@@ -8,7 +8,7 @@
    * Removed deprecated `Blueprints` class
    
 # v1.6.0
-## mm/dd/2021
+## 12/15/2021
 
 1. [](#new)
     * Added **PHP 8.1** support
