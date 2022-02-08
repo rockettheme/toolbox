@@ -348,7 +348,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             unset($bref_stack[key($bref_stack)]);
 
             foreach ($head as $key => $value) {
-                if (is_string($key) && str_contains($key, '@')) {
+                if (is_string($key) && ('' === $key || false !== strpos($key, '@'))) {
                     // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
                     $list = explode('-', (string)preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                     $action = array_shift($list);

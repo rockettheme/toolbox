@@ -7,6 +7,12 @@
    * Removed deprecated `Event` classes
    * Removed deprecated `Blueprints` class
    
+# v1.6.1
+## 02/08/2022
+
+1. [](#bugfix)
+    * Fixed PHP 5.6 and 7.0 compatibility
+
 # v1.6.0
 ## 12/15/2021
 
