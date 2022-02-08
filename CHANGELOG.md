@@ -1,5 +1,5 @@
 # v1.6.1
-## mm/dd/2022
+## 02/08/2022
 
 1. [](#bugfix)
     * Fixed PHP 5.6 and 7.0 compatibility
