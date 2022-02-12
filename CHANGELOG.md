@@ -1,6 +1,14 @@
+# v1.6.2
+## mm/dd/2022
+
+1. [](#bugfix)
+    * Removed support for Symfony 5 Event Dispatcher due to compatibility issues [#32](https://github.com/rockettheme/toolbox/issues/32)
+
 # v1.6.1
 ## 02/08/2022
 
+1. [](#new)
+    * Added support for Symfony 5 YAML and Event Dispatcher
 1. [](#bugfix)
     * Fixed PHP 5.6 and 7.0 compatibility
 
