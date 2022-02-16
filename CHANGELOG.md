@@ -6,7 +6,9 @@
    * Added full **Symfony 5** support
    * Removed deprecated `Event` classes
    * Removed deprecated `Blueprints` class
-   
+2. [](#improved)
+   * Updated code for PHP 7.2
+
 # v1.6.2
 ## mm/dd/2022
 
