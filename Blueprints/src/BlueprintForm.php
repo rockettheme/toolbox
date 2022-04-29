@@ -471,7 +471,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                 $newPath = array_merge($path, [$key]);
 
                 $location = $this->deepInit($item, $newPath);
-                if ($location) {
+                if ($location || $location === 0) {
                     $order[$key] = $location;
                 } elseif ($location === null) {
                     unset($items[$key]);
