@@ -142,6 +142,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             }
 
             // Import blueprints.
+            while ($this->deepImport($this->items)) {}
             $this->deepInit($this->items);
         } catch (Exception $e) {
             $filename = $this->filename;
@@ -387,6 +388,45 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
         return $a;
     }
 
+
+    /**
+     * @param array $items
+     * @param array $path
+     * @return string
+     */
+    protected function deepImport(array &$items, $path = [])
+    {
+        $run_again = false;
+        $field = end($path) === 'fields';
+
+        foreach ($items as $key => &$item) {
+            if ($field && isset($item['type'])) {
+                $item['name'] = $key;
+            }
+            // Handle special instructions in the form.
+            if (strpos($key, '@') !== false) {
+                // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
+                $list = explode('-', (string)preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
+                $action = array_shift($list);
+
+                if ($action == 'import') {
+                    unset($items[$key]);
+                    $this->doImport($item, $path);
+                    $run_again = true;
+                    break;
+                }
+            } elseif (\is_array($item)) {
+                // Recursively initialize form.
+                $newPath = array_merge($path, [$key]);
+                while ($this->deepImport($item, $newPath)) {
+                }
+            }
+        }
+        unset($item);
+
+        return $run_again;
+    }
+
     /**
      * @param array $items
      * @param array $path
@@ -417,10 +457,6 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                         if (empty($items)) {
                             return null;
                         }
-                        break;
-                    case 'import':
-                        unset($items[$key]);
-                        $this->doImport($item, $path);
                         break;
                     case 'ordering':
                         $ordering = $item;
