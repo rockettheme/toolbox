@@ -1,5 +1,5 @@
 # v1.6.2
-## mm/dd/2022
+## 06/14/2022
 
 1. [](#bugfix)
     * Removed support for Symfony 5 Event Dispatcher due to compatibility issues [#32](https://github.com/rockettheme/toolbox/issues/32)
