@@ -18,8 +18,6 @@ class ReadOnlyStream extends Stream
     /** @var ResourceLocatorInterface */
     protected static $locator;
 
-    public $context;
-
     /**
      * @param string $uri
      * @param string $mode
