@@ -404,17 +404,11 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                 $item['name'] = $key;
             }
             // Handle special instructions in the form.
-            if (strpos($key, '@') !== false) {
-                // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
-                $list = explode('-', (string)preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
-                $action = array_shift($list);
-
-                if ($action == 'import') {
-                    unset($items[$key]);
-                    $this->doImport($item, $path);
-                    $run_again = true;
-                    break;
-                }
+            if (strpos($key, '@') !== false && preg_match('/^(@*)?import(@\d*)?$/', $key)) {
+                unset($items[$key]);
+                $this->doImport($item, $path);
+                $run_again = true;
+                break;
             } elseif (\is_array($item)) {
                 // Recursively initialize form.
                 $newPath = array_merge($path, [$key]);
