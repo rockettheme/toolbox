@@ -142,7 +142,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             }
 
             // Import blueprints.
-            while ($this->deepImport($this->items)) {}
+            $this->deepImport($this->items);
             $this->deepInit($this->items);
         } catch (Exception $e) {
             $filename = $this->filename;
@@ -396,29 +396,27 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
      */
     protected function deepImport(array &$items, $path = [])
     {
-        $run_again = false;
-        $field = end($path) === 'fields';
-
-        foreach ($items as $key => &$item) {
-            if ($field && isset($item['type'])) {
-                $item['name'] = $key;
-            }
-            // Handle special instructions in the form.
-            if (strpos($key, '@') !== false && preg_match('/^(@*)?import(@\d*)?$/', $key)) {
-                unset($items[$key]);
-                $this->doImport($item, $path);
-                $run_again = true;
-                break;
-            } elseif (\is_array($item)) {
-                // Recursively initialize form.
-                $newPath = array_merge($path, [$key]);
-                while ($this->deepImport($item, $newPath)) {
+        do {
+            $run_again = false;
+            $field = end($path) === 'fields';
+            foreach ($items as $key => &$item) {
+                if ($field && isset($item['type'])) {
+                    $item['name'] = $key;
+                }
+                // Handle import@
+                if (strpos($key, '@') !== false && preg_match('/^(@*)?import(@\d*)?$/', $key)) {
+                    unset($items[$key]);
+                    $this->doImport($item, $path);
+                    $run_again = true;
+                    break;
+                } elseif (\is_array($item)) {
+                    // Recursively initialize form.
+                    $newPath = array_merge($path, [$key]);
+                    $this->deepImport($item, $newPath);
                 }
             }
-        }
-        unset($item);
-
-        return $run_again;
+            unset($item);
+        } while ($run_again);
     }
 
     /**
