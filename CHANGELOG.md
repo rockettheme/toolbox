@@ -1,3 +1,9 @@
+# v1.6.3
+## 02/19/2023
+
+1. [](#bugfix)
+   * Fixed a bug in ReadOnlyStream that throws deprecated warning PHP 8.2
+
 # v1.6.2
 ## 06/14/2022
 
