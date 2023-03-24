@@ -1,3 +1,9 @@
+# v1.6.4
+## 03/24/2023
+
+1. [](#bugfix)
+    * Fixed an issue with PHP 8.2 [#36](https://github.com/rockettheme/toolbox/pull/36)
+
 # v1.6.3
 ## 02/19/2023
 
