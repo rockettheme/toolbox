@@ -1,3 +1,9 @@
+# v1.6.5
+## 05/09/2023
+
+1. [](#bugfix)
+    * Fixed another issue with PHP 8.2
+
 # v1.6.4
 ## 03/24/2023
 
