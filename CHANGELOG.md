@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # v2.0.0
 ## mm/dd/2021
 
@@ -8,9 +9,28 @@
    * Removed deprecated `Blueprints` class
 2. [](#improved)
    * Updated code for PHP 7.2
+=======
+# v1.6.5
+## 05/09/2023
+
+1. [](#bugfix)
+    * Fixed another issue with PHP 8.2
+
+# v1.6.4
+## 03/24/2023
+
+1. [](#bugfix)
+    * Fixed an issue with PHP 8.2 [#36](https://github.com/rockettheme/toolbox/pull/36)
+
+# v1.6.3
+## 02/19/2023
+
+1. [](#bugfix)
+   * Fixed a bug in ReadOnlyStream that throws deprecated warning PHP 8.2
+>>>>>>> develop
 
 # v1.6.2
-## mm/dd/2022
+## 06/14/2022
 
 1. [](#bugfix)
     * Removed support for Symfony 5 Event Dispatcher due to compatibility issues [#32](https://github.com/rockettheme/toolbox/issues/32)
