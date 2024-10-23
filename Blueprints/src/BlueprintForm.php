@@ -142,6 +142,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             }
 
             // Import blueprints.
+            $this->deepImport($this->items);
             $this->deepInit($this->items);
         } catch (Exception $e) {
             $filename = $this->filename;
@@ -387,6 +388,37 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
         return $a;
     }
 
+
+    /**
+     * @param array $items
+     * @param array $path
+     * @return string
+     */
+    protected function deepImport(array &$items, $path = [])
+    {
+        do {
+            $run_again = false;
+            $field = end($path) === 'fields';
+            foreach ($items as $key => &$item) {
+                if ($field && isset($item['type'])) {
+                    $item['name'] = $key;
+                }
+                // Handle import@
+                if (strpos($key, '@') !== false && preg_match('/^(@*)?import(@\d*)?$/', $key)) {
+                    unset($items[$key]);
+                    $this->doImport($item, $path);
+                    $run_again = true;
+                    break;
+                } elseif (\is_array($item)) {
+                    // Recursively initialize form.
+                    $newPath = array_merge($path, [$key]);
+                    $this->deepImport($item, $newPath);
+                }
+            }
+            unset($item);
+        } while ($run_again);
+    }
+
     /**
      * @param array $items
      * @param array $path
@@ -418,10 +450,6 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                             return null;
                         }
                         break;
-                    case 'import':
-                        unset($items[$key]);
-                        $this->doImport($item, $path);
-                        break;
                     case 'ordering':
                         $ordering = $item;
                         unset($items[$key]);
@@ -435,7 +463,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                 $newPath = array_merge($path, [$key]);
 
                 $location = $this->deepInit($item, $newPath);
-                if ($location) {
+                if (null !== $location) {
                     $order[$key] = $location;
                 } elseif ($location === null) {
                     unset($items[$key]);
