@@ -1,15 +1,15 @@
-<<<<<<< HEAD
 # v2.0.0
-## mm/dd/2021
+## mm/dd/2025
 
 1. [](#new)
    * Updated minimum requirement to **PHP 7.2.5** and **Symfony 4.0**
-   * Added full **Symfony 5** support
+   * Added full **Symfony 5** and **Symfony 6** support
    * Removed deprecated `Event` classes
    * Removed deprecated `Blueprints` class
 2. [](#improved)
    * Updated code for PHP 7.2
-=======
+   * Added support for PHP 8.4 to handle deprecations
+
 # v1.6.5
 ## 05/09/2023
 

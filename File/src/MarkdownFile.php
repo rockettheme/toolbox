@@ -41,7 +41,7 @@ class MarkdownFile extends File
      * @param array|null $var
      * @return array
      */
-    public function header(array $var = null)
+    public function header(?array $var = null)
     {
         $content = $this->content();
 
