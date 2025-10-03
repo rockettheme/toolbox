@@ -420,7 +420,35 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                         break;
                     case 'import':
                         unset($items[$key]);
-                        $this->doImport($item, $path);
+                        // Check if we also have ordering@ at this level
+                        $hasOrdering = false;
+                        foreach ($items as $otherKey => $otherItem) {
+                            if (strpos($otherKey, 'ordering@') === 0) {
+                                $hasOrdering = true;
+                                break;
+                            }
+                        }
+                        
+                        if ($hasOrdering) {
+                            // We have both ordering and import - embed import into existing fields
+                            $imported = $this->loadImport($item);
+                            if ($imported && isset($imported['fields'])) {
+                                // Find the field that should receive the imported content
+                                foreach ($items as $fieldKey => $fieldValue) {
+                                    if (is_array($fieldValue) && isset($fieldValue['type'])) {
+                                        // This is a regular field, embed the import into it
+                                        if (!isset($fieldValue['fields'])) {
+                                            $fieldValue['fields'] = [];
+                                        }
+                                        $fieldValue['fields'] = array_merge($fieldValue['fields'], $imported['fields']);
+                                        $items[$fieldKey] = $fieldValue;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            $this->doImport($item, $path);
+                        }
                         break;
                     case 'ordering':
                         $ordering = $item;
@@ -452,6 +480,8 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
         return $ordering;
     }
 
+
+
     /**
      * @param array|string $value
      * @return array|null
@@ -466,7 +496,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
             $context = $value['context'] ?? null;
         }
         $field = 'form';
-
+        
         if ($type && strpos($type, ':') !== false) {
             [$type, $field] = explode(':', $type, 2);
         }
@@ -482,7 +512,8 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                 return null;
             }
 
-            $blueprint = new static($files);
+            $blueprint = new static();
+            $blueprint->filename = $files;
             $blueprint->setContext($this->context)->setOverrides($this->overrides)->load();
         } else {
             $blueprint = $this;
@@ -503,7 +534,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
         $imported = $this->loadImport($value);
 
         if ($imported) {
-            $this->deepInit($imported, $path);
+            // Embed the imported content into the parent
             $name = implode('/', $path);
             $this->embed($name, $imported, '/', false);
         }
@@ -622,18 +653,80 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
     protected function doReorder(array $items, array $keys)
     {
         $reordered = array_keys($items);
+        $count = count($reordered);
+
+        $indexOrders = [];
+        $weightOrders = [];
+        $relativeOrders = [];
 
         foreach ($keys as $item => $ordering) {
             if ((string)(int)$ordering === (string)$ordering) {
-                $location = array_search($item, $reordered, true) ?: 0;
-                $rel = array_splice($reordered, $location, 1);
-                array_splice($reordered, $ordering, 0, $rel);
+                $ordering = (int)$ordering;
 
+                if ($ordering >= -$count && $ordering < $count) {
+                    $indexOrders[$item] = $ordering;
+                } else {
+                    $weightOrders[$item] = $ordering;
+                }
             } elseif (isset($items[$ordering])) {
-                $location = array_search($item, $reordered, true) ?: 0;
-                $rel = array_splice($reordered, $location, 1);
-                $location = array_search($ordering, $reordered, true) ?: 0;
-                array_splice($reordered, $location + 1, 0, $rel);
+                $relativeOrders[$item] = $ordering;
+            }
+        }
+
+        foreach ($indexOrders as $item => $ordering) {
+            $location = array_search($item, $reordered, true);
+
+            if ($location === false) {
+                continue;
+            }
+
+            $rel = array_splice($reordered, $location, 1);
+            array_splice($reordered, $ordering, 0, $rel);
+        }
+
+        if ($weightOrders) {
+            $orderData = [];
+
+            foreach ($reordered as $index => $item) {
+                $hasWeight = isset($weightOrders[$item]);
+
+                $orderData[] = [
+                    'item' => $item,
+                    'weight' => $hasWeight ? $weightOrders[$item] : $index,
+                    'index' => $index,
+                    'weighted' => $hasWeight
+                ];
+            }
+
+            usort($orderData, static function ($a, $b) {
+                if ($a['weight'] === $b['weight']) {
+                    if ($a['weighted'] === $b['weighted']) {
+                        return $a['index'] <=> $b['index'];
+                    }
+
+                    return $a['weighted'] ? -1 : 1;
+                }
+
+                return $a['weight'] <=> $b['weight'];
+            });
+
+            $reordered = array_column($orderData, 'item');
+        }
+
+        foreach ($relativeOrders as $item => $ordering) {
+            $location = array_search($item, $reordered, true);
+
+            if ($location === false) {
+                continue;
+            }
+
+            $rel = array_splice($reordered, $location, 1);
+            $target = array_search($ordering, $reordered, true);
+
+            if ($target === false) {
+                $reordered = array_merge($reordered, $rel);
+            } else {
+                array_splice($reordered, $target + 1, 0, $rel);
             }
         }
 
