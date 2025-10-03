@@ -9,6 +9,7 @@
 2. [](#improved)
    * Updated code for PHP 7.2
    * Added support for PHP 8.4 to handle deprecations
+   * Added support for `ordering@` on fields with `import@`
 
 # v1.6.5
 ## 05/09/2023
