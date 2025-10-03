@@ -28,7 +28,6 @@
 
 1. [](#bugfix)
    * Fixed a bug in ReadOnlyStream that throws deprecated warning PHP 8.2
->>>>>>> develop
 
 # v1.6.2
 ## 06/14/2022
