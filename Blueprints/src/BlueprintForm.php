@@ -409,7 +409,7 @@ abstract class BlueprintForm implements ArrayAccess, ExportInterface
                 // Remove @ from the start and the end. Key syntax `import@2` is supported to allow multiple operations of the same type.
                 $list = explode('-', (string)preg_replace('/^(@*)?([^@]+)(@\d*)?$/', '\2', $key), 2);
                 $action = array_shift($list);
-                $property = array_shift($list);
+                $property = array_shift($list) ?? '';
 
                 switch ($action) {
                     case 'unset':
