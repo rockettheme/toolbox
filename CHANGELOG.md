@@ -11,6 +11,8 @@
    * Added support for PHP 8.4 to handle deprecations
    * Added support for `ordering@` on fields with `import@`
    * Fixed deprecated messages
+3. [](#bugfix)
+   * Fixed a field being replaced by a tab, section or column of the same name, which left the field's own validation rules unused
 
 # v1.6.5
 ## 05/09/2023

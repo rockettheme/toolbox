@@ -534,6 +534,15 @@ class BlueprintSchema
         }
 
         if (isset($field['fields'])) {
+            // Register the container before descending into it. Flattened keys
+            // are shared between a container and any leaf of the same name, so
+            // writing the container afterwards discarded the leaf that its own
+            // recursion had just stored, along with the leaf's validation rules
+            // (getgrav/grav#4271).
+            if ($isInputField) {
+                $this->items[$key] = $properties;
+            }
+
             // Recursively get all the nested fields.
             $isArray = !empty($properties['array']);
             $newParams = array_intersect_key($properties, $this->filter);
@@ -555,11 +564,8 @@ class BlueprintSchema
 
             if ($isInputField) {
                 $this->parseProperties($key, $properties);
+                $this->items[$key] = $properties;
             }
-        }
-
-        if ($isInputField) {
-            $this->items[$key] = $properties;
         }
     }
 
