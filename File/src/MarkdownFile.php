@@ -154,7 +154,7 @@ class MarkdownFile extends File
         preg_match($frontmatter_regex, ltrim($var), $m);
         if(!empty($m)) {
             // Normalize frontmatter.
-            $content['frontmatter'] = $frontmatter = preg_replace("/\n\t/", "\n    ", $m[1]);
+            $content['frontmatter'] = $frontmatter = (string)preg_replace("/\n\t/", "\n    ", $m[1]);
 
             // Try native PECL YAML PHP extension first if available.
             if (\function_exists('yaml_parse') && $this->setting('native')) {

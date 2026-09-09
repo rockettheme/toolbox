@@ -70,7 +70,7 @@ class BlueprintsBlueprintSchemaTest extends TestCase
         );
     }
 
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['empty'],

@@ -1,18 +1,17 @@
-# v2.0.0-beta
-## mm/dd/2025
+# v2.0.0
+## 09/09/2026
 
 1. [](#new)
-   * Updated minimum requirement to **PHP 7.2.5** and **Symfony 4.0**
-   * Added full **Symfony 5** and **Symfony 6** support
-   * Removed deprecated `Event` classes
-   * Removed deprecated `Blueprints` class
+   * Minimum requirement is now **PHP 8.3** and **Symfony 7**
+   * Removed the deprecated `Event` and `Blueprints` classes
 2. [](#improved)
-   * Updated code for PHP 7.2
-   * Added support for PHP 8.4 to handle deprecations
+   * Added support for PHP 8.4
    * Added support for `ordering@` on fields with `import@`
-   * Fixed deprecated messages
+   * The unit tests run again and are back in CI alongside phpstan, on PHP 8.3 and 8.4
 3. [](#bugfix)
+   * **A relative path can no longer resolve outside the locator's base folder.** Making file paths absolute meant a `..` climbed out through the base instead of being refused. Stream paths such as `user://` were never affected
    * Fixed a field being replaced by a tab, section or column of the same name, which left the field's own validation rules unused
+   * Fixed blueprint directives ending in `@`, such as `data-options@`, being ignored when a schema is built directly. Grav itself was unaffected
 
 # v1.6.5
 ## 05/09/2023
