@@ -624,7 +624,9 @@ class BlueprintSchema
         }
 
         foreach ($properties as $name => $value) {
-            if (is_string($name) && strpos($name[0], '@') !== false) {
+            // A directive is a key that either starts or ends with '@',
+            // such as `@config` or `data-options@`.
+            if (is_string($name) && $name !== '' && ($name[0] === '@' || $name[-1] === '@')) {
                 $list = explode('-', trim($name, '@'), 2);
                 $action = array_shift($list);
                 $property = array_shift($list);
