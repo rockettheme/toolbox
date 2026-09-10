@@ -45,7 +45,7 @@ class YamlFile extends File
      * @param array|null $settings
      * @return array
      */
-    public static function globalSettings(array $settings = null)
+    public static function globalSettings(?array $settings = null)
     {
         if ($settings !== null) {
             static::$globalSettings = $settings;
@@ -70,7 +70,7 @@ class YamlFile extends File
      * @param array|null $settings
      * @return array
      */
-    public function settings(array $settings = null)
+    public function settings(?array $settings = null)
     {
         if ($settings !== null) {
             $this->settings = $settings;
@@ -90,7 +90,7 @@ class YamlFile extends File
     {
         $value = parent::setting($setting);
         if (null === $value) {
-            $value = isset(static::$globalSettings[$setting]) ? static::$globalSettings[$setting] : $default;
+            $value = static::$globalSettings[$setting] ?? $default;
         }
 
         return $value;

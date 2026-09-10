@@ -2,16 +2,8 @@
 
 namespace RocketTheme\Toolbox\Event;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface as BaseEventSubscriberInterface;
+// Compatibility shim for legacy Composer autoload paths during upgrades.
 
-/**
- * Defines EventSubscriberInterface.
- *
- * @package RocketTheme\Toolbox\Event
- * @author RocketTheme
- * @license MIT
- * @deprecated Event classes will be removed in the future. Use PSR-14 implementation instead.
- */
-interface EventSubscriberInterface extends BaseEventSubscriberInterface
-{
+if (!interface_exists(__NAMESPACE__ . '\\EventSubscriberInterface', false)) {
+    require_once __DIR__ . '/../../../../../system/src/RocketTheme/Toolbox/Event/EventSubscriberInterface.php';
 }

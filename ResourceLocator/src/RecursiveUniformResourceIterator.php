@@ -2,6 +2,7 @@
 
 namespace RocketTheme\Toolbox\ResourceLocator;
 
+use FilesystemIterator;
 use RecursiveIterator;
 
 /**
@@ -34,7 +35,7 @@ class RecursiveUniformResourceIterator extends UniformResourceIterator implement
     #[\ReturnTypeWillChange]
     public function hasChildren($allow_links = null)
     {
-        $allow_links = (bool)($allow_links !== null ? $allow_links : $this->flags & \FilesystemIterator::FOLLOW_SYMLINKS);
+        $allow_links = (bool)($allow_links ?? ($this->flags & FilesystemIterator::FOLLOW_SYMLINKS));
 
         return $this->isDir() && !$this->isDot() && ($allow_links || !$this->isLink());
     }

@@ -2,23 +2,8 @@
 
 namespace RocketTheme\Toolbox\Event;
 
-use RocketTheme\Toolbox\ArrayTraits\ArrayAccess;
-use RocketTheme\Toolbox\ArrayTraits\Constructor;
-use RocketTheme\Toolbox\ArrayTraits\Export;
-use Symfony\Component\EventDispatcher\Event as BaseEvent;
+// Compatibility shim for legacy Composer autoload paths during upgrades.
 
-/**
- * Implements Symfony Event interface.
- *
- * @package RocketTheme\Toolbox\Event
- * @author RocketTheme
- * @license MIT
- * @deprecated Event classes will be removed in the future. Use PSR-14 implementation instead.
- */
-class Event extends BaseEvent implements \ArrayAccess
-{
-    use ArrayAccess, Constructor, Export;
-
-    /** @var array */
-    protected $items = [];
+if (!class_exists(__NAMESPACE__ . '\\Event', false)) {
+    require_once __DIR__ . '/../../../../../system/src/RocketTheme/Toolbox/Event/Event.php';
 }

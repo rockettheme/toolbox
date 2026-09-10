@@ -34,7 +34,7 @@ class UniformResourceIterator extends FilesystemIterator
      * @param int|null $flags
      * @param UniformResourceLocator|null $locator
      */
-    public function __construct($path, $flags = null, UniformResourceLocator $locator = null)
+    public function __construct($path, $flags = null, ?UniformResourceLocator $locator = null)
     {
         if (null === $locator) {
             throw new BadMethodCallException('Use $locator->getIterator() instead');
@@ -344,7 +344,7 @@ class UniformResourceIterator extends FilesystemIterator
     #[\ReturnTypeWillChange]
     public function getFlags()
     {
-        return $this->flags !== null ? $this->flags : static::KEY_AS_PATHNAME | static::CURRENT_AS_SELF | static::SKIP_DOTS;
+        return $this->flags ?? (static::KEY_AS_PATHNAME | static::CURRENT_AS_SELF | static::SKIP_DOTS);
     }
 
     /**

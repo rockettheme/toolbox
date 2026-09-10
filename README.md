@@ -13,7 +13,6 @@ RocketTheme\Toolbox package contains a set of reusable PHP interfaces, classes a
 * ArrayTraits
 * Blueprints
 * DI
-* Event
 * File
 * ResourceLocator
 * Session

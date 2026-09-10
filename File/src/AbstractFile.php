@@ -64,7 +64,7 @@ abstract class AbstractFile implements FileInterface
      * @param array|null $settings
      * @return array
      */
-    public function settings(array $settings = null)
+    public function settings(?array $settings = null)
     {
         if ($settings !== null) {
             $this->settings = $settings;
@@ -82,7 +82,7 @@ abstract class AbstractFile implements FileInterface
      */
     public function setting($setting, $default = null)
     {
-        return isset($this->settings[$setting]) ? $this->settings[$setting] : $default;
+        return $this->settings[$setting] ?? $default;
     }
 
     /**

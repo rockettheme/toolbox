@@ -198,7 +198,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
     public function getPaths($scheme = null)
     {
         if (null !== $scheme) {
-            return isset($this->schemes[$scheme]) ? $this->schemes[$scheme] : [];
+            return $this->schemes[$scheme] ?? [];
         }
 
         return $this->schemes;
@@ -233,7 +233,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $normalized = $this->normalize($uri, true, true);
             \assert(is_array($normalized));
 
-            list ($scheme,) = $normalized;
+            [$scheme,] = $normalized;
             if (!is_string($scheme)) {
                 return false;
             }
@@ -274,12 +274,17 @@ class UniformResourceLocator implements ResourceLocatorInterface
         $scheme = array_pop($segments) ?: 'file';
 
         // Make all file scheme paths absolute.
+        $floor = 0;
         if ($scheme === 'file') {
             if ('' === $path) {
                 // Empty path.
                 $path = $this->base;
             } elseif (preg_match('`^(/|([a-z]:/))`ui', $uri) !== 1) {
-                // Relative path.
+                // Relative path. It resolves against the base and has to stay
+                // inside it, so remember where the base ends: once the path is
+                // absolute, '..' would otherwise climb out through the base
+                // rather than being refused.
+                $floor = count(explode('/', rtrim($this->base, '/')));
                 $path = "{$this->base}/$path";
             }
         }
@@ -291,6 +296,15 @@ class UniformResourceLocator implements ResourceLocatorInterface
             $list = [];
             foreach ($parts as $i => $part) {
                 if ($part === '..') {
+                    if ($floor && count($list) <= $floor) {
+                        // Climbing out of the base.
+                        if ($throwException) {
+                            throw new BadMethodCallException('Invalid parameter $uri.');
+                        }
+
+                        return false;
+                    }
+
                     $part = array_pop($list);
                     if ($part === null || $part === '' || (!$list && strpos($part, ':'))) {
                         if ($throwException) {
@@ -535,7 +549,9 @@ class UniformResourceLocator implements ResourceLocatorInterface
             throw new InvalidArgumentException("Invalid resource {$scheme}://");
         }
 
-        $results = $array ? [] : false;
+        // Collected as a list either way. A non-array lookup returns on its
+        // first hit, so reaching the end of the search means it found nothing.
+        $results = [];
         /**
          * @var string $prefix
          * @var array $paths
@@ -553,7 +569,7 @@ class UniformResourceLocator implements ResourceLocatorInterface
                     // Handle scheme lookup.
                     $relPath = trim($path[1] . $filename, '/');
                     $found = $this->find($path[0], $relPath, $array, $absolute, $all);
-                    if ($found) {
+                    if ($found !== false && $found !== []) {
                         if (!is_array($found)) {
                             return $found;
                         }
@@ -591,6 +607,6 @@ class UniformResourceLocator implements ResourceLocatorInterface
             }
         }
 
-        return $results;
+        return $array ? $results : false;
     }
 }

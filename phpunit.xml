@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false">
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         failOnWarning="true"
+         failOnDeprecation="false"
+         cacheDirectory=".phpunit.cache">
 
     <php>
         <ini name="error_reporting" value="-1" />
@@ -17,7 +17,7 @@
     </php>
     <testsuites>
         <testsuite name="RocketTheme Toolbox Test Suite">
-            <directory suffix=".php">./*/tests/</directory>
+            <directory suffix="Test.php">./*/tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

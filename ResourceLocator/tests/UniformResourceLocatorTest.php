@@ -12,10 +12,18 @@ class UniformResourceLocatorTest extends TestCase
      */
     static protected $locator;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Share locator in all tests.
-        self::$locator = new UniformResourceLocator(__DIR__ . '/data');
+        self::$locator = new UniformResourceLocator(self::base());
+    }
+
+    /**
+     * @return string
+     */
+    private static function base()
+    {
+        return __DIR__ . '/data';
     }
 
     public function testGetBase()
@@ -41,7 +49,7 @@ class UniformResourceLocatorTest extends TestCase
         $this->assertTrue($locator->schemeExists($scheme));
     }
 
-    public function addPathProvider() {
+    public static function addPathProvider() {
         return [
             ['base', '', 'base'],
             ['local', '', 'local'],
@@ -73,7 +81,7 @@ class UniformResourceLocatorTest extends TestCase
     }
 
 
-    public function getPathsProvider() {
+    public static function getPathsProvider() {
         return [
             ['base', ['' => ['base']]],
             ['local', ['' => ['local']]],
@@ -97,7 +105,6 @@ class UniformResourceLocatorTest extends TestCase
 
     /**
      * @depends testAddPath
-     * @expectedException InvalidArgumentException
      */
     public function testGetIterator()
     {
@@ -108,12 +115,12 @@ class UniformResourceLocatorTest extends TestCase
             $locator->getIterator('all://')
         );
 
+        $this->expectException(\InvalidArgumentException::class);
         $locator->getIterator('fail://');
     }
 
     /**
      * @depends testAddPath
-     * @expectedException InvalidArgumentException
      */
     public function testGetRecursiveIterator()
     {
@@ -124,6 +131,7 @@ class UniformResourceLocatorTest extends TestCase
             $locator->getRecursiveIterator('all://')
         );
 
+        $this->expectException(\InvalidArgumentException::class);
         $locator->getRecursiveIterator('fail://');
     }
 
@@ -193,24 +201,29 @@ class UniformResourceLocatorTest extends TestCase
     }
 
 
-    public function normalizeProvider() {
+    /**
+     * A relative path with no scheme resolves against the base, and must stay
+     * inside it: anything climbing past the base is refused rather than
+     * resolved. Absolute paths, drive letters and streams are untouched.
+     */
+    public static function normalizeProvider() {
         return [
-            ['', ''],
-            ['./', ''],
-            ['././/./', ''],
+            ['', self::base()],
+            ['./', self::base() . '/'],
+            ['././/./', self::base() . '/'],
             ['././/../', false],
             ['/', '/'],
             ['//', '/'],
             ['///', '/'],
             ['/././', '/'],
-            ['foo', 'foo'],
+            ['foo', self::base() . '/foo'],
             ['/foo', '/foo'],
             ['//foo', '/foo'],
             ['/foo/', '/foo/'],
             ['//foo//', '/foo/'],
-            ['path/to/file.txt', 'path/to/file.txt'],
-            ['path/to/../file.txt', 'path/file.txt'],
-            ['path/to/../../file.txt', 'file.txt'],
+            ['path/to/file.txt', self::base() . '/path/to/file.txt'],
+            ['path/to/../file.txt', self::base() . '/path/file.txt'],
+            ['path/to/../../file.txt', self::base() . '/file.txt'],
             ['path/to/../../../file.txt', false],
             ['/path/to/file.txt', '/path/to/file.txt'],
             ['/path/to/../file.txt', '/path/file.txt'],
@@ -228,7 +241,7 @@ class UniformResourceLocatorTest extends TestCase
 
         ];
     }
-    public function findResourcesProvider() {
+    public static function findResourcesProvider() {
         return [
             ['all://base.txt', ['base/all/base.txt']],
             ['all://base_all.txt', ['override/all/base_all.txt', 'local/all/base_all.txt', 'base/all/base_all.txt']],

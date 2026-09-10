@@ -4,7 +4,7 @@ use RocketTheme\Toolbox\Blueprints\BlueprintForm;
 use RocketTheme\Toolbox\Blueprints\BlueprintSchema;
 use RocketTheme\Toolbox\File\YamlFile;
 
-function blueprint_data_option_test(array $param = null, $sort = false)
+function blueprint_data_option_test(?array $param = null, $sort = false)
 {
     if ($sort) {
         asort($param);
