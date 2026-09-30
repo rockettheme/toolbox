@@ -498,7 +498,19 @@ class BlueprintSchema
             return;
         }
 
+        $isElement = ($field['type'] ?? null) === 'element';
+        $isDotted = is_string($key) && strpos($key, '.') === 0;
         $key = $this->getFieldKey($key, $prefix, $parent);
+
+        // An `element` is a named branch of the `elements` field above it, so it
+        // belongs beside that field, in the same container, and its children bind
+        // beneath it (`header.sections.*.type` owns `header.sections.*.text`).
+        // Filing it at the root left the children of a list item outside the list
+        // and its `*` rule without a parent (getgrav/grav#4337). Matches the
+        // `parent_field(elementsName) ~ '.' ~ elementKey` name admin builds.
+        if ($isElement && !$isDotted && ($dot = strrpos($parent, '.')) !== false) {
+            $key = substr($parent, 0, $dot + 1) . $key;
+        }
 
         $newPath = array_merge($formPath, [$key]);
 
