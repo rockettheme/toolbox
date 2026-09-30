@@ -2,7 +2,7 @@
 ## 09/30/2026
 
 1. [](#bugfix)
-   * The fields inside an `element` are now filed under the list item or container their `elements` field sits in, instead of at the top of the blueprint, so they are validated on save and no longer clash with a top-level field of the same name [getgrav/grav#4337](https://github.com/getgrav/grav/issues/4337)
+   * The fields inside an `element` are now filed under the list item or container their `elements` field sits in, instead of at the top of the blueprint, so they no longer clash with a top-level field of the same name [getgrav/grav#4337](https://github.com/getgrav/grav/issues/4337)
 
 # v2.0.0
 ## 09/09/2026
